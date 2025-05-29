@@ -900,77 +900,6 @@
     box-shadow: 0 10px 30px rgba(0, 162, 255, 0.5);
 }
 
-        /* Mobile World Select Optimizations */
-@media (max-width: 768px) {
-    #worldSelectTitle {
-        font-size: 32px !important;
-        margin-bottom: 15px !important;
-    }
-    
-    #worldNavigation {
-        flex-direction: column !important;
-        align-items: center !important;
-        gap: 15px !important;
-    }
-    
-    #worldNavigation button {
-        font-size: 20px !important;
-        padding: 8px 16px !important;
-        margin: 0 10px !important;
-    }
-    
-    #worldDisplay {
-        width: 85vw !important;
-        max-width: 350px !important;
-        height: 180px !important;
-        margin: 0 !important;
-    }
-    
-    #worldName {
-        font-size: 24px !important;
-        margin-bottom: 8px !important;
-    }
-    
-    #worldDescription {
-        font-size: 16px !important;
-        padding: 0 15px !important;
-    }
-    
-    #worldUnlockStatus {
-        font-size: 14px !important;
-    }
-    
-    #startGameFromWorldButton {
-        font-size: 24px !important;
-        padding: 12px 30px !important;
-        margin-top: 10px !important;
-    }
-}
-
-@media (max-width: 480px) {
-    #worldSelectTitle {
-        font-size: 28px !important;
-    }
-    
-    #worldDisplay {
-        width: 90vw !important;
-        height: 160px !important;
-    }
-    
-    #worldName {
-        font-size: 20px !important;
-    }
-    
-    #worldDescription {
-        font-size: 14px !important;
-    }
-    
-    #startGameFromWorldButton {
-        font-size: 20px !important;
-        padding: 10px 25px !important;
-    }
-}
-
     </style>
 </head>
 <body>
@@ -1065,6 +994,77 @@
             box-shadow: 0 10px 30px rgba(76, 175, 80, 0.5);
             background-color: #45a049;
         }
+
+        /* Mobile World Select Optimizations */
+@media (max-width: 768px) {
+    #worldSelectTitle {
+        font-size: 32px !important;
+        margin-bottom: 15px !important;
+    }
+    
+    #worldNavigation {
+        flex-direction: column !important;
+        align-items: center !important;
+        gap: 15px !important;
+    }
+    
+    #worldNavigation button {
+        font-size: 20px !important;
+        padding: 8px 16px !important;
+        margin: 0 10px !important;
+    }
+    
+    #worldDisplay {
+        width: 85vw !important;
+        max-width: 350px !important;
+        height: 180px !important;
+        margin: 0 !important;
+    }
+    
+    #worldName {
+        font-size: 24px !important;
+        margin-bottom: 8px !important;
+    }
+    
+    #worldDescription {
+        font-size: 16px !important;
+        padding: 0 15px !important;
+    }
+    
+    #worldUnlockStatus {
+        font-size: 14px !important;
+    }
+    
+    #startGameFromWorldButton {
+        font-size: 24px !important;
+        padding: 12px 30px !important;
+        margin-top: 10px !important;
+    }
+}
+
+@media (max-width: 480px) {
+    #worldSelectTitle {
+        font-size: 28px !important;
+    }
+    
+    #worldDisplay {
+        width: 90vw !important;
+        height: 160px !important;
+    }
+    
+    #worldName {
+        font-size: 20px !important;
+    }
+    
+    #worldDescription {
+        font-size: 14px !important;
+    }
+    
+    #startGameFromWorldButton {
+        font-size: 20px !important;
+        padding: 10px 25px !important;
+    }
+}
     </style>
 </div>
 
@@ -1395,7 +1395,7 @@ let characterSelectModels = []; // Store character models for the selection scre
 let selectedCharacterIndex = 0; // Index of the currently selected character
 let characterNames = [
     // CHARACTER ROSTER INJECTION POINT - Package manager will modify this array
-    "apple", "carrot", "pumpkin", "creature", "ufo"
+    "apple", "carrot", "pumpkin", "happyface", "monster", "atom", "slime", "ufo", "robot", "dragon", "ghost", "creature"
     // END CHARACTER ROSTER INJECTION POINT
 ];
 
@@ -2750,8 +2750,15 @@ function createTitleCharacters() {
     case "apple": charModel = createAppleCharacter(); break;
     case "carrot": charModel = createCarrotCharacter(); break;
     case "pumpkin": charModel = createPumpkinCharacter(); break;
-    case "creature": charModel = createCreatureCharacter(); break;
+    case "happyface": charModel = createHappyFaceCharacter(); break;
+    case "monster": charModel = createMonsterCharacter(); break;
+    case "atom": charModel = createAtomCharacter(); break;
+    case "slime": charModel = createSlimeCharacter(); break;
     case "ufo": charModel = createUFOCharacter(); break;
+    case "robot": charModel = createRobotCharacter(); break;
+    case "dragon": charModel = createDragonCharacter(); break;
+    case "ghost": charModel = createGhostCharacter(); break;
+    case "creature": charModel = createCreatureCharacter(); break;
     // END CHARACTER SELECTION SWITCH INJECTION POINT
             default:
                 console.warn(`Unknown character type: ${charType}, using happyface instead`);
@@ -2854,8 +2861,15 @@ characterNames.forEach(charType => {
     case "apple": charModel = createAppleCharacter(); break;
     case "carrot": charModel = createCarrotCharacter(); break;
     case "pumpkin": charModel = createPumpkinCharacter(); break;
-    case "creature": charModel = createCreatureCharacter(); break;
+    case "happyface": charModel = createHappyFaceCharacter(); break;
+    case "monster": charModel = createMonsterCharacter(); break;
+    case "atom": charModel = createAtomCharacter(); break;
+    case "slime": charModel = createSlimeCharacter(); break;
     case "ufo": charModel = createUFOCharacter(); break;
+    case "robot": charModel = createRobotCharacter(); break;
+    case "dragon": charModel = createDragonCharacter(); break;
+    case "ghost": charModel = createGhostCharacter(); break;
+    case "creature": charModel = createCreatureCharacter(); break;
     // END CHARACTER SELECTION SWITCH INJECTION POINT
     default:
         console.warn(`Character ${charType} not yet extracted - using Happy Face`);
@@ -5493,8 +5507,15 @@ if (currentWorld === 'desert') {
     case "apple": player = createAppleCharacter(); break;
     case "carrot": player = createCarrotCharacter(); break;
     case "pumpkin": player = createPumpkinCharacter(); break;
-    case "creature": player = createCreatureCharacter(); break;
+    case "happyface": player = createHappyFaceCharacter(); break;
+    case "monster": player = createMonsterCharacter(); break;
+    case "atom": player = createAtomCharacter(); break;
+    case "slime": player = createSlimeCharacter(); break;
     case "ufo": player = createUFOCharacter(); break;
+    case "robot": player = createRobotCharacter(); break;
+    case "dragon": player = createDragonCharacter(); break;
+    case "ghost": player = createGhostCharacter(); break;
+    case "creature": player = createCreatureCharacter(); break;
     // END CREATE PLAYER SWITCH INJECTION POINT
     default:
         console.warn(`Character ${currentCharacter} not yet extracted - using Happy Face`);
