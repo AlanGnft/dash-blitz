@@ -6353,7 +6353,7 @@ dragonFireCooldown = 0;
             }
         }
         
-        function togglePause() {
+function togglePause() {
     // Don't do anything if not in playing or paused state
     if (!gameStarted || gameOver || (gameState !== "playing" && gameState !== "paused")) return;
     
@@ -7682,29 +7682,16 @@ function handleCharacterAbilities() {
     if (dragonFireCooldown > 0) dragonFireCooldown--;
     if (ghostPhaseCooldown > 0) ghostPhaseCooldown--;
     
-    // Robot Electromagnetic Shield
+    // Robot Electromagnetic Shield (Performance Optimized)
 if (currentCharacter === 'robot') {
-    // Animate electromagnetic field particles (optimized for mobile)
-    if (player.userData && player.userData.fieldParticles) {
-        // Only update particles every 3rd frame for mobile performance
-        if (frameCount % 3 === 0) {
-            player.userData.fieldParticles.forEach(particle => {
-                if (particle.userData) {
-                    // Update orbit angle
-                    particle.userData.orbitAngle += particle.userData.orbitSpeed * 3; // Compensate for less frequent updates
-                    
-                    // Calculate new position in orbit
-                    const x = Math.cos(particle.userData.orbitAngle) * particle.userData.orbitRadius;
-                    const z = Math.sin(particle.userData.orbitAngle) * particle.userData.orbitRadius;
-                    const y = particle.userData.verticalOffset + Math.sin(frameCount * 0.02 + particle.userData.orbitAngle) * 0.2;
-                    
-                    particle.position.set(x, y, z);
-                    
-                    // Simplified brightness - no complex sine calculations
-                    particle.material.opacity = robotShieldActive ? 0.8 : 0.3;
-                }
-            });
-        }
+    // Animate wireframe shield rotation
+    if (player.userData && player.userData.shieldDome && robotShieldActive) {
+        const shield = player.userData.shieldDome;
+        shield.rotation.y += shield.userData.rotationSpeed || 0.01;
+        shield.rotation.x += (shield.userData.rotationSpeed || 0.01) * 0.5;
+        
+        // Pulse the electromagnetic glow
+        shield.material.emissiveIntensity = 0.5 + Math.sin(frameCount * 0.1) * 0.2;
     }
     
     // Auto-activate shield when obstacles are near (if not on cooldown)
@@ -7845,56 +7832,51 @@ function deactivateRobotShield() {
     }
 }
 
-// Create mobile-optimized shield dome for robot
+// Create electromagnetic wireframe shield for robot
 function createRobotShieldDome() {
     // Remove existing dome if any
     if (player.userData.shieldDome) {
         player.remove(player.userData.shieldDome);
     }
     
-    // Create simplified shield dome for mobile performance
-    const shieldGeometry = new THREE.SphereGeometry(1.0, 8, 8); // Much lower poly count
-    const shieldMaterial = new THREE.MeshBasicMaterial({ // Use MeshBasicMaterial instead of MeshStandardMaterial
-        color: 0x00FFFF,
+    // Create electromagnetic wireframe shield
+    const shieldGeometry = new THREE.SphereGeometry(1.0, 12, 12); // Slightly higher detail for better wireframe
+    const shieldMaterial = new THREE.MeshBasicMaterial({
+        color: 0x00FFFF,        // Bright cyan
+        emissive: 0x0088FF,     // Glowing blue
+        emissiveIntensity: 0.5, // Electromagnetic glow
         transparent: true,
-        opacity: 0.3, // Slightly more transparent
-        wireframe: false // Remove wireframe for better performance
+        opacity: 0.7,           // Semi-transparent
+        wireframe: true,        // WIREFRAME MODE - looks electromagnetic!
+        side: THREE.DoubleSide  // Visible from inside and outside
     });
     
     const shieldDome = new THREE.Mesh(shieldGeometry, shieldMaterial);
     player.add(shieldDome);
     player.userData.shieldDome = shieldDome;
+    
+    // Add subtle rotation for electromagnetic field effect
+    shieldDome.userData.rotationSpeed = 0.01;
 }
 
-// Create spark effect when shield blocks something
+// Create simple shield flash effect (performance optimized)
 function createShieldSparkEffect(position) {
-    for (let i = 0; i < 10; i++) {
-        const sparkGeometry = new THREE.SphereGeometry(0.05, 8, 8);
-        const sparkMaterial = new THREE.MeshBasicMaterial({
-            color: 0x00FFFF,
-            emissive: 0x00FFFF,
-            emissiveIntensity: 1.0
-        });
+    // Simple shield flash - just brighten the shield dome briefly
+    if (player.userData.shieldDome) {
+        // Flash effect by temporarily increasing opacity
+        const dome = player.userData.shieldDome;
+        dome.material.opacity = 0.8; // Bright flash
         
-        const spark = new THREE.Mesh(sparkGeometry, sparkMaterial);
-        spark.position.copy(position);
-        spark.position.add(new THREE.Vector3(
-            (Math.random() - 0.5) * 2,
-            (Math.random() - 0.5) * 2,
-            (Math.random() - 0.5) * 2
-        ));
-        
-        spark.userData.velocity = new THREE.Vector3(
-            (Math.random() - 0.5) * 0.3,
-            Math.random() * 0.2 + 0.1,
-            (Math.random() - 0.5) * 0.3
-        );
-        spark.userData.lifespan = 30;
-        spark.userData.age = 0;
-        
-        scene.add(spark);
-        sparkleParticles.push(spark);
+        // Return to normal opacity after a brief moment
+        setTimeout(() => {
+            if (dome.material) {
+                dome.material.opacity = 0.3; // Back to normal
+            }
+        }, 100);
     }
+    
+    // Optional: Play a sound effect instead of visual particles
+    // This gives feedback without performance cost
 }
 
 // Dragon Fire Functions
