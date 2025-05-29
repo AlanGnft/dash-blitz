@@ -206,6 +206,20 @@ function createBackgroundMusic() {
     try {
         console.log(`🎵 Creating ${currentTrack} background music...`);
         
+        // SET CORRECT TEMPO IMMEDIATELY - before creating patterns!
+        let baseTempo;
+        if (currentTrack === 'medieval') {
+            baseTempo = 100;
+        } else if (currentTrack === 'electronic') {
+            baseTempo = 120;
+        } else if (currentTrack === 'ambient') {
+            baseTempo = 90; // Set ambient tempo right away!
+        }
+        
+        // Apply tempo immediately
+        Tone.Transport.bpm.value = baseTempo;
+        console.log(`🎵 Set initial tempo to ${baseTempo} BPM for ${currentTrack}`);
+        
         // Create different music based on selected track
         musicLayers = [];
         
@@ -217,7 +231,7 @@ function createBackgroundMusic() {
             createAmbientMusic();
         }
         
-        console.log(`✅ ${currentTrack} music layers created!`);
+        console.log(`✅ ${currentTrack} music layers created with correct tempo!`);
         
     } catch (error) {
         console.error(`❌ Error creating ${currentTrack} music:`, error);
