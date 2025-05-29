@@ -600,8 +600,8 @@ function updateBackgroundMusic() {
         baseTempo = 120; // Standard electronic tempo
         maxTempo = 160;  // High energy electronic
     } else if (currentTrack === 'ambient') {
-        baseTempo = 60;  // Even more chill lofi tempo
-        maxTempo = 80;   // Keeps it perfectly chill but still responsive
+        baseTempo = 65;  // Even more chill lofi tempo
+        maxTempo = 85;   // Keeps it perfectly chill but still responsive
     }
     
     // Calculate target tempo based on speed level (0-4)
