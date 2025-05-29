@@ -900,6 +900,77 @@
     box-shadow: 0 10px 30px rgba(0, 162, 255, 0.5);
 }
 
+        /* Mobile World Select Optimizations */
+@media (max-width: 768px) {
+    #worldSelectTitle {
+        font-size: 32px !important;
+        margin-bottom: 15px !important;
+    }
+    
+    #worldNavigation {
+        flex-direction: column !important;
+        align-items: center !important;
+        gap: 15px !important;
+    }
+    
+    #worldNavigation button {
+        font-size: 20px !important;
+        padding: 8px 16px !important;
+        margin: 0 10px !important;
+    }
+    
+    #worldDisplay {
+        width: 85vw !important;
+        max-width: 350px !important;
+        height: 180px !important;
+        margin: 0 !important;
+    }
+    
+    #worldName {
+        font-size: 24px !important;
+        margin-bottom: 8px !important;
+    }
+    
+    #worldDescription {
+        font-size: 16px !important;
+        padding: 0 15px !important;
+    }
+    
+    #worldUnlockStatus {
+        font-size: 14px !important;
+    }
+    
+    #startGameFromWorldButton {
+        font-size: 24px !important;
+        padding: 12px 30px !important;
+        margin-top: 10px !important;
+    }
+}
+
+@media (max-width: 480px) {
+    #worldSelectTitle {
+        font-size: 28px !important;
+    }
+    
+    #worldDisplay {
+        width: 90vw !important;
+        height: 160px !important;
+    }
+    
+    #worldName {
+        font-size: 20px !important;
+    }
+    
+    #worldDescription {
+        font-size: 14px !important;
+    }
+    
+    #startGameFromWorldButton {
+        font-size: 20px !important;
+        padding: 10px 25px !important;
+    }
+}
+
     </style>
 </head>
 <body>
@@ -1013,22 +1084,22 @@
     <button id="startGameButton" class="game-button" style="font-size: 32px; padding: 15px 50px; background-color: #4CAF50; color: white; border: none; border-radius: 5px; cursor: pointer; position: relative; z-index: 10; animation: pulse 1.5s infinite;">RUN!</button>
 </div>
 <!-- World Select Screen -->
-<div id="worldSelectScreen" style="position: absolute; top: 0; left: 0; width: 100%; height: 100%; display: none; flex-direction: column; justify-content: center; align-items: center; z-index: 300; background: linear-gradient(to bottom, #000428, #004e92);">
+<div id="worldSelectScreen" style="position: absolute; top: 0; left: 0; width: 100%; height: 100%; display: none; flex-direction: column; justify-content: center; align-items: center; z-index: 300; background: linear-gradient(to bottom, #000428, #004e92); padding: 20px; box-sizing: border-box;">
     <div style="position: absolute; top: 0; left: 0; width: 100%; height: 100%;" id="worldSelectCanvas"></div>
-    <h2 style="color: white; font-size: 48px; margin-bottom: 20px; text-shadow: 0 0 10px #00a2ff, 0 0 20px #00a2ff; position: relative; z-index: 10;">Select Your World</h2>
-    <div style="display: flex; align-items: center; margin-bottom: 30px; position: relative; z-index: 10;">
-        <button id="prevWorldBtn" class="game-button" style="font-size: 24px; padding: 10px 20px; margin-right: 20px;">←</button>
-        <div id="worldDisplay" style="width: 300px; height: 200px; background-color: rgba(0, 0, 0, 0.3); border-radius: 15px; display: flex; justify-content: center; align-items: center; box-shadow: 0 0 20px rgba(0, 162, 255, 0.5); position: relative; overflow: hidden;">
+    <h2 id="worldSelectTitle" style="color: white; font-size: 48px; margin-bottom: 20px; text-shadow: 0 0 10px #00a2ff, 0 0 20px #00a2ff; position: relative; z-index: 10; text-align: center;">Select Your World</h2>
+    <div id="worldNavigation" style="display: flex; align-items: center; margin-bottom: 30px; position: relative; z-index: 10; width: 100%; max-width: 500px; justify-content: center;">
+        <button id="prevWorldBtn" class="game-button" style="font-size: 24px; padding: 10px 20px; margin-right: 20px; flex-shrink: 0;">←</button>
+        <div id="worldDisplay" style="width: 300px; height: 200px; max-width: calc(100vw - 140px); background-color: rgba(0, 0, 0, 0.3); border-radius: 15px; display: flex; justify-content: center; align-items: center; box-shadow: 0 0 20px rgba(0, 162, 255, 0.5); position: relative; overflow: hidden;">
             <div id="worldPreview" style="width: 100%; height: 100%; border-radius: 15px;"></div>
         </div>
-        <button id="nextWorldBtn" class="game-button" style="font-size: 24px; padding: 10px 20px; margin-left: 20px;">→</button>
+        <button id="nextWorldBtn" class="game-button" style="font-size: 24px; padding: 10px 20px; margin-left: 20px; flex-shrink: 0;">→</button>
     </div>
-    <div id="worldInfo" style="color: white; text-align: center; margin-bottom: 20px; position: relative; z-index: 10;">
-        <h3 id="worldName" style="font-size: 32px; margin-bottom: 10px;">Classic Plains</h3>
-        <p id="worldDescription" style="font-size: 18px;">Rolling green hills and peaceful meadows</p>
+    <div id="worldInfo" style="color: white; text-align: center; margin-bottom: 20px; position: relative; z-index: 10; width: 100%; max-width: 400px;">
+        <h3 id="worldName" style="font-size: 32px; margin-bottom: 10px; word-wrap: break-word;">Classic Plains</h3>
+        <p id="worldDescription" style="font-size: 18px; word-wrap: break-word; padding: 0 10px;">Rolling green hills and peaceful meadows</p>
         <p id="worldUnlockStatus" style="font-size: 16px; color: #4CAF50;">Unlocked</p>
     </div>
-    <button id="startGameFromWorldButton" class="game-button" style="font-size: 32px; padding: 15px 50px; background-color: #4CAF50; color: white; border: none; border-radius: 5px; cursor: pointer; position: relative; z-index: 10; animation: pulse 1.5s infinite;">START ADVENTURE!</button>
+    <button id="startGameFromWorldButton" class="game-button" style="font-size: 32px; padding: 15px 50px; background-color: #4CAF50; color: white; border: none; border-radius: 5px; cursor: pointer; position: relative; z-index: 10; animation: pulse 1.5s infinite; max-width: calc(100vw - 40px); word-wrap: break-word;">START ADVENTURE!</button>
 </div>
 <div id="score">Score: 0</div>
     <div id="totalCoins">Coins: 0</div>
