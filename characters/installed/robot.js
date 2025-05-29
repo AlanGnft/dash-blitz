@@ -82,37 +82,21 @@ function createRobotCharacter() {
     antenna.position.y = 0.75;
     robotGroup.add(antenna);
     
-    // Electromagnetic field particles (always visible but dim when not active)
-    for (let i = 0; i < 16; i++) {
-        const fieldGeometry = new THREE.SphereGeometry(0.02, 6, 6);
-        const fieldMaterial = new THREE.MeshBasicMaterial({
-            color: 0x00DDFF,
-            transparent: true,
-            opacity: 0.3
-        });
-        const fieldParticle = new THREE.Mesh(fieldGeometry, fieldMaterial);
-        
-        const angle = (i / 16) * Math.PI * 2;
-        const radius = 0.8 + Math.random() * 0.2;
-        fieldParticle.position.set(
-            Math.cos(angle) * radius,
-            Math.sin(angle * 0.5) * 0.4,
-            Math.sin(angle) * radius
-        );
-        
-        fieldParticle.userData = {
-            orbitSpeed: 0.03 + Math.random() * 0.02,
-            orbitRadius: radius,
-            orbitAngle: angle,
-            verticalOffset: Math.sin(angle * 0.5) * 0.4
-        };
-        
-        robotGroup.add(fieldParticle);
-    }
+    // Simple shield barrier (only visible when active)
+    const shieldGeometry = new THREE.SphereGeometry(1.2, 16, 16);
+    const shieldMaterial = new THREE.MeshBasicMaterial({
+        color: 0x00DDFF,
+        transparent: true,
+        opacity: 0.0, // Invisible by default
+        side: THREE.DoubleSide
+    });
+    const shieldBarrier = new THREE.Mesh(shieldGeometry, shieldMaterial);
+    shieldBarrier.visible = false; // Hidden by default
+    robotGroup.add(shieldBarrier);
     
     // Store references for ability system
     robotGroup.userData = {
-        fieldParticles: robotGroup.children.slice(8), // Store field particles
+        shieldBarrier: shieldBarrier,
         shieldActive: false
     };
 
