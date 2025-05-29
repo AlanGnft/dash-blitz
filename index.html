@@ -1,9 +1,33 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>3D Endless Runner</title>
+
+<!-- Firebase Scripts -->
+<script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-auth-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-database-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-auth-compat.js"></script>
+
+<script>
+// Firebase configuration
+const firebaseConfig = {
+  apiKey: "AIzaSyDr_qv6W6AxuXGWG49bTdr0j2DvmMZObnA",
+  authDomain: "running-blitz.firebaseapp.com",
+  databaseURL: "https://running-blitz-default-rtdb.firebaseio.com",
+  projectId: "running-blitz",
+  storageBucket: "running-blitz.firebasestorage.app",
+  messagingSenderId: "511589639020",
+  appId: "1:511589639020:web:a0c3cbc26e293a00834949"
+};
+
+// Initialize Firebase
+firebase.initializeApp(firebaseConfig);
+</script>
+
     <style>
         body {
             margin: 0;
@@ -914,9 +938,79 @@
     <!-- Enhanced title with pulsing animation -->
     <h1 class="title-logo" style="color: white; font-size: 72px; margin-bottom: 20px; text-shadow: 0 0 10px #00a2ff, 0 0 20px #00a2ff; position: relative; z-index: 10; animation: title-pulse 3s ease-in-out infinite;">Running BlitZ</h1>
     
+
     <!-- Enhanced start button with hover effects -->
-    <button id="titleStartButton" class="game-button start-button" style="font-size: 28px; padding: 15px 40px; background-color: #4CAF50; color: white; border: none; border-radius: 5px; cursor: pointer; position: relative; z-index: 10; animation: pulse 1.5s infinite; transition: all 0.3s ease; box-shadow: 0 0 20px rgba(0, 162, 255, 0.3);">START</button>
+    <button id="titleStartButton" class="game-button start-button" style="font-size: 28px; padding: 15px 40px; background-color: #4CAF50; color: white; border: none; border-radius: 5px; cursor: pointer; position: relative; z-index: 10; animation: pulse 1.5s infinite; transition: all 0.3s ease; box-shadow: 0 0 20px rgba(0, 162, 255, 0.3); width: 240px;">START</button>
     
+<!-- Add this AFTER your START button -->
+<div id="titleScreenAuth" style="text-align: center; margin: 20px 0; position: relative; z-index: 1000;">
+    <!-- Google Sign-In Button (matches START button width) -->
+    <button onclick="signInWithGoogle()" id="googleSignInBtn" 
+        style="
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 0 auto 12px auto;
+            background: white;
+            color: #757575;
+            border: 1px solid #dadce0;
+            border-radius: 8px;
+            padding: 14px 20px;
+            font-size: 16px;
+            font-weight: 500;
+            cursor: pointer;
+            transition: all 0.2s;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.15);
+            min-width: 240px;
+            width: 240px;
+            position: relative;
+            z-index: 1001;
+        "
+        onmouseover="this.style.boxShadow='0 4px 12px rgba(0,0,0,0.2)'; this.style.backgroundColor='#f8f9fa'; this.style.transform='translateY(-1px)';"
+        onmouseout="this.style.boxShadow='0 2px 8px rgba(0,0,0,0.15)'; this.style.backgroundColor='white'; this.style.transform='translateY(0)';">
+        
+        <!-- Google Logo SVG (slightly larger) -->
+        <svg width="20" height="20" viewBox="0 0 18 18" style="margin-right: 12px;">
+            <path fill="#4285F4" d="M16.51 8H8.98v3h4.3c-.18 1-.74 1.48-1.6 2.04v2.01h2.6a7.8 7.8 0 0 0 2.38-5.88c0-.57-.05-.66-.15-1.18z"/>
+            <path fill="#34A853" d="M8.98 17c2.16 0 3.97-.72 5.3-1.94l-2.6-2.04a4.8 4.8 0 0 1-7.18-2.53H1.83v2.07A8 8 0 0 0 8.98 17z"/>
+            <path fill="#FBBC05" d="M4.5 10.49a4.8 4.8 0 0 1 0-3.07V5.35H1.83a8 8 0 0 0 0 7.28l2.67-2.14z"/>
+            <path fill="#EA4335" d="M8.98 3.58c1.32 0 2.5.45 3.44 1.35l2.54-2.59a7.81 7.81 0 0 0-5.98-2.26 8 8 0 0 0-7.15 4.42l2.67 2.14c.63-1.89 2.39-3.06 4.48-3.06z"/>
+        </svg>
+        
+        Sign in with Google
+    </button>
+    
+            <!-- Subtle subtitle -->
+        <p style="
+            color: rgba(255, 255, 255, 0.8);
+            font-size: 12px;
+            margin: 8px 0 0 0;
+            font-style: italic;
+            text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.5);
+            font-weight: 300;
+        ">
+            (for cloud saves across devices!)
+</p>
+</div>
+
+    <!-- Add this near your existing title screen buttons -->
+    <button onclick="showTitleSettings()" class="game-button" 
+        style="
+            position: absolute;
+            top: 20px;
+            right: 20px;
+            padding: 10px;
+            border-radius: 50%;
+            width: 50px;
+            height: 50px;
+            font-size: 20px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        ">
+        ⚙️
+    </button>
+
     <style>
         /* Keep your existing pulse animation */
         @keyframes pulse {
@@ -1067,6 +1161,12 @@
 }
     </style>
 </div>
+
+<!--------- BUTTONS & UI SECTION--------->
+<!--==============================-->
+<!--==============================-->
+
+
 
 <div id="characterSelectScreen" style="position: absolute; top: 0; left: 0; width: 100%; height: 100%; display: none; flex-direction: column; justify-content: center; align-items: center; z-index: 300; background: linear-gradient(to bottom, #000428, #004e92);">
     <div style="position: absolute; top: 0; left: 0; width: 100%; height: 100%;" id="characterSelectCanvas"></div>
@@ -1996,7 +2096,7 @@ initializeObjectPools();
 
 document.getElementById('soundEffectsCheckbox').addEventListener('change', function() {
     soundEffectsEnabled = this.checked;
-    saveGameData();
+    saveGameData('settings_change');
 });
 
 
@@ -2011,7 +2111,7 @@ document.getElementById('backgroundMusicCheckbox').addEventListener('change', fu
         }
         startBackgroundMusic();
     }
-    saveGameData();
+    saveGameData('settings_change');
 });
             
             // Add mobile touch controls if needed
@@ -2392,7 +2492,7 @@ function applySelectedTrack() {
     initializeJukebox();
     
     // Save preference
-    saveGameData();
+    saveGameData('settings_change');
     
     console.log(`✅ Successfully switched to: ${availableTracks.find(t => t.id === currentTrack)?.name}`);
 }
@@ -2504,6 +2604,9 @@ function formatDate(dateString) {
     
     console.log('Score saved to leaderboard!', leaderboard);
     
+    // Save profile with high score reason - THIS WILL SHOW THE SAVE INDICATOR
+    saveGameData('high_score');
+    
     // Optional: Show confirmation
     alert(`Score saved! ${playerName}: ${currentScore} points`);
 }
@@ -2573,6 +2676,7 @@ document.getElementById('playerNameInput').addEventListener('keypress', function
 
 // Function to initialize the title screen with orbiting characters
 function initTitleScreen() {
+
     // Create a new scene for the character orbits
     characterTitleScene = new THREE.Scene();
     characterTitleScene.background = null; // Transparent background
@@ -2731,6 +2835,9 @@ setTimeout(() => {
         console.log('Start button not found!');
     }
 }, 500); // Increased timeout to ensure DOM is ready
+
+
+
 }
 
 // Create character models for the title screen
@@ -3493,7 +3600,7 @@ function tryUnlockWorld(worldId) {
         totalCoins -= cost;
         unlockedWorlds[worldId] = true;
         updateTotalCoins();
-        saveGameData();
+        saveGameData('world_unlock');  // or 'world_unlock'
         alert(`${world.name} unlocked!`);
     } else {
         alert(`Not enough coins! You need ${cost} coins to unlock this world.`);
@@ -4705,7 +4812,7 @@ availableWorlds.forEach(world => {
     alert('Mod Mode disabled.');
 }
             
-            saveGameData();
+            saveGameData('settings_change');
 
 
 
@@ -5571,7 +5678,7 @@ if (typeof initializeAbilityStatusBar === 'function') {
                 unlockedCharacters[character] = true;
                 selectCharacter(character);
                 updateTotalCoins();
-                saveGameData();
+                saveGameData('character_unlock');  // or 'world_unlock'
             } else {
                 alert(`Not enough coins! You need ${cost} coins to unlock this character.`);
             }
@@ -5587,8 +5694,403 @@ if (typeof initializeAbilityStatusBar === 'function') {
             saveGameData();
         }
         
-        // ===== FUTURE-PROOF SAVE SYSTEM =====
+
+
+// ==================== GAME SAVE SYSTEM ====================
 // This system ensures compatibility across all versions and devices
+// =================================================================
+// =================================================================
+
+// ===== GOOGLE SIGN-IN SYSTEM =====
+let isGoogleUser = false;
+
+// Enable Google Sign-In in Firebase Console first!
+// Enable Google Sign-In in Firebase Console first!
+function signInWithGoogle() {
+    if (!firebase.auth) {
+        alert('❌ Authentication not available!');
+        return;
+    }
+    
+    const provider = new firebase.auth.GoogleAuthProvider();
+    provider.addScope('profile');
+    provider.addScope('email');
+    
+    firebase.auth().signInWithPopup(provider)
+        .then((result) => {
+            console.log('✅ Google sign-in successful!');
+            const user = result.user;
+            
+            // Update player info
+            playerId = user.uid;
+            isGoogleUser = true;
+            cloudSaveEnabled = true;
+            
+            console.log('👤 Signed in as:', user.displayName);
+            console.log('📧 Email:', user.email);
+            
+            // Merge anonymous data with Google account
+            mergeAnonymousDataToGoogleAccount();
+            
+            // Hide the Google sign-in button on title screen
+            const signInBtn = document.getElementById('googleSignInBtn');
+            const authSection = document.getElementById('titleScreenAuth');
+            if (signInBtn && authSection) {
+                authSection.innerHTML = `
+                    <p style="color: #34C759; font-size: 14px; margin: 10px 0;">
+                        ✅ Signed in as ${user.displayName}
+                    </p>
+                    <p style="color: #666; font-size: 12px; font-style: italic;">
+                        Your progress syncs across all devices!
+                    </p>
+                `;
+            }
+            
+            alert(`✅ Signed in as ${user.displayName}!\nYour progress now syncs across all devices!`);
+            
+        })
+        .catch((error) => {
+            console.error('❌ Google sign-in failed:', error);
+            alert('❌ Sign-in failed: ' + error.message);
+        });
+}
+
+// Merge current anonymous progress to Google account
+function mergeAnonymousDataToGoogleAccount() {
+    if (!currentProfile || !playerId) return;
+    
+    console.log('🔄 Merging anonymous data to Google account...');
+    
+    // Check if Google account already has data
+    firebase.database().ref('profiles/' + playerId + '/Default').once('value')
+        .then((snapshot) => {
+            const googleData = snapshot.val();
+            
+            if (googleData) {
+                // Google account has existing data - ask player what to do
+                const googleCoins = googleData.totalCoins || 0;
+                const localCoins = currentProfile.totalCoins || 0;
+                
+                if (confirm(`You have progress on both devices!\n\nThis device: ${localCoins} coins\nGoogle account: ${googleCoins} coins\n\nKeep the higher amount?`)) {
+                    if (localCoins > googleCoins) {
+                        // Keep local data
+                        saveProfile();
+                    } else {
+                        // Use Google data
+                        currentProfile = validateAndMigrateProfile(googleData);
+                        syncProfileToGameState();
+                    }
+                }
+            } else {
+                // No Google data - upload current progress
+                console.log('📤 Uploading current progress to Google account...');
+                saveProfile();
+            }
+            
+            showSaveIndicator('☁️ Google Synced');
+        })
+        .catch((error) => {
+            console.log('⚠️ Merge failed, saving current data:', error);
+            saveProfile();
+        });
+}
+
+// Sign out of Google
+function signOutGoogle() {
+    firebase.auth().signOut()
+        .then(() => {
+            console.log('👋 Signed out of Google');
+            
+            // Revert to anonymous auth
+            initializeCloudSave();
+            
+            alert('👋 Signed out! Your progress is now device-specific again.');
+        })
+        .catch((error) => {
+            console.error('❌ Sign-out failed:', error);
+        });
+}
+
+// ===== SAVE CODE SYSTEM =====
+// Generate a transferable save code
+function generateSaveCode() {
+    if (!currentProfile || !playerId) {
+        alert('❌ No save data available to export!');
+        return null;
+    }
+    
+    try {
+        const exportData = {
+            version: SAVE_VERSION,
+            playerId: playerId,
+            profileName: currentProfileName,
+            profile: currentProfile,
+            timestamp: Date.now(),
+            deviceInfo: navigator.userAgent.substring(0, 50) // For reference
+        };
+        
+        // Compress and encode the data
+        const compressed = JSON.stringify(exportData);
+        const encoded = btoa(compressed);
+        
+        // Create readable save code (format: BLITZ-XXXX-XXXX-XXXX)
+        const codeBase = encoded.substring(0, 12).toUpperCase();
+        const saveCode = `BLITZ-${codeBase.substring(0, 4)}-${codeBase.substring(4, 8)}-${codeBase.substring(8, 12)}`;
+        
+        console.log('💾 Save code generated:', saveCode);
+        return { code: saveCode, fullData: encoded };
+        
+    } catch (error) {
+        console.error('❌ Failed to generate save code:', error);
+        alert('❌ Failed to generate save code!');
+        return null;
+    }
+}
+
+// Use a save code to restore progress
+function useSaveCode(saveCode, fullData = null) {
+    try {
+        let decodedData;
+        
+        if (fullData) {
+            // Use full data if provided
+            decodedData = JSON.parse(atob(fullData));
+        } else {
+            // For now, save codes need the full data
+            // In a real implementation, you'd store codes in Firebase
+            alert('❌ Save codes need the full export data for now!');
+            return false;
+        }
+        
+        if (decodedData.version !== SAVE_VERSION) {
+            console.log('⚠️ Save code is from different version, attempting migration...');
+        }
+        
+        // Validate the data
+        if (!decodedData.profile || !decodedData.playerId) {
+            throw new Error('Invalid save code data');
+        }
+        
+        console.log('📥 Restoring save from code...');
+        console.log(`💰 Restoring ${decodedData.profile.totalCoins} coins`);
+        console.log(`👤 Restoring character: ${decodedData.profile.currentCharacter}`);
+        
+        // Apply the restored profile
+        currentProfile = validateAndMigrateProfile(decodedData.profile);
+        currentProfileName = decodedData.profileName || "Restored";
+        
+        // Sync to game state
+        syncProfileToGameState();
+        
+        // Save the restored profile locally and to cloud
+        saveProfile();
+        
+        alert(`✅ Progress restored!\n💰 ${currentProfile.totalCoins} coins\n👤 Character: ${currentProfile.currentCharacter}`);
+        
+        return true;
+        
+    } catch (error) {
+        console.error('❌ Failed to use save code:', error);
+        alert('❌ Invalid save code!');
+        return false;
+    }
+}
+
+// Show save code to player
+function showSaveCode() {
+    const result = generateSaveCode();
+    if (!result) return;
+    
+    const modal = document.createElement('div');
+    modal.style.cssText = `
+        position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+        background: rgba(0,0,0,0.8); display: flex; justify-content: center; align-items: center;
+        z-index: 10000; font-family: Arial, sans-serif;
+    `;
+    
+    modal.innerHTML = `
+        <div style="background: white; padding: 30px; border-radius: 15px; max-width: 500px; text-align: center;">
+            <h2 style="color: #333; margin-bottom: 20px;">📱 Transfer Your Progress</h2>
+            <p style="color: #666; margin-bottom: 20px;">Use this code to restore your progress on any device:</p>
+            
+            <div style="background: #f0f0f0; padding: 15px; border-radius: 8px; margin: 20px 0;">
+                <h3 style="color: #333; margin: 0 0 10px 0;">Save Code:</h3>
+                <div style="font-size: 24px; font-weight: bold; color: #007AFF; letter-spacing: 2px;">${result.code}</div>
+            </div>
+            
+            <textarea readonly style="width: 100%; height: 60px; font-size: 10px; margin: 10px 0; padding: 10px;" 
+                onclick="this.select()">${result.fullData}</textarea>
+            <p style="font-size: 12px; color: #999;">Copy both the code AND the text above</p>
+            
+            <div style="margin-top: 20px;">
+                <button onclick="this.parentElement.parentElement.parentElement.remove()" 
+                    style="background: #007AFF; color: white; border: none; padding: 12px 24px; border-radius: 8px; cursor: pointer; font-size: 16px;">
+                    Done
+                </button>
+            </div>
+        </div>
+    `;
+    
+    document.body.appendChild(modal);
+}
+
+// Show restore from code dialog
+function showRestoreCode() {
+    const modal = document.createElement('div');
+    modal.style.cssText = `
+        position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+        background: rgba(0,0,0,0.8); display: flex; justify-content: center; align-items: center;
+        z-index: 10000; font-family: Arial, sans-serif;
+    `;
+    
+    modal.innerHTML = `
+        <div style="background: white; padding: 30px; border-radius: 15px; max-width: 500px; text-align: center;">
+            <h2 style="color: #333; margin-bottom: 20px;">📥 Restore Your Progress</h2>
+            <p style="color: #666; margin-bottom: 20px;">Enter your save code and data:</p>
+            
+            <input type="text" id="saveCodeInput" placeholder="BLITZ-XXXX-XXXX-XXXX" 
+                style="width: 100%; padding: 12px; margin: 10px 0; border: 2px solid #ddd; border-radius: 8px; text-align: center; font-size: 16px; letter-spacing: 1px;">
+            
+            <textarea id="saveDataInput" placeholder="Paste the full save data here..." 
+                style="width: 100%; height: 80px; padding: 12px; margin: 10px 0; border: 2px solid #ddd; border-radius: 8px; font-size: 12px;"></textarea>
+            
+            <div style="margin-top: 20px;">
+                <button onclick="restoreFromInputs()" 
+                    style="background: #34C759; color: white; border: none; padding: 12px 24px; border-radius: 8px; cursor: pointer; font-size: 16px; margin-right: 10px;">
+                    Restore Progress
+                </button>
+                <button onclick="this.parentElement.parentElement.parentElement.remove()" 
+                    style="background: #666; color: white; border: none; padding: 12px 24px; border-radius: 8px; cursor: pointer; font-size: 16px;">
+                    Cancel
+                </button>
+            </div>
+        </div>
+    `;
+    
+    document.body.appendChild(modal);
+}
+
+// Restore from save code
+function restoreFromInputs() {
+    const code = document.getElementById('saveCodeInput').value.trim();
+    const data = document.getElementById('saveDataInput').value.trim();
+    
+    if (!code || !data) {
+        alert('❌ Please enter both the save code and data!');
+        return;
+    }
+    
+    try {
+        const decodedData = JSON.parse(atob(data));
+        
+        console.log('📥 Restoring save from code...');
+        console.log(`💰 Restoring ${decodedData.profile.totalCoins} coins`);
+        
+        currentProfile = validateAndMigrateProfile(decodedData.profile);
+        currentProfileName = decodedData.profileName || "Restored";
+        
+        syncProfileToGameState();
+        saveGameData('manual_save');
+        
+        alert(`✅ Progress restored!\n💰 ${currentProfile.totalCoins} coins\n👤 Character: ${currentProfile.currentCharacter}`);
+        
+        document.querySelector('[style*="z-index: 10000"]').remove();
+        
+    } catch (error) {
+        console.error('❌ Failed to restore save:', error);
+        alert('❌ Invalid save code or data!');
+    }
+}
+
+function showTitleSettings() {
+    const modal = document.createElement('div');
+    modal.style.cssText = `
+        position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+        background: rgba(0,0,0,0.8); display: flex; justify-content: center; align-items: center;
+        z-index: 10000; font-family: Arial, sans-serif;
+    `;
+    
+    // Check if user is signed in with Google
+    const currentUser = firebase.auth().currentUser;
+    const isSignedIn = currentUser && !currentUser.isAnonymous;
+    
+    modal.innerHTML = `
+        <div style="
+        background: rgba(0, 20, 40, 0.95);
+        backdrop-filter: blur(10px);
+        border: 1px solid rgba(255, 255, 255, 0.2);
+        padding: 30px;
+        border-radius: 20px;
+        max-width: 400px;
+        text-align: center;
+        box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
+    ">
+            <h2 style="color: white; margin-bottom: 20px; text-shadow: 0 2px 4px rgba(0,0,0,0.5);">⚙️ Settings</h2>
+            
+            <!-- Audio Settings -->
+            <div style="margin: 20px 0; text-align: left;">
+                <label style="display: flex; align-items: center; margin: 10px 0; cursor: pointer;">
+                    <input type="checkbox" id="titleMusicCheckbox" ${backgroundMusicEnabled ? 'checked' : ''} 
+                        onchange="backgroundMusicEnabled = this.checked; saveGameData('settings_change');"
+                        style="margin-right: 10px; transform: scale(1.2);">
+                    <span style="font-size: 16px; color: white; text-shadow: 0 1px 2px rgba(0,0,0,0.5);">🎵 Background Music</span>
+                </label>
+                
+                <label style="display: flex; align-items: center; margin: 10px 0; cursor: pointer;">
+                    <input type="checkbox" id="titleSoundCheckbox" ${soundEffectsEnabled ? 'checked' : ''} 
+                        onchange="soundEffectsEnabled = this.checked; saveGameData('settings_change');"
+                        style="margin-right: 10px; transform: scale(1.2);">
+                    <span style="font-size: 16px; color: white; text-shadow: 0 1px 2px rgba(0,0,0,0.5);">🔊 Sound Effects</span>
+                </label>
+            </div>
+            
+            <hr style="margin: 20px 0; border: none; border-top: 1px solid #eee;">
+            
+            <!-- Save System -->
+            <div style="margin: 20px 0;">
+                <h3 style="color: white; margin-bottom: 15px; text-shadow: 0 1px 3px rgba(0,0,0,0.5);">💾 Save System</h3>
+                
+                ${isSignedIn ? `
+                    <p style="color: #34C759; margin-bottom: 15px;">
+                        ✅ Signed in as ${currentUser.displayName}<br>
+                        <small style="color: #666;">Your progress syncs across all devices!</small>
+                    </p>
+                    <button onclick="signOutGoogle(); this.parentElement.parentElement.parentElement.remove();" 
+                        style="background: #666; color: white; border: none; padding: 8px 16px; border-radius: 6px; cursor: pointer; margin: 5px;">
+                        Sign Out
+                    </button>
+                ` : `
+                    <button onclick="signInWithGoogle(); this.parentElement.parentElement.parentElement.remove();" 
+                        style="background: #4285f4; color: white; border: none; padding: 10px 20px; border-radius: 6px; cursor: pointer; margin: 5px;">
+                        🔗 Sign in with Google
+                    </button>
+                `}
+                
+                <br>
+                
+                <button onclick="showSaveCode()" 
+                    style="background: #34C759; color: white; border: none; padding: 8px 16px; border-radius: 6px; cursor: pointer; margin: 5px;">
+                    📱 Get Save Code
+                </button>
+                
+                <button onclick="showRestoreCode()" 
+                    style="background: #FF9500; color: white; border: none; padding: 8px 16px; border-radius: 6px; cursor: pointer; margin: 5px;">
+                    📥 Use Save Code
+                </button>
+            </div>
+            
+            <hr style="margin: 20px 0; border: none; border-top: 1px solid #eee;">
+            
+            <!-- Close Button -->
+            <button onclick="this.parentElement.parentElement.remove()" 
+                style="background: #007AFF; color: white; border: none; padding: 12px 24px; border-radius: 8px; cursor: pointer; font-size: 16px;">
+                Done
+            </button>
+        </div>
+    `;
+    
+    document.body.appendChild(modal);
+}
 
 // Current save system version - increment when making breaking changes
 const SAVE_VERSION = "1.0";
@@ -5660,6 +6162,91 @@ unlockedWorlds: {
 let currentProfile = null;
 let currentProfileName = "Default";
 
+// ADD THESE CLOUD SAVE VARIABLES
+let playerId = null;
+let cloudSaveEnabled = false;
+
+// Initialize Firebase Auth (anonymous)
+function initializeCloudSave() {
+    firebase.auth().signInAnonymously()
+        .then((userCredential) => {
+            playerId = userCredential.user.uid;
+            cloudSaveEnabled = true;
+            console.log('🔥 Cloud save enabled! Player ID:', playerId.substring(0, 8) + '...');
+            
+            // Try to sync existing profile with cloud
+            syncProfileWithCloud();
+        })
+        .catch((error) => {
+            console.log('⚠️ Cloud save unavailable, using local storage:', error);
+            cloudSaveEnabled = false;
+        });
+}
+
+// Visual save indicator
+function showSaveIndicator(message) {
+    let indicator = document.getElementById('saveIndicator');
+    if (!indicator) {
+        indicator = document.createElement('div');
+        indicator.id = 'saveIndicator';
+        indicator.style.cssText = `
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            background: rgba(0,0,0,0.8);
+            color: white;
+            padding: 8px 16px;
+            border-radius: 20px;
+            font-size: 14px;
+            z-index: 1000;
+            opacity: 0;
+            transition: opacity 0.3s;
+        `;
+        document.body.appendChild(indicator);
+    }
+    
+    indicator.textContent = message;
+    indicator.style.opacity = '1';
+    
+    setTimeout(() => {
+        indicator.style.opacity = '0';
+    }, 2000);
+}
+
+// Sync profile with cloud when Firebase connects
+function syncProfileWithCloud() {
+    if (!cloudSaveEnabled || !playerId || !currentProfileName) return;
+    
+    // Check if cloud has newer data
+    firebase.database().ref('profiles/' + playerId + '/' + currentProfileName).once('value')
+        .then((snapshot) => {
+            const cloudProfile = snapshot.val();
+            
+            if (cloudProfile) {
+                const cloudTime = new Date(cloudProfile.lastPlayed || 0).getTime();
+                const localTime = new Date(currentProfile.lastPlayed || 0).getTime();
+                
+                if (cloudTime > localTime) {
+                    console.log('☁️ Cloud profile is newer, syncing down...');
+                    currentProfile = validateAndMigrateProfile(cloudProfile);
+                    syncProfileToGameState();
+                    showSaveIndicator('☁️ Cloud Synced');
+                } else {
+                    console.log('💾 Local profile is newer, syncing up...');
+                    saveProfile(); // This will upload to cloud
+                }
+            } else {
+                console.log('☁️ No cloud profile found, uploading local...');
+                saveProfile(); // Upload current profile to cloud
+            }
+        })
+        .catch((error) => {
+            console.log('⚠️ Cloud sync failed:', error);
+        });
+}
+
+
+
 // Initialize save system
 function initializeSaveSystem() {
     console.log('🗄️ Initializing future-proof save system...');
@@ -5669,6 +6256,11 @@ function initializeSaveSystem() {
     
     // Load or create default profile
     loadProfile("Default");
+    
+    // Initialize cloud save after profile is loaded
+    setTimeout(() => {
+        initializeCloudSave();
+    }, 1000);
     
     console.log('✅ Save system initialized successfully!');
 }
@@ -5777,12 +6369,25 @@ function generateProfileId() {
     return Date.now().toString(36) + Math.random().toString(36).substr(2);
 }
 
-// Save current profile
-function saveProfile(profileName = currentProfileName) {
+// Save current profile (Cloud Enhanced) - with save reasons
+function saveProfile(profileName = currentProfileName, saveReason = 'general') {
     if (!currentProfile) {
         console.error('❌ No active profile to save!');
         return false;
     }
+    
+    // Define which reasons should show the save indicator
+    const importantSaveReasons = [
+        'game_end',
+        'character_unlock',
+        'world_unlock', 
+        'high_score',
+        'major_purchase',
+        'settings_change',
+        'manual_save'
+    ];
+    
+    const showIndicator = importantSaveReasons.includes(saveReason);
     
     try {
         // Update timestamps and current data
@@ -5792,14 +6397,35 @@ function saveProfile(profileName = currentProfileName) {
         // Sync current game state to profile
         syncGameStateToProfile();
         
-        // Save to localStorage with versioned key
+        // Save to localStorage with versioned key (local backup)
         const saveKey = `${GAME_ID}_profile_${profileName}`;
         localStorage.setItem(saveKey, JSON.stringify(currentProfile));
         
         // Update profile list
         updateProfileList(profileName);
         
-        console.log(`💾 Profile "${profileName}" saved successfully!`);
+        // Save to cloud if available
+        if (cloudSaveEnabled && playerId) {
+            firebase.database().ref('profiles/' + playerId + '/' + profileName).set(currentProfile)
+                .then(() => {
+                    console.log(`☁️ Profile "${profileName}" saved to cloud! (${saveReason})`);
+                    if (showIndicator) {
+                        showSaveIndicator('☁️ Progress Saved');
+                    }
+                })
+                .catch((error) => {
+                    console.log('⚠️ Cloud save failed, local backup saved:', error);
+                    if (showIndicator) {
+                        showSaveIndicator('💾 Local Saved');
+                    }
+                });
+        } else {
+            if (showIndicator) {
+                showSaveIndicator('💾 Progress Saved');
+            }
+        }
+        
+        console.log(`💾 Profile "${profileName}" saved successfully! (${saveReason})`);
         return true;
         
     } catch (error) {
@@ -6100,8 +6726,8 @@ function importProfile(exportedData, newProfileName = null) {
 }
 
 // Wrapper functions for compatibility
-function saveGameData() {
-    saveProfile();
+function saveGameData(reason = 'general') {
+    saveProfile(currentProfileName, reason);
 }
 
 function loadGameData(ignoreModMode = false) {
@@ -7677,7 +8303,7 @@ function endGame() {
         
         document.getElementById('gameOver').style.display = 'flex';
         
-        saveGameData();
+        saveGameData('game_end');
     }, 1500);
 }
 
