@@ -7610,53 +7610,76 @@ return playerBox.intersectsBox(objectBox);
         }
         
         // Game over
-        function endGame() {
+function endGame() {
     playCrashSound(); // Add this line at the start
-            gameState = "gameOver";
-            gameOver = true;
+    gameState = "gameOver";
+    gameOver = true;
+    
+    // Hide UI elements
+    document.getElementById('pauseBtn').style.display = 'none';
+    document.getElementById('speedIndicator').style.display = 'none';
+    document.getElementById('modalOverlay').style.display = 'none';
+    if (isMobile) {
+        document.getElementById('swipeInstructions').style.display = 'none';
+    }
+    
+    // INSTANT audio cutoff - stop everything immediately
+    try {
+        if (musicPlaying) {
+            // Stop all music layers instantly
+            musicLayers.forEach(layer => {
+                if (layer.pattern) {
+                    layer.pattern.stop(0); // Stop immediately (no fade)
+                }
+                if (layer.synth) {
+                    layer.synth.volume.rampTo(-60, 0.01); // Instant volume cut
+                }
+            });
             
-            // Hide UI elements
-            document.getElementById('pauseBtn').style.display = 'none';
-            document.getElementById('speedIndicator').style.display = 'none';
-            document.getElementById('modalOverlay').style.display = 'none';
-            if (isMobile) {
-                document.getElementById('swipeInstructions').style.display = 'none';
-            }
+            // Stop transport immediately
+            Tone.Transport.stop();
+            Tone.Transport.cancel(); // Cancel any scheduled events
             
-// Stop background music
-            stopBackgroundMusic();
-
-            // Create explosion effect
-            createExplosion();
-
-
-            
-            // Show game over screen after a short delay to see the explosion
-            setTimeout(() => {
-                document.getElementById('finalScore').textContent = `Score: ${score}`;
-                
-                // Show total coins collected this session (no bonus since coins were added in real-time)
-document.getElementById('coinsCollected').textContent = `Final Balance: ${totalCoins} coins`;
-                
-                // Check if it's a high score and show input form if needed
-console.log('🏆 Checking if score is high score:', score);
-const isHighScore = checkHighScore(score);
-console.log('🏆 Is high score result:', isHighScore);
-
-if (isHighScore) {
-    console.log('🏆 Showing name entry form');
-    document.getElementById('newHighScoreMessage').style.display = 'block';
-} else {
-    console.log('🏆 Not a high score - hiding name entry');
-    document.getElementById('newHighScoreMessage').style.display = 'none';
-}
-                
-                document.getElementById('gameOver').style.display = 'flex';
-                
-
-                saveGameData();
-            }, 1500);
+            musicPlaying = false;
         }
+        
+        // Also stop any preview music if playing
+        if (window.previewMusic && window.previewMusic.playing) {
+            stopPreview();
+        }
+        
+    } catch (error) {
+        console.log('Audio stop error (non-critical):', error);
+    }
+
+    // Create explosion effect
+    createExplosion();
+    
+    // Show game over screen after a short delay to see the explosion
+    setTimeout(() => {
+        document.getElementById('finalScore').textContent = `Score: ${score}`;
+        
+        // Show total coins collected this session (no bonus since coins were added in real-time)
+        document.getElementById('coinsCollected').textContent = `Final Balance: ${totalCoins} coins`;
+        
+        // Check if it's a high score and show input form if needed
+        console.log('🏆 Checking if score is high score:', score);
+        const isHighScore = checkHighScore(score);
+        console.log('🏆 Is high score result:', isHighScore);
+
+        if (isHighScore) {
+            console.log('🏆 Showing name entry form');
+            document.getElementById('newHighScoreMessage').style.display = 'block';
+        } else {
+            console.log('🏆 Not a high score - hiding name entry');
+            document.getElementById('newHighScoreMessage').style.display = 'none';
+        }
+        
+        document.getElementById('gameOver').style.display = 'flex';
+        
+        saveGameData();
+    }, 1500);
+}
 
         // Add this function anywhere with your other game functions
 function checkHighScore(currentScore) {
