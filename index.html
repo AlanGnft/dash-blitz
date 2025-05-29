@@ -6366,10 +6366,38 @@ dragonFireCooldown = 0;
         document.getElementById('pauseScreen').style.display = 'flex';
         document.getElementById('swipeInstructions').style.display = 'none';
         
-        // Pause music
+        // INSTANT audio cutoff - no hanging sound!
         if (musicPlaying) {
-            Tone.Transport.pause();
+            try {
+                // Stop all music layers instantly
+                musicLayers.forEach(layer => {
+                    if (layer.pattern) {
+                        layer.pattern.stop(0); // Stop immediately
+                    }
+                    if (layer.synth) {
+                        layer.synth.volume.rampTo(-60, 0.01); // Instant volume cut
+                    }
+                });
+                
+                // Stop transport and cancel scheduled events
+                Tone.Transport.stop();
+                Tone.Transport.cancel();
+                
+                musicPlaying = false;
+            } catch (error) {
+                console.log('Audio pause error (non-critical):', error);
+            }
         }
+        
+        // Also stop any preview music
+        if (window.previewMusic && window.previewMusic.playing) {
+            try {
+                stopPreview();
+            } catch (error) {
+                console.log('Preview stop error (non-critical):', error);
+            }
+        }
+        
     } else {
         // Resume the game
         gameState = "playing";
@@ -6378,9 +6406,15 @@ dragonFireCooldown = 0;
             document.getElementById('swipeInstructions').style.display = 'block';
         }
         
-        // Resume music
-        if (musicPlaying) {
-            Tone.Transport.start();
+        // Restart music cleanly if enabled
+        if (backgroundMusicEnabled) {
+            try {
+                // Recreate music layers for clean restart
+                createBackgroundMusic();
+                startBackgroundMusic();
+            } catch (error) {
+                console.log('Audio resume error (non-critical):', error);
+            }
         }
     }
 }
