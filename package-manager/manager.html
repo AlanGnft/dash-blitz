@@ -1,0 +1,86 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Running Blitz - Character Package Manager</title>
+    <link rel="stylesheet" href="manager.css">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+</head>
+<body>
+    <div class="manager-container">
+        <!-- Header -->
+        <header class="manager-header">
+            <h1>🎮 Running Blitz Character Manager</h1>
+            <div class="header-actions">
+                <button id="saveChanges" class="btn-primary">💾 Save All Changes</button>
+                <button id="refreshData" class="btn-secondary">🔄 Refresh</button>
+            </div>
+        </header>
+
+        <!-- Main Content Grid -->
+        <div class="manager-grid">
+            <!-- Left Panel: Active Characters -->
+            <div class="panel active-panel">
+                <h2>🎯 Active Characters</h2>
+                <div class="character-swapper">
+                    <div id="activeCharacters" class="character-list sortable">
+                        <!-- Characters will be populated here -->
+                    </div>
+                    <div class="swapper-controls">
+                        <button id="randomizeOrder" class="btn-fun">🎲 Randomize Order</button>
+                        <button id="reverseOrder" class="btn-fun">↕️ Reverse Order</button>
+                    </div>
+                </div>
+                
+                <!-- Deactivated Characters Section -->
+                <div class="deactivated-section" id="deactivatedSection" style="display: none;">
+                    <h3>😴 Deactivated Characters</h3>
+                    <div id="deactivatedCharacters" class="character-list-small">
+                        <!-- Deactivated characters will be populated here -->
+                    </div>
+                </div>
+            </div>
+
+            <!-- Center Panel: Available Characters -->
+            <div class="panel available-panel">
+                <h2>📦 Available Characters</h2>
+                <div class="character-browser">
+                    <div class="browser-filters">
+                        <select id="categoryFilter">
+                            <option value="all">All Categories</option>
+                            <option value="cute">🥰 Cute</option>
+                            <option value="scary">👻 Scary</option>
+                            <option value="scifi">🚀 Sci-Fi</option>
+                            <option value="nature">🌱 Nature</option>
+                        </select>
+                        <input type="text" id="searchFilter" placeholder="🔍 Search characters...">
+                    </div>
+                    <div id="availableCharacters" class="character-grid">
+                        <!-- Available characters will be populated here -->
+                    </div>
+                </div>
+            </div>
+
+            <!-- Right Panel: Character Preview -->
+    <div class="panel preview-panel">
+        <h2>👀 Character Preview</h2>
+        <div id="previewArea" class="preview-container-large">
+            <div class="preview-placeholder">
+                Select a character to preview
+            </div>
+        </div>
+    </div>
+</div>
+        </div>
+
+        <!-- Status Bar -->
+        <div class="status-bar">
+            <span id="statusMessage">Ready</span>
+            <span id="characterCount">Active: 0 | Available: 0</span>
+        </div>
+    </div>
+
+    <script src="manager.js"></script>
+</body>
+</html>
