@@ -1626,6 +1626,39 @@ let poolSize = 50; // Maximum pooled objects
 // Dependencies: None
 // Functions: initializeObjectPools(), getSparkleFromPool(), returnSparkleToPool(), etc.
 
+// Shared materials for performance
+const SharedMaterials = {
+    coin: null,
+    coinEdge: null,
+    obstacle: null,
+    
+    init() {
+        this.coin = new THREE.MeshStandardMaterial({ 
+            color: 0xFFD700,
+            metalness: 1.0,
+            roughness: 0.05,
+            emissive: 0xFFD700,
+            emissiveIntensity: 0.4
+        });
+        
+        this.coinEdge = new THREE.MeshStandardMaterial({ 
+            color: 0xFFD700,
+            metalness: 1.0, 
+            roughness: 0.03,
+            emissive: 0xFFD700,
+            emissiveIntensity: 0.3
+        });
+        
+        this.obstacle = new THREE.MeshStandardMaterial({
+            color: 0xff0000,
+            roughness: 0.8
+        });
+    }
+};
+
+// Initialize shared materials
+SharedMaterials.init();
+
 // Initialize object pools
 function initializeObjectPools() {
     // Pre-create sparkle particles
@@ -1657,6 +1690,35 @@ function initializeObjectPools() {
         explosion.visible = false;
         explosionPool.push(explosion);
     }
+}
+
+// Coin pool for performance
+let coinPool = [];
+let coinPoolSize = 20;
+
+function initializeCoinPool() {
+    for (let i = 0; i < coinPoolSize; i++) {
+        const coin = createCoinObject();
+        coin.visible = false;
+        coinPool.push(coin);
+    }
+}
+
+function getCoinFromPool() {
+    for (let i = 0; i < coinPool.length; i++) {
+        if (!coinPool[i].visible) {
+            coinPool[i].visible = true;
+            return coinPool[i];
+        }
+    }
+    // Pool exhausted, create new coin
+    return createCoinObject();
+}
+
+function returnCoinToPool(coin) {
+    coin.visible = false;
+    coin.position.set(0, 0, -100);
+    coin.rotation.set(0, 0, 0);
 }
 
 // Get sparkle from pool
@@ -7952,7 +8014,11 @@ stem.position.set(
             const coinGroup = new THREE.Group();
             
             // Create coin with brilliant shiny gold material
-const coinGeometry = new THREE.CylinderGeometry(0.3, 0.3, 0.05, 32);
+// Reuse shared geometry for all coins
+if (!window.sharedCoinGeometry) {
+    window.sharedCoinGeometry = new THREE.CylinderGeometry(0.3, 0.3, 0.05, 16); // Reduced segments
+}
+const coinGeometry = window.sharedCoinGeometry;
 const coinMaterial = new THREE.MeshStandardMaterial({ 
     color: 0xFFD700, // Bright gold
     metalness: 1.0,  // Fully metallic
@@ -8228,6 +8294,22 @@ for (let i = 0; i < 3; i++) {
 // Collision detection, hit testing, and collision response
 // Dependencies: Player Controls, Obstacle System, Power-up System
 // Functions: checkCollision(), checkSimpleCollision(), collision handling logic
+
+        // Smart collision - early exit for distant objects
+function fastCollisionCheck(object1, object2, threshold = 3.0) {
+    const dx = object1.position.x - object2.position.x;
+    const dy = object1.position.y - object2.position.y;
+    const dz = object1.position.z - object2.position.z;
+    const distanceSquared = dx * dx + dy * dy + dz * dz;
+    
+    // Early exit if objects are too far apart
+    if (distanceSquared > threshold * threshold) {
+        return false;
+    }
+    
+    // Only do expensive collision check if objects are close
+    return checkCollision(object2);
+}
 
         // Optimized collision detection with caching
 function checkCollision(object) {
@@ -9050,6 +9132,11 @@ function createObstacleDestruction(position) {
     // Optional: Add a simple flash effect instead of particles
     console.log('💥 Obstacle destroyed with sparkle effect!');
 }
+
+// Performance helper - only animate objects near player
+function shouldAnimateObject(object, maxDistance = 15) {
+    return object.position.distanceTo(player.position) < maxDistance;
+}
         
         // ==================== GAME LOOP & UPDATES ====================
 // Main game loop, animation, and real-time updates
@@ -9059,9 +9146,27 @@ function createObstacleDestruction(position) {
         // Game animation loop
         function animate() {
     requestAnimationFrame(animate);
+
+    // Enhanced frustum culling - only update visible objects
+const frustum = new THREE.Frustum();
+const cameraMatrix = new THREE.Matrix4().multiplyMatrices(camera.projectionMatrix, camera.matrixWorldInverse);
+frustum.setFromProjectionMatrix(cameraMatrix);
+
+// Helper function to check if object is in view
+function isInCameraView(object) {
+    return frustum.intersectsObject(object);
+}
     
     // Update the frame counter for all animations
     frameCount++;
+
+    // Staggered updates for performance - different systems update on different frames
+    const updateSchedule = {
+        weather: frameCount % 3 === 0,      // Update weather every 3rd frame
+        butterflies: frameCount % 4 === 0,   // Update butterflies every 4th frame  
+        scenery: frameCount % 2 === 0,       // Update scenery every 2nd frame
+        particles: frameCount % 2 === 1      // Update particles on alternating frames
+    };
     
     // Handle world select screen state
     if (gameState === "worldSelect") {
@@ -9112,70 +9217,70 @@ if (currentCharacter === 'monster' && player.userData) {
 } 
 
 else if (currentCharacter === 'atom') {
-                    // Update Atom character animations
-                    // Rotate all orbitals
-                    for (let i = 0; i < player.children.length; i++) {
-                        const child = player.children[i];
-                        
-                        // Orbit rotation for the atom's orbital rings
-                        if (i >= 2 && i <= 4) { // These are the orbital rings
-                            child.rotation.z += 0.01;
+    // Batch atom animations - update every other frame for performance
+    if (frameCount % 2 === 0) {
+        // Update Atom character animations
+        // Rotate all orbitals
+        for (let i = 0; i < player.children.length; i++) {
+            const child = player.children[i];
+            
+            // Orbit rotation for the atom's orbital rings
+            if (i >= 2 && i <= 4) { // These are the orbital rings
+                child.rotation.z += 0.02; // Slightly faster since updating every other frame
+            }
+            
+            // Update electrons
+            if (child.userData && child.userData.orbitalIndex !== undefined) {
+                const electron = child;
+                const orbitalIndex = electron.userData.orbitalIndex;
+                const orbitalRadius = electron.userData.orbitalRadius;
+                const speed = electron.userData.speed * 2; // Double speed since updating every other frame
+                
+                // Update electron angle
+                electron.userData.angle += speed;
+                
+                // Position based on orbital orientation
+                if (orbitalIndex === 0) {
+                    electron.position.x = Math.cos(electron.userData.angle) * orbitalRadius;
+                    electron.position.z = Math.sin(electron.userData.angle) * orbitalRadius;
+                } else if (orbitalIndex === 1) {
+                    electron.position.y = Math.cos(electron.userData.angle) * orbitalRadius;
+                    electron.position.z = Math.sin(electron.userData.angle) * orbitalRadius;
+                } else {
+                    electron.position.x = Math.cos(electron.userData.angle) * orbitalRadius * 0.7;
+                    electron.position.y = Math.cos(electron.userData.angle) * orbitalRadius * 0.7;
+                    electron.position.z = Math.sin(electron.userData.angle) * orbitalRadius;
+                }
+            }
+            
+            // Pulse nucleus sparkles
+            if (i === 0) { // Nucleus
+                // Update sparkles inside the nucleus
+                if (child.children) {
+                    child.children.forEach(sparkle => {
+                        if (sparkle.userData) {
+                            // Pulse size of sparkle
+                            const pulseScale = 0.8 + Math.sin(frameCount * sparkle.userData.pulseSpeed + sparkle.userData.pulsePhase) * 0.3;
+                            sparkle.scale.set(pulseScale, pulseScale, pulseScale);
                         }
-                        
-                        // Update electrons
-                        if (child.userData && child.userData.orbitalIndex !== undefined) {
-                            const electron = child;
-                            const orbitalIndex = electron.userData.orbitalIndex;
-                            const orbitalRadius = electron.userData.orbitalRadius;
-                            const speed = electron.userData.speed;
-                            
-                            // Update electron angle
-                            electron.userData.angle += speed;
-                            
-                            // Position based on orbital orientation
-                            if (orbitalIndex === 0) {
-                                electron.position.x = Math.cos(electron.userData.angle) * orbitalRadius;
-                                electron.position.z = Math.sin(electron.userData.angle) * orbitalRadius;
-                            } else if (orbitalIndex === 1) {
-                                electron.position.y = Math.cos(electron.userData.angle) * orbitalRadius;
-                                electron.position.z = Math.sin(electron.userData.angle) * orbitalRadius;
-                            } else {
-                                electron.position.x = Math.cos(electron.userData.angle) * orbitalRadius * 0.7;
-                                electron.position.y = Math.cos(electron.userData.angle) * orbitalRadius * 0.7;
-                                electron.position.z = Math.sin(electron.userData.angle) * orbitalRadius;
-                            }
-                        }
-                        
-                        // Pulse nucleus sparkles
-                        if (i === 0) { // Nucleus
-                            // Update sparkles inside the nucleus
-                            if (child.children) {
-                                child.children.forEach(sparkle => {
-                                    if (sparkle.userData) {
-                                        // Pulse size of sparkle
-                                        const pulseScale = 0.8 + Math.sin(frameCount * sparkle.userData.pulseSpeed + sparkle.userData.pulsePhase) * 0.3;
-                                        sparkle.scale.set(pulseScale, pulseScale, pulseScale);
-                                    }
-                                });
-                            }
-                        }
-                        
-                        // Pulse the glow
-                        if (i === 1) { // Glow sphere
-                            // Pulse size and opacity
-                            const pulseScale = 1.0 + Math.sin(frameCount * 0.05) * 0.1;
-                            child.scale.set(pulseScale, pulseScale, pulseScale);
-                            child.material.opacity = 0.3 + Math.sin(frameCount * 0.08) * 0.15;
-                        }
-                    }
-                    
-                    // Add gentle rotation if not jumping
-                    if (!jumping) {
-                        player.rotation.y += 0.02;
-                    }
-                } else if (currentCharacter === 'happyface' && player.userData && player.userData.bounceOffset !== undefined && !jumping) {
-    // Add a bouncy animation to the happy face - only when not jumping
-    player.position.y = playerY + Math.sin(frameCount * player.userData.bounceSpeed + player.userData.bounceOffset) * 0.1;
+                    });
+                }
+            }
+            
+            // Pulse the glow
+            if (i === 1) { // Glow sphere
+                // Pulse size and opacity
+                const pulseScale = 1.0 + Math.sin(frameCount * 0.05) * 0.1;
+                child.scale.set(pulseScale, pulseScale, pulseScale);
+                child.material.opacity = 0.3 + Math.sin(frameCount * 0.08) * 0.15;
+            }
+        }
+        
+        // Add gentle rotation if not jumping
+        if (!jumping) {
+            player.rotation.y += 0.04; // Double speed since updating every other frame
+        }
+    }
 } else if (currentCharacter === 'ufo' && player.userData) {
     // Rotate the outer ring
     if (player.userData.ring) {
@@ -9434,12 +9539,9 @@ if (currentCharacter === 'pumpkin') {
 updatePowerUpStatusBar();
 updateAbilityStatusBar();
                 
-                // Update weather and environment
-                updateWeather();
-                
-                // Update weather and environment
-                updateWeather();
-                updateButterfliesAndBirds();
+                // Staggered updates for better performance
+                if (updateSchedule.weather) updateWeather();
+                if (updateSchedule.butterflies) updateButterfliesAndBirds();
                 
                 // Update water streams
                 updateWaterStreams();
@@ -9580,20 +9682,20 @@ for (let i = coins.length - 1; i >= 0; i--) {
     
     // Highlight removed - no longer needed
     
-    // Animate sparkles around the coin
-    if (coin.userData.sparkles) {
-        coin.userData.sparkles.forEach(sparkle => {
-            // Orbit around the coin
-            sparkle.userData.orbitAngle += sparkle.userData.orbitSpeed;
-            sparkle.position.x = Math.cos(sparkle.userData.orbitAngle) * sparkle.userData.orbitRadius;
-            sparkle.position.z = Math.sin(sparkle.userData.orbitAngle) * sparkle.userData.orbitRadius;
-            
-            // Pulse the sparkle size and opacity
-            const pulseScale = 0.5 + Math.sin(frameCount * sparkle.userData.pulseSpeed + sparkle.userData.pulsePhase) * 0.5;
-            sparkle.scale.set(pulseScale, pulseScale, pulseScale);
-            sparkle.material.opacity = 0.6 + Math.sin(frameCount * sparkle.userData.pulseSpeed * 1.5 + sparkle.userData.pulsePhase) * 0.4;
-        });
-    }
+    // Animate sparkles only for nearby coins (performance optimization)
+if (coin.userData.sparkles && coin.position.distanceTo(player.position) < 10) {
+    coin.userData.sparkles.forEach(sparkle => {
+        // Orbit around the coin
+        sparkle.userData.orbitAngle += sparkle.userData.orbitSpeed;
+        sparkle.position.x = Math.cos(sparkle.userData.orbitAngle) * sparkle.userData.orbitRadius;
+        sparkle.position.z = Math.sin(sparkle.userData.orbitAngle) * sparkle.userData.orbitRadius;
+        
+        // Pulse the sparkle size and opacity
+        const pulseScale = 0.5 + Math.sin(frameCount * sparkle.userData.pulseSpeed + sparkle.userData.pulsePhase) * 0.5;
+        sparkle.scale.set(pulseScale, pulseScale, pulseScale);
+        sparkle.material.opacity = 0.6 + Math.sin(frameCount * sparkle.userData.pulseSpeed * 1.5 + sparkle.userData.pulsePhase) * 0.4;
+    });
+}
                     
                     // Magnet effect - attract coins to player
 if (magnetActive) {
@@ -9771,10 +9873,20 @@ if (checkCollision(obstacle)) {
                     }
                 }
                 
-                // Move scenery objects with current speed
+                // Move scenery objects with current speed - only animate nearby objects
 for (let i = sceneryObjects.length - 1; i >= 0; i--) {
     const scenery = sceneryObjects[i];
     scenery.position.z += currentSpeed;
+    
+    // Only run complex animations for nearby scenery
+    if (!shouldAnimateObject(scenery, 20)) {
+        // Skip animations for distant objects
+        if (scenery.position.z > 20) {
+            scene.remove(scenery);
+            sceneryObjects.splice(i, 1);
+        }
+        continue;
+    }
     
     // Animate forest-specific scenery
     if (currentWorld === 'forest') {
