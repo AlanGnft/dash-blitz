@@ -995,21 +995,22 @@ firebase.initializeApp(firebaseConfig);
 
     <!-- Add this near your existing title screen buttons -->
     <button onclick="showTitleSettings()" class="game-button" 
-        style="
-            position: absolute;
-            top: 20px;
-            right: 20px;
-            padding: 10px;
-            border-radius: 50%;
-            width: 50px;
-            height: 50px;
-            font-size: 20px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-        ">
-        ⚙️
-    </button>
+    style="
+        position: absolute;
+        top: 20px;
+        right: 20px;
+        padding: 10px;
+        border-radius: 50%;
+        width: 50px;
+        height: 50px;
+        font-size: 20px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        z-index: 2000;
+    ">
+    ⚙️
+</button>
 
     <style>
         /* Keep your existing pulse animation */
@@ -1173,7 +1174,7 @@ firebase.initializeApp(firebaseConfig);
     <h2 style="color: white; font-size: 48px; margin-bottom: 20px; text-shadow: 0 0 10px #00a2ff, 0 0 20px #00a2ff; position: relative; z-index: 10;">Select Your Character</h2>
     <div style="display: flex; align-items: center; margin-bottom: 30px; position: relative; z-index: 10;">
         <button id="prevCharacterBtn" class="game-button" style="font-size: 24px; padding: 10px 20px; margin-right: 20px;">←</button>
-        <div id="characterDisplay" style="width: 200px; height: 200px; background-color: rgba(0, 0, 0, 0.3); border-radius: 50%; display: flex; justify-content: center; align-items: center; box-shadow: 0 0 20px rgba(0, 162, 255, 0.5);"></div>
+<div id="characterDisplay" style="width: 200px; height: 200px;"></div>
         <button id="nextCharacterBtn" class="game-button" style="font-size: 24px; padding: 10px 20px; margin-left: 20px;">→</button>
     </div>
     <div id="characterInfo" style="color: white; text-align: center; margin-bottom: 20px; position: relative; z-index: 10;">
@@ -1201,6 +1202,8 @@ firebase.initializeApp(firebaseConfig);
     </div>
     <button id="startGameFromWorldButton" class="game-button" style="font-size: 32px; padding: 15px 50px; background-color: #4CAF50; color: white; border: none; border-radius: 5px; cursor: pointer; position: relative; z-index: 10; animation: pulse 1.5s infinite; max-width: calc(100vw - 40px); word-wrap: break-word;">START ADVENTURE!</button>
 </div>
+
+<!-- Game Over Screen -->
 <div id="score">Score: 0</div>
     <div id="totalCoins">Coins: 0</div>
     <button id="pauseBtn">⏸️</button>
@@ -1229,6 +1232,8 @@ firebase.initializeApp(firebaseConfig);
         </p>
         <button id="startButton">Start Game</button>
     </div>
+
+    <!-- Pause Screen -->
     <div id="pauseScreen">
     <h2>Paused</h2>
     <p>Press P or tap to resume</p>
@@ -1239,14 +1244,17 @@ firebase.initializeApp(firebaseConfig);
         <button id="pauseSettingsBtn" class="game-button">Settings</button>
     </div>
 </div>
+
+    <!-- Settings Menu Tabs -->
     <div id="modalOverlay"></div>
-    <div id="settingsScreen">
-        <h2>Settings</h2>
-        
-        <div class="tab-buttons">
-    <button class="tab-button active" data-tab="settings-tab">Game Settings</button>
-    <button class="tab-button" data-tab="leaderboard-tab">Leaderboard</button>
-</div>
+<div id="settingsScreen">
+    <h2>Settings</h2>
+    
+    <div class="tab-buttons">
+        <button class="tab-button active" data-tab="settings-tab">⚙️ Game Settings</button>
+        <button class="tab-button" data-tab="leaderboard-tab">🏆 Leaderboard</button>
+        <button class="tab-button" data-tab="global-leaderboard-tab">🌍 Global</button>
+    </div>
         
         <div id="settings-tab" class="tab-content active">
     <div class="settings-section">
@@ -1315,7 +1323,7 @@ firebase.initializeApp(firebaseConfig);
         </div>
         
        
-        
+        <!-- LEADERBOARD TAB -->
         <div id="leaderboard-tab" class="tab-content">
             <div class="settings-section">
                 <h3>Top Scores</h3>
@@ -1334,7 +1342,35 @@ firebase.initializeApp(firebaseConfig);
                 </table>
             </div>
         </div>
+
+        <!-- GLOBAL LEADERBOARD TAB -->
+<div id="global-leaderboard-tab" class="tab-content">
+    <div class="settings-section">
+        <h3>🌍 Global Leaderboard</h3>
+        <table class="leaderboard-table">
+            <thead>
+                <tr>
+                    <th>Rank</th>
+                    <th>Player</th>
+                    <th>Score</th>
+                    <th>Character</th>
+                </tr>
+            </thead>
+            <tbody id="globalLeaderboardBody">
+                <!-- Global leaderboard entries will be added here -->
+            </tbody>
+        </table>
         
+        <div style="text-align: center; margin-top: 15px;">
+            <p id="globalPlayerRank" style="color: #FFD700; font-size: 14px; margin: 10px 0;"></p>
+            <button onclick="updateGlobalLeaderboardDisplay()" class="game-button" 
+                style="padding: 8px 16px; font-size: 14px; background: #4CAF50;">
+                🔄 Refresh Global Scores
+            </button>
+        </div>
+    </div>
+</div>
+
         <button id="closeSettingsButton">Close</button>
     </div>
     <div id="touchArea"></div>
@@ -2603,6 +2639,9 @@ function formatDate(dateString) {
     document.getElementById('playerNameInput').value = '';
     
     console.log('Score saved to leaderboard!', leaderboard);
+
+    // ADD THIS LINE - Submit to global leaderboard
+    submitToGlobalLeaderboard(playerName, currentScore, currentCharacter);
     
     // Save profile with high score reason - THIS WILL SHOW THE SAVE INDICATOR
     saveGameData('high_score');
@@ -2617,6 +2656,203 @@ document.getElementById('playerNameInput').addEventListener('keypress', function
         document.getElementById('saveScoreButton').click();
     }
 });
+
+// ===== GLOBAL LEADERBOARD SYSTEM =====
+let globalLeaderboard = [];
+let playerGlobalRank = null;
+
+// Submit score to global leaderboard
+function submitToGlobalLeaderboard(playerName, score, character) {
+    if (!cloudSaveEnabled || !playerId) {
+        console.log('⚠️ Cannot submit to global leaderboard - cloud save not available');
+        return;
+    }
+    
+    const globalEntry = {
+        playerId: playerId,
+        playerName: playerName,
+        score: score,
+        character: character,
+        timestamp: Date.now(),
+        date: new Date().toLocaleDateString(),
+        country: 'Unknown' // We'll add geolocation later
+    };
+    
+    // Submit to Firebase global leaderboard
+    firebase.database().ref('globalLeaderboard').push(globalEntry)
+        .then(() => {
+            console.log('🏆 Score submitted to global leaderboard!');
+            loadGlobalLeaderboard(); // Refresh to see new rankings
+        })
+        .catch((error) => {
+            console.error('❌ Failed to submit to global leaderboard:', error);
+        });
+}
+
+// Load global leaderboard from Firebase
+function loadGlobalLeaderboard() {
+    if (!cloudSaveEnabled) return;
+    
+    firebase.database().ref('globalLeaderboard')
+        .orderByChild('score')
+        .limitToLast(100) // Get top 100 scores
+        .once('value')
+        .then((snapshot) => {
+            const data = snapshot.val();
+            
+            if (data) {
+                // Convert to array and sort by score (highest first)
+                globalLeaderboard = Object.values(data)
+                    .sort((a, b) => b.score - a.score)
+                    .slice(0, 50); // Keep top 50
+                
+                console.log(`🌍 Loaded ${globalLeaderboard.length} global scores`);
+                
+                // Find player's rank
+                findPlayerGlobalRank();
+            } else {
+                globalLeaderboard = [];
+                console.log('🌍 No global scores found - be the first!');
+            }
+        })
+        .catch((error) => {
+            console.error('❌ Failed to load global leaderboard:', error);
+        });
+}
+
+// Find current player's rank in global leaderboard
+function findPlayerGlobalRank() {
+    if (!playerId) return;
+    
+    playerGlobalRank = null;
+    
+    for (let i = 0; i < globalLeaderboard.length; i++) {
+        if (globalLeaderboard[i].playerId === playerId) {
+            playerGlobalRank = i + 1; // Rank is index + 1
+            break;
+        }
+    }
+    
+    if (playerGlobalRank) {
+        console.log(`🏆 Your global rank: #${playerGlobalRank}`);
+    }
+}
+
+// Show global leaderboard popup
+function showGlobalLeaderboard() {
+    loadGlobalLeaderboard(); // Refresh data first
+    
+    setTimeout(() => { // Wait for data to load
+        const modal = document.createElement('div');
+        modal.style.cssText = `
+            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+            background: rgba(0,0,0,0.8); display: flex; justify-content: center; align-items: center;
+            z-index: 10000; font-family: Arial, sans-serif;
+        `;
+        
+        let leaderboardHTML = `
+            <div style="
+                background: rgba(0, 20, 40, 0.95);
+                backdrop-filter: blur(10px);
+                border: 1px solid rgba(255, 255, 255, 0.2);
+                padding: 30px;
+                border-radius: 20px;
+                max-width: 500px;
+                max-height: 80vh;
+                overflow-y: auto;
+                text-align: center;
+                box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
+            ">
+                <h2 style="color: white; margin-bottom: 20px; text-shadow: 0 2px 4px rgba(0,0,0,0.5);">
+                    🌍 Global Leaderboard
+                </h2>
+        `;
+        
+        if (globalLeaderboard.length === 0) {
+            leaderboardHTML += `
+                <p style="color: white; font-size: 18px; margin: 40px 0;">
+                    🏆 Be the first player on the global leaderboard!<br>
+                    <small style="color: #ccc;">Play a game and your score will appear here!</small>
+                </p>
+            `;
+        } else {
+            // Show player's rank if they have one
+            if (playerGlobalRank) {
+                leaderboardHTML += `
+                    <div style="background: rgba(255, 215, 0, 0.2); border: 1px solid #FFD700; border-radius: 10px; padding: 15px; margin-bottom: 20px;">
+                        <p style="color: #FFD700; font-size: 16px; margin: 0;">
+                            🏆 Your Global Rank: #${playerGlobalRank}
+                        </p>
+                    </div>
+                `;
+            }
+            
+            leaderboardHTML += `
+                <div style="text-align: left; max-height: 400px; overflow-y: auto;">
+            `;
+            
+            // Display top scores
+            globalLeaderboard.slice(0, 20).forEach((entry, index) => {
+                const rank = index + 1;
+                const isCurrentPlayer = entry.playerId === playerId;
+                
+                let rankEmoji = '🏅';
+                if (rank === 1) rankEmoji = '🥇';
+                else if (rank === 2) rankEmoji = '🥈';
+                else if (rank === 3) rankEmoji = '🥉';
+                
+                const bgColor = isCurrentPlayer ? 'rgba(0, 255, 0, 0.1)' : 'rgba(255, 255, 255, 0.05)';
+                const textColor = isCurrentPlayer ? '#00FF00' : 'white';
+                
+                leaderboardHTML += `
+                    <div style="
+                        background: ${bgColor};
+                        border: 1px solid rgba(255, 255, 255, 0.1);
+                        border-radius: 8px;
+                        padding: 12px;
+                        margin: 8px 0;
+                        display: flex;
+                        justify-content: space-between;
+                        align-items: center;
+                    ">
+                        <span style="color: ${textColor}; font-weight: bold;">
+                            ${rankEmoji} #${rank} ${entry.playerName || 'Anonymous'}
+                        </span>
+                        <div style="text-align: right;">
+                            <div style="color: ${textColor}; font-size: 18px; font-weight: bold;">
+                                ${entry.score.toLocaleString()}
+                            </div>
+                            <div style="color: #ccc; font-size: 12px;">
+                                ${entry.character} • ${entry.date}
+                            </div>
+                        </div>
+                    </div>
+                `;
+            });
+            
+            leaderboardHTML += `</div>`;
+            
+            // Show total players
+            leaderboardHTML += `
+                <p style="color: #ccc; font-size: 14px; margin-top: 20px;">
+                    🌍 ${globalLeaderboard.length} players competing worldwide!
+                </p>
+            `;
+        }
+        
+        leaderboardHTML += `
+                <button onclick="this.parentElement.parentElement.remove()" 
+                    style="background: #007AFF; color: white; border: none; padding: 12px 24px; border-radius: 8px; cursor: pointer; font-size: 16px; margin-top: 20px;">
+                    Close
+                </button>
+            </div>
+        `;
+        
+        modal.innerHTML = leaderboardHTML;
+        document.body.appendChild(modal);
+    }, 1000); // Give time for data to load
+}
+
         
         // Update character display in settings
         function updateCharactersInSettings() {
@@ -2673,6 +2909,90 @@ document.getElementById('playerNameInput').addEventListener('keypress', function
 // Title screen, animations, and initial game presentation
 // Dependencies: Character System for orbiting characters
 // Functions: initTitleScreen(), updateTitleScreen(), startTitleAnimations(), etc.
+
+// Create particles for title screen
+function createTitleScreenParticles() {
+    if (!characterTitleScene) return; // Changed from window.titleScene
+    
+    // Create particles
+    const particlesGeometry = new THREE.BufferGeometry();
+    const particleCount = 150;
+    
+    const positions = new Float32Array(particleCount * 3);
+    const colors = new Float32Array(particleCount * 3);
+    
+    for (let i = 0; i < particleCount; i++) {
+        // Position - spread wider for title screen
+        positions[i * 3] = (Math.random() - 0.5) * 30;      // x
+        positions[i * 3 + 1] = (Math.random() - 0.5) * 20;  // y
+        positions[i * 3 + 2] = (Math.random() - 0.5) * 15;  // z (behind characters)
+        
+        // Color (blue/cyan matching your theme)
+        colors[i * 3] = 0.1 + Math.random() * 0.3;          // r
+        colors[i * 3 + 1] = 0.4 + Math.random() * 0.4;      // g
+        colors[i * 3 + 2] = 0.7 + Math.random() * 0.3;      // b
+    }
+    
+    particlesGeometry.setAttribute('position', new THREE.BufferAttribute(positions, 3));
+    particlesGeometry.setAttribute('color', new THREE.BufferAttribute(colors, 3));
+    
+    const particlesMaterial = new THREE.PointsMaterial({
+        size: 0.08,
+        transparent: true,
+        opacity: 0.6,
+        vertexColors: true,
+        blending: THREE.AdditiveBlending
+    });
+    
+    const particles = new THREE.Points(particlesGeometry, particlesMaterial);
+    particles.userData = {
+        originalPositions: positions.slice()
+    };
+    
+    characterTitleScene.add(particles); // Changed from window.titleScene
+    characterTitleScene.userData.particles = particles; // Changed from window.titleScene
+    
+    console.log('✨ Title screen particles created!'); // Debug log
+}
+
+// Animate title screen particles
+function animateTitleParticles() {
+    if (!characterTitleScene || !characterTitleScene.userData.particles) return; // Changed scene names
+    
+    const particles = characterTitleScene.userData.particles; // Changed scene name
+    const positions = particles.geometry.attributes.position.array;
+    const originalPositions = particles.userData.originalPositions;
+    
+    for (let i = 0; i < positions.length; i += 3) {
+        // Gentle floating motion
+        positions[i] = originalPositions[i] + Math.sin(frameCount * 0.008 + i * 0.1) * 0.15;
+        positions[i + 1] = originalPositions[i + 1] + Math.cos(frameCount * 0.006 + i * 0.05) * 0.1;
+        positions[i + 2] = originalPositions[i + 2] + Math.sin(frameCount * 0.004 + i * 0.02) * 0.05;
+    }
+    
+    particles.geometry.attributes.position.needsUpdate = true;
+}
+
+// Animate title screen particles (time-based)
+function animateTitleParticles() {
+    if (!characterTitleScene || !characterTitleScene.userData.particles) return;
+    
+    const particles = characterTitleScene.userData.particles;
+    const positions = particles.geometry.attributes.position.array;
+    const originalPositions = particles.userData.originalPositions;
+    
+    // Use Date.now() for time-based animation instead of frameCount
+    const time = Date.now() * 0.001; // Convert to seconds
+    
+    for (let i = 0; i < positions.length; i += 3) {
+        // Gentle floating motion using time
+        positions[i] = originalPositions[i] + Math.sin(time * 0.8 + i * 0.1) * 0.15;
+        positions[i + 1] = originalPositions[i + 1] + Math.cos(time * 0.6 + i * 0.05) * 0.1;
+        positions[i + 2] = originalPositions[i + 2] + Math.sin(time * 0.4 + i * 0.02) * 0.05;
+    }
+    
+    particles.geometry.attributes.position.needsUpdate = true;
+}
 
 // Function to initialize the title screen with orbiting characters
 function initTitleScreen() {
@@ -2749,6 +3069,9 @@ function initTitleScreen() {
         requestAnimationFrame(animateTitleScreen);
         
         if (gameState === "title" && titleRenderer && characterTitleScene && characterTitleCamera) {
+            // ADD THIS LINE - increment frameCount for animations
+            frameCount++;
+
             // Rotate the center sphere
             if (orbitCenter) {
                 orbitCenter.rotation.y += 0.003;
@@ -2789,10 +3112,16 @@ function initTitleScreen() {
                 }
             });
             
-            // Render the scene
-            titleRenderer.render(characterTitleScene, characterTitleCamera);
+            // ADD PARTICLE ANIMATION HERE
+animateTitleParticles();
+
+// Render the scene
+titleRenderer.render(characterTitleScene, characterTitleCamera);
         }
     }
+
+    // Create particles for title screen
+createTitleScreenParticles();
     
     // Start the animation once
     animateTitleScreen();
@@ -6262,6 +6591,13 @@ function initializeSaveSystem() {
         initializeCloudSave();
     }, 1000);
     
+    // Load global leaderboard after cloud save is ready
+    setTimeout(() => {
+        if (cloudSaveEnabled) {
+            loadGlobalLeaderboard(); // Load global scores on startup
+        }
+    }, 3000);
+    
     console.log('✅ Save system initialized successfully!');
 }
 
@@ -6628,6 +6964,66 @@ function syncProfileToGameState() {
         if (soundCheckbox) soundCheckbox.checked = soundEffectsEnabled;
         if (musicCheckbox) musicCheckbox.checked = backgroundMusicEnabled;
     }, 100);
+}
+
+// Update global leaderboard display in pause menu tab
+function updateGlobalLeaderboardDisplay() {
+    const tbody = document.getElementById('globalLeaderboardBody');
+    const rankDisplay = document.getElementById('globalPlayerRank');
+    
+    if (!tbody) return;
+    
+    // Load fresh data
+    loadGlobalLeaderboard();
+    
+    setTimeout(() => {
+        // Clear existing content
+        tbody.innerHTML = '';
+        
+        if (globalLeaderboard.length === 0) {
+            tbody.innerHTML = `
+                <tr>
+                    <td colspan="4" style="text-align: center; padding: 40px; color: white;">
+                        🏆 Be the first on the global leaderboard!<br>
+                        <small style="color: #ccc;">Complete a game to see your score here!</small>
+                    </td>
+                </tr>
+            `;
+            return;
+        }
+        
+        // Add top 15 scores (more than local leaderboard)
+        globalLeaderboard.slice(0, 15).forEach((entry, index) => {
+            const rank = index + 1;
+            const isCurrentPlayer = entry.playerId === playerId;
+            
+            let rankDisplay = `#${rank}`;
+            if (rank === 1) rankDisplay = '🥇';
+            else if (rank === 2) rankDisplay = '🥈';
+            else if (rank === 3) rankDisplay = '🥉';
+            
+            const rowStyle = isCurrentPlayer ? 'background: rgba(0, 255, 0, 0.1); color: #00FF00;' : '';
+            
+            tbody.innerHTML += `
+                <tr style="${rowStyle}">
+                    <td>${rankDisplay}</td>
+                    <td>${entry.playerName || 'Anonymous'}</td>
+                    <td>${entry.score.toLocaleString()}</td>
+                    <td>${entry.character}</td>
+                </tr>
+            `;
+        });
+        
+        // Update player rank display
+        if (playerGlobalRank && rankDisplay) {
+            rankDisplay.textContent = `🏆 Your Global Rank: #${playerGlobalRank} out of ${globalLeaderboard.length} players`;
+            rankDisplay.style.color = '#FFD700';
+        } else if (rankDisplay) {
+            rankDisplay.textContent = `🌍 ${globalLeaderboard.length} players competing worldwide`;
+            rankDisplay.style.color = '#ccc';
+        }
+        
+    }, 1000); // Wait for data to load
 }
 
 // Update profile list in localStorage
