@@ -4892,9 +4892,20 @@ initializeObjectPools();
             camera.position.set(0, 2, 5);
             camera.lookAt(0, 0, -10);
             
-            // Create renderer
-renderer = new THREE.WebGLRenderer({ antialias: true });
+            // Create renderer with mobile optimization
+renderer = new THREE.WebGLRenderer({ 
+    antialias: !isMobile, // Disable antialiasing on mobile
+    powerPreference: "high-performance"
+});
 renderer.setSize(window.innerWidth, window.innerHeight);
+
+// Lower resolution on mobile for better performance
+if (isMobile) {
+    renderer.setPixelRatio(1); // Force pixel ratio to 1
+} else {
+    renderer.setPixelRatio(window.devicePixelRatio);
+}
+
 renderer.domElement.style.cssText = `
     display: none;
     position: absolute;
