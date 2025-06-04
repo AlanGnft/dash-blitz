@@ -1,0 +1,287 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>BlitZ Menu System</title>
+    <link rel="stylesheet" href="menu-styles.css">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+</head>
+<body>
+    <!-- Particle Background -->
+    <div id="particle-canvas"></div>
+
+    <!-- Title Screen -->
+    <div id="title-screen" class="screen active">
+        <div class="title-container">
+            <h1 class="game-title">
+                <span class="title-letter">D</span>
+                <span class="title-letter">a</span>
+                <span class="title-letter">s</span>
+                <span class="title-letter">h</span>
+                <span class="title-letter"> </span>
+                <span class="title-letter">B</span>
+                <span class="title-letter">l</span>
+                <span class="title-letter">i</span>
+                <span class="title-letter">t</span>
+                <span class="title-letter">z</span>
+            </h1>
+            <div class="title-subtitle">Endless Running Adventure</div>
+            
+            <div class="auth-container">
+                <button class="start-button" onclick="showMainMenu()">
+                    <span class="button-text">Start Game</span>
+                </button>
+                
+                <div class="auth-divider">
+                    <span class="divider-line"></span>
+                    <span class="divider-text">or</span>
+                    <span class="divider-line"></span>
+                </div>
+                
+                <div class="google-signin-container">
+                    <button class="google-signin-button" onclick="handleGoogleSignIn()">
+                        <div class="google-icon">
+                            <svg width="20" height="20" viewBox="0 0 24 24">
+                                <path fill="#4285F4" d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z"/>
+                                <path fill="#34A853" d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z"/>
+                                <path fill="#FBBC05" d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l2.85-2.22.81-.62z"/>
+                                <path fill="#EA4335" d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z"/>
+                            </svg>
+                        </div>
+                        <span class="google-text">Continue with Google</span>
+                    </button>
+                    <div class="google-benefit-text">(for cloud data across all devices!)</div>
+                </div>
+                
+                <div class="auth-status" id="auth-status" style="display: none;">
+                    <div class="user-info">
+                        <div class="user-avatar" id="user-avatar"></div>
+                        <div class="user-details">
+                            <div class="user-name" id="user-name">Loading...</div>
+                            <div class="user-email" id="user-email">Loading...</div>
+                        </div>
+                        <button class="sign-out-button" onclick="handleSignOut()">Sign Out</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Main Menu Hub -->
+    <div id="main-menu" class="screen">
+        <div class="menu-container">
+            <div class="menu-header">
+                <h2 class="menu-title">Dash BlitZ</h2>
+                <div class="player-stats">
+                    <div class="coin-display">
+                        <span class="coin-icon">🪙</span>
+                        <span id="coin-count">0</span>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="daily-challenges-button-container">
+                <button class="daily-challenges-btn" onclick="showDailyChallenges()">
+                    <div class="challenges-btn-icon">🏆</div>
+                    <div class="challenges-btn-content">
+                        <div class="challenges-btn-title">Daily Challenges</div>
+                        <div class="challenges-btn-subtitle" id="challenges-progress-text">3 challenges available</div>
+                    </div>
+                    <div class="challenges-btn-badge" id="challenges-completion-badge" style="display: none;">
+                        <span id="completed-count">0</span>/3
+                    </div>
+                </button>
+            </div>
+            
+            <div class="menu-grid">
+                <button class="menu-card run-card" onclick="showWorldSelect()">
+                    <div class="card-icon">🏃</div>
+                    <div class="card-title">RUN</div>
+                    <div class="card-subtitle">Begin Your Journey</div>
+                </button>
+                
+                <button class="menu-card characters-card" onclick="showCharacterSelect()">
+                    <div class="card-icon">👤</div>
+                    <div class="card-title">CHARACTERS</div>
+                    <div class="card-subtitle">Choose Your Hero</div>
+                </button>
+                
+                <button class="menu-card shop-card" onclick="showShop()">
+                    <div class="card-icon">🛍️</div>
+                    <div class="card-title">SHOP</div>
+                    <div class="card-subtitle">Unlock & Upgrade</div>
+                </button>
+                
+                <button class="menu-card settings-card" onclick="showSettings()">
+                    <div class="card-icon">⚙️</div>
+                    <div class="card-title">SETTINGS</div>
+                    <div class="card-subtitle">Configure Experience</div>
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Character Select Screen -->
+    <div id="character-select" class="screen">
+        <div class="screen-header">
+            <button class="back-button" onclick="showMainMenu()">←</button>
+            <h2>Choose Your Character</h2>
+            <div class="spacer"></div>
+        </div>
+        <div class="character-grid" id="character-grid">
+            <!-- Characters will be populated by JavaScript -->
+        </div>
+    </div>
+
+    <!-- World Select Screen -->
+    <div id="world-select" class="screen">
+        <div class="screen-header">
+            <button class="back-button" onclick="showMainMenu()">←</button>
+            <h2>Select World</h2>
+            <div class="spacer"></div>
+        </div>
+        <div class="world-grid" id="world-grid">
+            <!-- Worlds will be populated by JavaScript -->
+        </div>
+        <div class="start-run-container">
+            <button class="start-run-button" onclick="startGame()">START RUN</button>
+        </div>
+    </div>
+
+    <!-- Shop Screen -->
+    <div id="shop" class="screen">
+        <div class="screen-header">
+            <button class="back-button" onclick="showMainMenu()">←</button>
+            <h2>Shop</h2>
+            <div class="coin-display">
+                <span class="coin-icon">🪙</span>
+                <span id="shop-coin-count">0</span>
+            </div>
+        </div>
+        
+        <div class="shop-tabs">
+            <button class="shop-tab active" onclick="switchShopTab('characters')">Characters</button>
+            <button class="shop-tab" onclick="switchShopTab('worlds')">Worlds</button>
+        </div>
+        
+        <div class="shop-content">
+            <div id="shop-characters" class="shop-tab-content active">
+                <div class="shop-grid" id="shop-characters-grid">
+                    <!-- Character shop items will be populated by JavaScript -->
+                </div>
+            </div>
+            <div id="shop-worlds" class="shop-tab-content">
+                <div class="shop-grid" id="shop-worlds-grid">
+                    <!-- World shop items will be populated by JavaScript -->
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Settings Screen -->
+    <div id="settings" class="screen">
+        <div class="screen-header">
+            <button class="back-button" onclick="showMainMenu()">←</button>
+            <h2>Settings</h2>
+            <div class="spacer"></div>
+        </div>
+        <div class="settings-content">
+            <div class="setting-group">
+                <h3>Save & Sync</h3>
+                <div class="save-options">
+                    <button class="save-btn primary" onclick="showSaveCode()">
+                        <div class="save-btn-icon">📱</div>
+                        <div class="save-btn-content">
+                            <div class="save-btn-title">Generate Save Code</div>
+                            <div class="save-btn-subtitle">Transfer progress to any device</div>
+                        </div>
+                    </button>
+                    
+                    <button class="save-btn secondary" onclick="showRestoreCode()">
+                        <div class="save-btn-icon">📥</div>
+                        <div class="save-btn-content">
+                            <div class="save-btn-title">Restore from Code</div>
+                            <div class="save-btn-subtitle">Import progress from another device</div>
+                        </div>
+                    </button>
+                </div>
+            </div>
+            
+            <div class="setting-group">
+                <h3>Audio</h3>
+                <div class="setting-item">
+                    <label>Music Volume</label>
+                    <input type="range" id="music-volume" min="0" max="100" value="50">
+                </div>
+                <div class="setting-item">
+                    <label>Sound Effects</label>
+                    <input type="range" id="sfx-volume" min="0" max="100" value="50">
+                </div>
+            </div>
+            
+            <div class="setting-group">
+                <h3>🧪 Challenge Testing</h3>
+                <h3>Jukebox</h3>
+                <div class="jukebox-controls">
+                    <button class="jukebox-btn" onclick="playTrack('theme')">🎵 Theme Song</button>
+                    <button class="jukebox-btn" onclick="playTrack('action')">🎵 Action Beat</button>
+                    <button class="jukebox-btn" onclick="playTrack('chill')">🎵 Chill Vibes</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Character Preview Modal -->
+    <div id="character-preview-modal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3 id="preview-character-name">Character Name</h3>
+                <button class="close-button" onclick="closeCharacterPreview()">×</button>
+            </div>
+            <div class="preview-container">
+                <div id="character-3d-preview"></div>
+            </div>
+            <div class="character-details">
+                <div class="character-description-preview">
+                    <span id="preview-character-description">Character description will appear here</span>
+                </div>
+            </div>
+            <div class="modal-actions">
+                <button class="preview-button select-btn" onclick="selectCharacter()">SELECT</button>
+                <button class="preview-button buy-btn" onclick="buyCharacter()" id="buy-character-btn" style="display: none;">
+                    BUY - <span id="character-price">100</span> 🪙
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <script src="menu-functions.js"></script>
+
+    <!-- Daily Challenges Modal -->
+    <div id="daily-challenges-modal" class="challenges-modal">
+        <div class="challenges-modal-content">
+            <div class="challenges-modal-header">
+                <h2>🏆 Daily Challenges</h2>
+                <button class="close-challenges-btn" onclick="closeDailyChallenges()">×</button>
+            </div>
+            <div class="challenges-modal-body">
+                <div class="challenges-subtitle">Complete challenges to earn bonus coins!</div>
+                <div id="daily-challenges-container">
+                    <!-- Challenges will be populated by JavaScript -->
+                </div>
+            </div>
+            <div class="challenges-modal-footer">
+                <div class="challenges-reset-info">
+                    <span class="reset-icon">🔄</span>
+                    <span>Challenges reset daily at midnight</span>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="menu-functions.js"></script>
+</body>
+    
+</body>
+</html>
