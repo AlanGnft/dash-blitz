@@ -2910,6 +2910,48 @@ html, body {
     box-shadow: 0 6px 20px rgba(15, 20, 25, 0.7), 0 0 15px rgba(79, 172, 254, 0.2);
 }
 
+.auth-container {
+    position: relative;
+    z-index: 10; /* Above particle canvas */
+}
+
+.start-button {
+    position: relative;
+    z-index: 15; /* Extra high to ensure clickability */
+    pointer-events: auto !important;
+}
+
+/* Mobile-specific fixes */
+@media (max-width: 768px) {
+    .start-button {
+        /* Bigger touch target for mobile */
+        min-height: 50px;
+        padding: 1.2rem 3rem;
+        font-size: 1.1rem;
+        
+        /* Ensure it's clickable */
+        -webkit-tap-highlight-color: rgba(0,0,0,0.1);
+        touch-action: manipulation; /* Prevents double-tap zoom */
+    }
+    
+    /* Fix title screen layout on mobile */
+    .title-container {
+        padding: 2rem 1rem;
+        min-height: 100vh;
+        overflow-y: auto;
+    }
+    
+    .game-title {
+        font-size: clamp(3rem, 12vw, 6rem); /* Responsive title size */
+        white-space: nowrap;
+    }
+    
+    .auth-container {
+        padding: 0 1rem;
+        width: 100%;
+    }
+}
+
     </style>
 </head>
 <body>
