@@ -10581,6 +10581,12 @@ function togglePause() {
         gameState = "paused";
         document.getElementById('pauseScreen').style.display = 'flex';
         document.getElementById('swipeInstructions').style.display = 'none';
+
+        // ADD THIS: Hide touch area when pausing
+    const touchArea = document.getElementById('touchArea');
+    if (touchArea) {
+        touchArea.style.display = 'none';
+    }
         
         // FORCE HIDE PARTICLES DURING PAUSE
         const canvas = document.getElementById('particle-canvas');
@@ -10632,6 +10638,13 @@ function togglePause() {
         document.getElementById('pauseScreen').style.display = 'none';
         if (isMobile) {
             document.getElementById('swipeInstructions').style.display = 'block';
+
+            // ADD THIS: Show touch area when resuming on mobile
+        const touchArea = document.getElementById('touchArea');
+        if (touchArea) {
+            touchArea.style.display = 'block';
+        }
+    
         }
         
         // ENSURE PARTICLES STAY HIDDEN WHEN RESUMING
@@ -11900,6 +11913,12 @@ function endGame() {
     document.getElementById('modalOverlay').style.display = 'none';
     if (isMobile) {
         document.getElementById('swipeInstructions').style.display = 'none';
+    }
+
+    // Hide touch area
+    const touchArea = document.getElementById('touchArea');
+    if (touchArea) {
+        touchArea.style.display = 'none';
     }
     
     // INSTANT audio cutoff - stop everything immediately
