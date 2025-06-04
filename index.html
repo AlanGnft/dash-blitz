@@ -10283,6 +10283,21 @@ function forceCleanupParticles() {
 if (renderer && renderer.domElement) {
     renderer.domElement.style.display = 'block';
 }
+
+// Show touch area for mobile controls
+    if (isMobile) {
+        const touchArea = document.getElementById('touchArea');
+        if (touchArea) {
+            touchArea.style.display = 'block';
+            console.log('Touch area enabled for gameplay');
+        }
+        
+        // Also show swipe instructions
+        const swipeInstructions = document.getElementById('swipeInstructions');
+        if (swipeInstructions) {
+            swipeInstructions.style.display = 'block';
+        }
+    }
     
     // NUCLEAR PARTICLE CLEANUP BEFORE GAME START
 nuclearParticleCleanup();
