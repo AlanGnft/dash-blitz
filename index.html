@@ -15001,6 +15001,29 @@ document.addEventListener('touchstart', function(e) {
     console.log('Element id:', e.target.id);
 }, true);
 
+// More aggressive cleanup
+function cleanupDistantObjects() {
+    // Remove objects that are too far behind
+    const cleanupDistance = 30;
+    
+    [obstacles, coins, sceneryObjects, powerUps].forEach(array => {
+        for (let i = array.length - 1; i >= 0; i--) {
+            if (array[i].position.z > player.position.z + cleanupDistance) {
+                scene.remove(array[i]);
+                // Dispose of geometries and materials
+                if (array[i].geometry) array[i].geometry.dispose();
+                if (array[i].material) array[i].material.dispose();
+                array.splice(i, 1);
+            }
+        }
+    });
+}
+
+// Call every 60 frames
+if (frameCount % 60 === 0) {
+    cleanupDistantObjects();
+}
+
 
 
     </script>
