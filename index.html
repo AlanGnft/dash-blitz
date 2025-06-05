@@ -4986,6 +4986,31 @@ function updateSpeedIndicator() {
         // Initialize the game
         function init() {
 
+            // Add this at the beginning of your init() function
+function initMobileOptimizations() {
+    if (!isMobile) return;
+    
+    // 1. Disable particle system on mobile
+    titleParticleSystem = null;
+    
+    // 2. Reduce weather particles
+    mobileWeatherCount = 50; // Instead of 150
+    
+    // 3. Simplify renderer
+    renderer.setPixelRatio(1);
+    renderer.antialias = false;
+    
+    // 4. Reduce spawn rates
+    coinSpawnRate = 60; // Instead of 40
+    scenerySpawnRate = 50; // Instead of 25
+    
+    // 5. Disable complex animations
+    // In your animate() function, skip complex character animations on mobile
+}
+
+// Call after checkMobile()
+initMobileOptimizations();
+
 // Add loading class to prevent UI flash
 document.body.classList.add('loading');
 
