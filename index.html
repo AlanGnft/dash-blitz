@@ -481,10 +481,10 @@ body.loading #swipeInstructions {
         }
         #touchArea {
             position: absolute;
-            bottom: 0;
+            top: 0;  /* Changed from bottom: 0 to top: 0 */
             left: 0;
             width: 100%;
-            height: 80%; /* Increased touch area height */
+            height: 100%; /* Changed from 80% to 100% - full screen coverage */
             z-index: 50;
             display: none;
         }
@@ -4539,6 +4539,27 @@ let sparklePool = [];
 let explosionPool = [];
 let poolSize = 50; // Maximum pooled objects
 
+// ==================== DEBUG SYSTEM ====================
+// Control all console logging from one place
+let DEBUG_MODE = false; // Set to true only when debugging
+
+function debug(message, ...args) {
+    if (DEBUG_MODE) {
+        debug(message, ...args);
+    }
+}
+
+function debugWarn(message, ...args) {
+    if (DEBUG_MODE) {
+        debugWarn(message, ...args);
+    }
+}
+
+function debugError(message, ...args) {
+    // Always show errors
+    console.error(message, ...args);
+}
+
 // ==================== OBJECT POOL SYSTEM ====================
 // Performance optimization - pre-created objects for reuse
 // Dependencies: None
@@ -4824,7 +4845,7 @@ if (difficultyOverride >= 0) {
             // Time to increase speed!
             currentSpeedLevel = i + 1;
             maxSpeedReached = Math.max(maxSpeedReached, currentSpeedLevel); // ADD THIS LINE
-            console.log(`🏃 Speed increased! Current: ${currentSpeedLevel}, Max: ${maxSpeedReached}`);
+            debug(`🏃 Speed increased! Current: ${currentSpeedLevel}, Max: ${maxSpeedReached}`);
             currentSpeed = Math.min(baseSpeed + (currentSpeedLevel * speedIncrement), maxSpeed);
                     
                     // Adjust obstacle spawn rates - more aggressive at higher speeds
@@ -4857,7 +4878,7 @@ if (currentSpeedLevel >= 3) {
                     updateSpeedIndicator();
                     
                     // Debug log to see what's happening
-                    console.log(`Speed Level: ${currentSpeedLevel}, Speed: ${currentSpeed.toFixed(2)}, Obstacle Rate: ${currentObstacleSpawnRate}, Stream Rate: ${currentStreamSpawnRate}`);
+                    debug(`Speed Level: ${currentSpeedLevel}, Speed: ${currentSpeed.toFixed(2)}, Obstacle Rate: ${currentObstacleSpawnRate}, Stream Rate: ${currentStreamSpawnRate}`);
                 }
             }
         }
@@ -4918,7 +4939,7 @@ function updateSpeedIndicator() {
             updateSpeedIndicator();
             
             // Debug log to confirm reset
-            console.log(`Game Reset - Speed: ${currentSpeed}, Obstacle Rate: ${currentObstacleSpawnRate}, Stream Rate: ${currentStreamSpawnRate}`);
+            debug(`Game Reset - Speed: ${currentSpeed}, Obstacle Rate: ${currentObstacleSpawnRate}, Stream Rate: ${currentStreamSpawnRate}`);
         }
         
         // Check if it's a mobile device
@@ -5089,7 +5110,7 @@ if (!isMobile) {
         createTitleParticles();
     }, 100);
 }
-console.log('New title screen should be visible now');
+debug('New title screen should be visible now');
 
 // Add particle burst effects on clicks
 document.addEventListener('click', (e) => {
@@ -5271,7 +5292,7 @@ class TitleParticleSystem {
         
         this.canvas = document.getElementById('particle-canvas');
         if (!this.canvas) {
-            console.log('⚠️ Particle canvas not found');
+            debug('⚠️ Particle canvas not found');
             return;
         }
         
@@ -5290,7 +5311,7 @@ class TitleParticleSystem {
         this.animate();
         this.initialized = true;
         
-        console.log('✨ Advanced particle system initialized!');
+        debug('✨ Advanced particle system initialized!');
 
         // Reset challenge tracking variables
 function resetChallengeTracking() {
@@ -5316,7 +5337,7 @@ function startGame() {
         if (!this.canvas) return;
         this.canvas.width = window.innerWidth;
         this.canvas.height = window.innerHeight;
-        console.log('🔧 Canvas resized to:', this.canvas.width, 'x', this.canvas.height);
+        debug('🔧 Canvas resized to:', this.canvas.width, 'x', this.canvas.height);
     }
     
     createParticles() {
@@ -5355,7 +5376,7 @@ function startGame() {
     animate() {
     // Only stop particles during actual gameplay
     if (gameState === "playing" || gameState === "paused" || gameState === "gameOver") {
-        console.log('🛑 Particles stopped for gameplay, gameState:', gameState);
+        debug('🛑 Particles stopped for gameplay, gameState:', gameState);
         this.animationId = null;
         return;
     }
@@ -5371,7 +5392,7 @@ if (this.canvas && this.canvas.parentElement === null) {
         return;
     }
     
-// console.log('🎨 Drawing particles:', this.particles.length, 'gameState:', gameState);    
+// debug('🎨 Drawing particles:', this.particles.length, 'gameState:', gameState);    
     this.ctx.clearRect(0, 0, this.canvas.width, this.canvas.height);
         
         this.particles.forEach((particle, index) => {
@@ -5470,7 +5491,7 @@ if (gameState !== "playing" && gameState !== "paused" && gameState !== "gameOver
 let titleParticleSystem = null;
 
 function debugParticles() {
-    console.log('🔍 Particle Debug:', {
+    debug('🔍 Particle Debug:', {
         gameState: gameState,
         particleSystem: !!titleParticleSystem,
         animationId: titleParticleSystem?.animationId,
@@ -5483,7 +5504,7 @@ function debugParticles() {
 
 function debugParticleState() {
     const canvas = document.getElementById('particle-canvas');
-    console.log('🔍 Particle State Debug:', {
+    debug('🔍 Particle State Debug:', {
         gameState: gameState,
         system: !!titleParticleSystem,
         animating: titleParticleSystem?.animationId,
@@ -5498,7 +5519,7 @@ function debugParticleState() {
 
 // Nuclear option - completely destroy all particles
 function nuclearParticleCleanup() {
-    console.log('☢️ NUCLEAR PARTICLE CLEANUP');
+    debug('☢️ NUCLEAR PARTICLE CLEANUP');
     
     // Destroy the particle system completely
     if (titleParticleSystem) {
@@ -5511,7 +5532,7 @@ function nuclearParticleCleanup() {
     allCanvases.forEach(canvas => {
         if (canvas.id === 'particle-canvas') {
             canvas.remove();
-            console.log('🗑️ Removed particle canvas');
+            debug('🗑️ Removed particle canvas');
         }
     });
     
@@ -5521,12 +5542,12 @@ function nuclearParticleCleanup() {
         window.titleParticleAnimationId = null;
     }
     
-    console.log('✅ Nuclear cleanup complete');
+    debug('✅ Nuclear cleanup complete');
 }
 
 // Force recreate particle system for main menu
 function forceRecreateParticles() {
-    console.log('🔄 Force recreating particle system...');
+    debug('🔄 Force recreating particle system...');
     
     // Destroy existing system
     if (titleParticleSystem) {
@@ -5565,7 +5586,7 @@ function forceRecreateParticles() {
     titleParticleSystem = new TitleParticleSystem();
     titleParticleSystem.init();
     
-    console.log('✅ Fresh particle system created and started');
+    debug('✅ Fresh particle system created and started');
 }
 
 // Initialize title particles
@@ -5580,7 +5601,7 @@ function createTitleParticles() {
         titleParticleSystem.animate();
     }
     
-    console.log('🎨 Title particles created and started');
+    debug('🎨 Title particles created and started');
 }
 
 
@@ -5616,7 +5637,7 @@ function ensureParticlesVisible() {
             titleParticleSystem.animate();
         }
         
-        console.log('🔧 Forced particle visibility with canvas size:', canvas.width, 'x', canvas.height);
+        debug('🔧 Forced particle visibility with canvas size:', canvas.width, 'x', canvas.height);
         return true;
     }
     console.error('❌ Cannot ensure particle visibility - canvas not found');
@@ -5681,7 +5702,7 @@ function initializeJukebox() {
     document.getElementById('previewTrackBtn').addEventListener('click', previewSelectedTrack);
     document.getElementById('applyTrackBtn').addEventListener('click', applySelectedTrack);
     
-    console.log('🎵 Jukebox system initialized!');
+    debug('🎵 Jukebox system initialized!');
 }
 
 // Select a track in the jukebox
@@ -5707,13 +5728,13 @@ function selectTrack(trackId) {
     // Add selected class to clicked track
     document.querySelector(`[data-track-id="${trackId}"]`).classList.add('selected');
     
-    console.log(`🎵 Selected track: ${trackId}`);
+    debug(`🎵 Selected track: ${trackId}`);
 }
 
 // Preview the selected track
 // Preview the selected track
 function previewSelectedTrack() {
-    console.log(`🎧 Previewing track: ${selectedTrack}`);
+    debug(`🎧 Previewing track: ${selectedTrack}`);
     
     // Stop any existing preview
     if (window.previewMusic && window.previewMusic.playing) {
@@ -5722,7 +5743,7 @@ function previewSelectedTrack() {
     
     // Don't preview if it's already the current track
     if (selectedTrack === currentTrack && musicPlaying) {
-        console.log('🎵 Track already playing - no preview needed!');
+        debug('🎵 Track already playing - no preview needed!');
         alert(`🎵 "${availableTracks.find(t => t.id === selectedTrack)?.name}" is already playing!`);
         return;
     }
@@ -5752,7 +5773,7 @@ function startPreview(trackId) {
     }
     
     try {
-        console.log(`🎧 Starting preview of: ${trackId}`);
+        debug(`🎧 Starting preview of: ${trackId}`);
         
         // Create preview music layers
         window.previewMusic = {
@@ -5782,7 +5803,7 @@ function startPreview(trackId) {
             Tone.Transport.start();
         }
         
-        console.log(`✅ Preview started for: ${availableTracks.find(t => t.id === trackId)?.name}`);
+        debug(`✅ Preview started for: ${availableTracks.find(t => t.id === trackId)?.name}`);
         
     } catch (error) {
         console.error('❌ Error starting preview:', error);
@@ -5792,7 +5813,7 @@ function startPreview(trackId) {
 
 // Stop preview
 function stopPreview() {
-    console.log('🛑 Stopping preview...');
+    debug('🛑 Stopping preview...');
     
     if (window.previewMusic && window.previewMusic.layers) {
         // Stop and dispose all preview patterns
@@ -5820,12 +5841,12 @@ function stopPreview() {
     previewBtn.textContent = '🎧 Preview';
     previewBtn.onclick = previewSelectedTrack;
     
-    console.log('✅ Preview stopped');
+    debug('✅ Preview stopped');
 }
 
 // Preview versions of each track (shorter, simpler versions)
 function createPreviewMedieval() {
-    console.log('🎧 Creating medieval preview...');
+    debug('🎧 Creating medieval preview...');
     
     // Just drums and lute for preview
     const drumSynth = new Tone.MembraneSynth({
@@ -5861,7 +5882,7 @@ function createPreviewMedieval() {
 }
 
 function createPreviewElectronic() {
-    console.log('🎧 Creating electronic preview...');
+    debug('🎧 Creating electronic preview...');
     
     // Kick and lead synth for preview
     const kickSynth = new Tone.MembraneSynth({
@@ -5900,7 +5921,7 @@ function createPreviewElectronic() {
 }
 
 function createPreviewAmbient() {
-    console.log('🎧 Creating ambient preview...');
+    debug('🎧 Creating ambient preview...');
     
     // Drone and bells for preview
     const droneSynth = new Tone.Synth({
@@ -5943,11 +5964,11 @@ function createPreviewAmbient() {
 // Apply the selected track
 function applySelectedTrack() {
     if (selectedTrack === currentTrack) {
-        console.log('🎵 Track already playing!');
+        debug('🎵 Track already playing!');
         return;
     }
     
-    console.log(`🎵 Switching from ${currentTrack} to ${selectedTrack}`);
+    debug(`🎵 Switching from ${currentTrack} to ${selectedTrack}`);
     
     // Stop current music
     if (musicPlaying) {
@@ -5971,7 +5992,7 @@ function applySelectedTrack() {
     // Save preference
     saveGameData('settings_change');
     
-    console.log(`✅ Successfully switched to: ${availableTracks.find(t => t.id === currentTrack)?.name}`);
+    debug(`✅ Successfully switched to: ${availableTracks.find(t => t.id === currentTrack)?.name}`);
 }
         
 // Leaderboard functions - Updated with data preservation
@@ -5995,7 +6016,7 @@ function mergeLeaderboards() {
     localStorage.setItem('runningBlitzLeaderboard', JSON.stringify(uniqueLeaderboard));
     localStorage.setItem('endlessRunnerLeaderboard', JSON.stringify(uniqueLeaderboard));
     
-    console.log('Leaderboards merged:', uniqueLeaderboard);
+    debug('Leaderboards merged:', uniqueLeaderboard);
     return uniqueLeaderboard;
 }
 
@@ -6079,7 +6100,7 @@ function formatDate(dateString) {
     // Clear the input for next time
     document.getElementById('playerNameInput').value = '';
     
-    console.log('Score saved to leaderboard!', leaderboard);
+    debug('Score saved to leaderboard!', leaderboard);
 
     // ADD THIS LINE - Submit to global leaderboard
     submitToGlobalLeaderboard(playerName, currentScore, currentCharacter);
@@ -6122,7 +6143,7 @@ function submitToGlobalLeaderboard(playerName, score, character) {
     // Submit to Firebase global leaderboard
     firebase.database().ref('globalLeaderboard').push(globalEntry)
         .then(() => {
-            console.log('🏆 Score submitted to global leaderboard!');
+            debug('🏆 Score submitted to global leaderboard!');
             loadGlobalLeaderboard(); // Refresh to see new rankings
         })
         .catch((error) => {
@@ -6147,13 +6168,13 @@ function loadGlobalLeaderboard() {
                     .sort((a, b) => b.score - a.score)
                     .slice(0, 50); // Keep top 50
                 
-                console.log(`🌍 Loaded ${globalLeaderboard.length} global scores`);
+                debug(`🌍 Loaded ${globalLeaderboard.length} global scores`);
                 
                 // Find player's rank
                 findPlayerGlobalRank();
             } else {
                 globalLeaderboard = [];
-                console.log('🌍 No global scores found - be the first!');
+                debug('🌍 No global scores found - be the first!');
             }
         })
         .catch((error) => {
@@ -6175,7 +6196,7 @@ function findPlayerGlobalRank() {
     }
     
     if (playerGlobalRank) {
-        console.log(`🏆 Your global rank: #${playerGlobalRank}`);
+        debug(`🏆 Your global rank: #${playerGlobalRank}`);
     }
 }
 
@@ -6446,7 +6467,7 @@ characterSelectRenderer.setPixelRatio(Math.min(window.devicePixelRatio, 2)); // 
                 case "creature": charModel = createCreatureCharacter(); break;
                 // END CHARACTER SELECTION SWITCH INJECTION POINT
                 default:
-                    console.warn(`Character ${charType} not yet extracted - using Happy Face`);
+                    debugWarn(`Character ${charType} not yet extracted - using Happy Face`);
                     charModel = createHappyFaceCharacter();
                     break;
             }
@@ -6457,7 +6478,7 @@ characterSelectRenderer.setPixelRatio(Math.min(window.devicePixelRatio, 2)); // 
                 charModel = createAppleCharacter();
             }
             
-            console.log(`✅ Created character: ${charType}`, charModel);
+            debug(`✅ Created character: ${charType}`, charModel);
             
             // Scale and position - responsive to screen size
 const baseScale = Math.min(window.innerHeight / 800, 1.5);
@@ -6699,7 +6720,7 @@ function setupCharacterNavigation() {
         
         newStartBtn.addEventListener('click', function() {
             // Make sure we're using the current character (not just what's displayed)
-            console.log(`Starting game with character: ${currentCharacter}`);
+            debug(`Starting game with character: ${currentCharacter}`);
             
             // Hide character selection screen and show world selection
             document.getElementById('characterSelectScreen').style.display = 'none';
@@ -7086,7 +7107,7 @@ function setupWorldSelectButtons() {
 
     // Add fresh event listeners
     document.getElementById('prevWorldBtn').addEventListener('click', function() {
-    console.log('Starting at index:', selectedWorldIndex, '(', availableWorlds[selectedWorldIndex].id, ')');
+    debug('Starting at index:', selectedWorldIndex, '(', availableWorlds[selectedWorldIndex].id, ')');
     
     // Hide current model
     if (worldSelectModels && worldSelectModels[selectedWorldIndex]) {
@@ -7097,7 +7118,7 @@ function setupWorldSelectButtons() {
     if (modModeEnabled) {
         // Simple navigation when mod mode is on
         selectedWorldIndex = (selectedWorldIndex - 1 + availableWorlds.length) % availableWorlds.length;
-        console.log('Mod mode ON - moved to index:', selectedWorldIndex);
+        debug('Mod mode ON - moved to index:', selectedWorldIndex);
     } else {
         // Find previous unlocked world
         let prevIndex = selectedWorldIndex;
@@ -7106,18 +7127,18 @@ function setupWorldSelectButtons() {
         
         do {
             prevIndex = (prevIndex - 1 + availableWorlds.length) % availableWorlds.length;
-            console.log(`Checking index ${prevIndex} (${availableWorlds[prevIndex].id}): unlocked = ${unlockedWorlds[availableWorlds[prevIndex].id]}`);
+            debug(`Checking index ${prevIndex} (${availableWorlds[prevIndex].id}): unlocked = ${unlockedWorlds[availableWorlds[prevIndex].id]}`);
             attempts++;
             
             if (attempts > availableWorlds.length) {
-                console.log('⚠️ No other unlocked worlds found, staying at current');
+                debug('⚠️ No other unlocked worlds found, staying at current');
                 prevIndex = startIndex;
                 break;
             }
         } while (!unlockedWorlds[availableWorlds[prevIndex].id] && prevIndex !== startIndex);
         
         selectedWorldIndex = prevIndex;
-        console.log('Final index:', selectedWorldIndex);
+        debug('Final index:', selectedWorldIndex);
     }
     
     // Show new model
@@ -7148,7 +7169,7 @@ document.getElementById('nextWorldBtn').addEventListener('click', function() {
         
         do {
             nextIndex = (nextIndex + 1) % availableWorlds.length;
-            console.log(`Checking index ${nextIndex} (${availableWorlds[nextIndex].id}): unlocked = ${unlockedWorlds[availableWorlds[nextIndex].id]}`);
+            debug(`Checking index ${nextIndex} (${availableWorlds[nextIndex].id}): unlocked = ${unlockedWorlds[availableWorlds[nextIndex].id]}`);
             attempts++;
             
             if (attempts > availableWorlds.length) {
@@ -7285,7 +7306,7 @@ function applyWorldSettings(world) {
     // IMPORTANT: Recreate the ground with the new world theme
     recreateGroundForWorld();
     
-    console.log(`Applied settings for world: ${world.name}`);
+    debug(`Applied settings for world: ${world.name}`);
 }
 
 // Recreate ground and background with current world theme
@@ -7309,7 +7330,7 @@ function recreateGroundForWorld() {
     createGround();
     createBackground();
     
-    console.log(`Ground and background recreated for world: ${currentWorld}`);
+    debug(`Ground and background recreated for world: ${currentWorld}`);
 }
 
 // Remove old background elements when switching worlds
@@ -7344,7 +7365,7 @@ function removeOldBackground() {
         scene.remove(element);
     });
     
-    console.log(`Removed ${elementsToRemove.length} old background elements`);
+    debug(`Removed ${elementsToRemove.length} old background elements`);
 }
 
         // Update character info display
@@ -8587,7 +8608,7 @@ function applyDifficultyOverride() {
         // Update visual speed indicator
         updateSpeedIndicator();
         
-        console.log(`Forced Level: ${currentSpeedLevel}, Speed: ${currentSpeed.toFixed(2)}, Obstacle Rate: ${currentObstacleSpawnRate}`);
+        debug(`Forced Level: ${currentSpeedLevel}, Speed: ${currentSpeed.toFixed(2)}, Obstacle Rate: ${currentObstacleSpawnRate}`);
     }
 }
         
@@ -9341,7 +9362,7 @@ if (currentWorld === 'desert') {
     case "creature": player = createCreatureCharacter(); break;
     // END CREATE PLAYER SWITCH INJECTION POINT
     default:
-        console.warn(`Character ${currentCharacter} not yet extracted - using Happy Face`);
+        debugWarn(`Character ${currentCharacter} not yet extracted - using Happy Face`);
         currentCharacter = "happyface";
         player = createHappyFaceCharacter();
         break;
@@ -9859,10 +9880,10 @@ function syncProfileWithCloud() {
                 const cloudTime = new Date(cloudProfile.lastPlayed || 0).getTime();
                 const localTime = new Date(localProfileBackup.lastPlayed || 0).getTime();
                 
-                console.log('Cloud time:', new Date(cloudTime).toISOString());
-                console.log('Local time:', new Date(localTime).toISOString());
-                console.log('Cloud unlocked worlds:', cloudProfile.unlockedWorlds);
-                console.log('Local unlocked worlds:', localProfileBackup.unlockedWorlds);
+                debug('Cloud time:', new Date(cloudTime).toISOString());
+                debug('Local time:', new Date(localTime).toISOString());
+                debug('Cloud unlocked worlds:', cloudProfile.unlockedWorlds);
+                debug('Local unlocked worlds:', localProfileBackup.unlockedWorlds);
                 
                 // SMART MERGE: Combine unlocked content from both sources
                 const mergedProfile = JSON.parse(JSON.stringify(localProfileBackup));
@@ -9924,7 +9945,7 @@ function syncProfileWithCloud() {
 
 // Initialize save system
 function initializeSaveSystem() {
-    console.log('🗄️ Initializing future-proof save system...');
+    debug('🗄️ Initializing future-proof save system...');
     
     // Check for legacy save data and migrate
     migrateLegacySaveData();
@@ -10498,7 +10519,7 @@ function updateTotalCoins() {
 
 // Force cleanup particles before starting game
 function forceCleanupParticles() {
-    console.log('🧹 Force cleaning up particles...');
+    debug('🧹 Force cleaning up particles...');
     
     // Hide canvas
     const canvas = document.getElementById('particle-canvas');
@@ -10539,7 +10560,7 @@ if (renderer && renderer.domElement) {
         const touchArea = document.getElementById('touchArea');
         if (touchArea) {
             touchArea.style.display = 'block';
-            console.log('Touch area enabled for gameplay');
+            debug('Touch area enabled for gameplay');
         }
         
         // Also show swipe instructions
@@ -10553,7 +10574,7 @@ if (renderer && renderer.domElement) {
 nuclearParticleCleanup();
 
 // ADD THIS: More aggressive particle cleanup
-    console.log('🧹 Cleaning up particles for gameplay...');
+    debug('🧹 Cleaning up particles for gameplay...');
     
     // Destroy particle system
     if (window.titleParticleSystem) {
@@ -10565,7 +10586,7 @@ nuclearParticleCleanup();
     const allCanvases = document.querySelectorAll('#particle-canvas');
     allCanvases.forEach(canvas => {
         canvas.remove();
-        console.log('Removed particle canvas');
+        debug('Removed particle canvas');
     });
 
 // Reset power-up states at game start
@@ -10650,7 +10671,7 @@ startBackgroundMusic();
 // Fallback: try again after a short delay if music didn't start
 setTimeout(() => {
     if (!musicPlaying && backgroundMusicEnabled && audioInitialized) {
-        console.log('🎵 Fallback: Retrying music start...');
+        debug('🎵 Fallback: Retrying music start...');
         if (!backgroundMusic) {
             createBackgroundMusic();
         }
@@ -10699,7 +10720,7 @@ if (player && player.userData && player.userData.shieldEffect) {
 }
 
 // Force log to confirm reset
-console.log('Power-ups reset - Shield:', shieldActive, 'Multiplier:', coinMultiplierActive, 'Magnet:', magnetActive);
+debug('Power-ups reset - Shield:', shieldActive, 'Multiplier:', coinMultiplierActive, 'Magnet:', magnetActive);
             
             waterStreams.forEach(stream => scene.remove(stream));
             waterStreams = [];
@@ -10758,6 +10779,12 @@ dragonFireCooldown = 0;
             document.getElementById('newHighScoreMessage').style.display = 'none';
             if (isMobile) {
                 document.getElementById('swipeInstructions').style.display = 'block';
+                // IMPORTANT: Re-enable touch area for mobile controls
+                const touchArea = document.getElementById('touchArea');
+                if (touchArea) {
+                    touchArea.style.display = 'block';
+                    debug('Touch area re-enabled for restart');
+                }
             }
             gameOver = false;
             gamePaused = false;
@@ -10814,6 +10841,12 @@ dragonFireCooldown = 0;
                 toggleSettingsScreen();
                 return;
             }
+
+            // Add this to your keyboard controls
+            if (event.key === 'd' || event.key === 'D') {
+                DEBUG_MODE = !DEBUG_MODE;
+                console.log('Debug mode:', DEBUG_MODE ? 'ON' : 'OFF');
+            }
             
             if (!gameStarted || gamePaused) return;
         
@@ -10833,6 +10866,8 @@ dragonFireCooldown = 0;
                     quickDrop();
                     break;
             }
+
+            
         }
         
 function togglePause() {
@@ -10885,7 +10920,7 @@ function togglePause() {
                 
                 musicPlaying = false;
             } catch (error) {
-                console.log('Audio pause error (non-critical):', error);
+                debug('Audio pause error (non-critical):', error);
             }
         }
         
@@ -10894,7 +10929,7 @@ function togglePause() {
             try {
                 stopPreview();
             } catch (error) {
-                console.log('Preview stop error (non-critical):', error);
+                debug('Preview stop error (non-critical):', error);
             }
         }
         
@@ -10926,7 +10961,7 @@ function togglePause() {
                 createBackgroundMusic();
                 startBackgroundMusic();
             } catch (error) {
-                console.log('Audio resume error (non-critical):', error);
+                debug('Audio resume error (non-critical):', error);
             }
         }
     }
@@ -11778,7 +11813,8 @@ if (isAncientRuin) {
         mainPillar.getWorldPosition(pillarPos);
         
         const distance = playerPos.distanceTo(pillarPos);
-        console.log('🏛️ Ancient pillar distance check:', distance, 'Player at:', playerPos.x, 'Pillar at:', pillarPos.x);
+        debug('🏛️ Ancient pillar distance check:', distance, 'Player at:', playerPos.x, 'Pillar at:', pillarPos.x);
+
         
         // Only check collision if player is very close to the pillar
         if (distance < 2.0) {
@@ -11796,13 +11832,13 @@ if (isAncientRuin) {
             
             // Can jump over pillars if high enough
             if (jumping && player.position.y > 1.2) {
-                console.log('🦘 Jumped over ancient pillar!');
+                debug('🦘 Jumped over ancient pillar!');
                 return false;
             }
             
             const collision = playerBox.intersectsBox(pillarBox);
             if (collision) {
-                console.log('🏛️ Hit ancient pillar!');
+                debug('🏛️ Hit ancient pillar!');
             }
             return collision;
         }
@@ -11829,16 +11865,16 @@ if (isQuicksand) {
         mainPit.getWorldPosition(pitPos);
         
         const distance = playerPos.distanceTo(pitPos);
-        console.log('🏜️ Quicksand distance check:', distance, 'Player at:', playerPos.x, 'Pit at:', pitPos.x);
+        debug('🏜️ Quicksand distance check:', distance, 'Player at:', playerPos.x, 'Pit at:', pitPos.x);
         
         // Only check collision if player is close to the pit center
         if (distance < 1.0) {
             // Can jump over quicksand if high enough
             if (jumping && player.position.y > 0.8) {
-                console.log('🦘 Jumped over quicksand!');
+                debug('🦘 Jumped over quicksand!');
                 return false;
             }
-            console.log('💥 Hit quicksand pit!');
+            debug('💥 Hit quicksand pit!');
             return true;
         }
         return false; // No collision if too far from pit center
@@ -11957,10 +11993,10 @@ if (isFallenTree) {
         if (distance < 1.0) {
             // Can jump over fallen trees
             if (jumping && player.position.y > 1.0) {
-                console.log('🦘 Jumped over fallen tree!');
+                debug('🦘 Jumped over fallen tree!');
                 return false;
             }
-            console.log('💥 Hit fallen tree trunk!');
+            debug('💥 Hit fallen tree trunk!');
             return true;
         }
         return false; // No collision if too far from trunk
@@ -11991,7 +12027,7 @@ if (currentCharacter === 'robot') {
     // Check if this is an obstacle and player is jumping
     const isObstacle = obstacles.includes(object);
     if (isObstacle && jumping && player.position.y > 1.2) {
-        console.log('🦘 Robot jumped over obstacle at height:', player.position.y);
+        debug('🦘 Robot jumped over obstacle at height:', player.position.y);
         return false; // No collision with obstacles when jumping high enough
     }
     
@@ -12004,7 +12040,7 @@ if (currentCharacter === 'robot') {
         if (isObstacle || isStream || isMeteor) {
             // Create shield spark effect when blocking
             createShieldSparkEffect(object.position);
-            console.log('🤖 Robot shield blocked obstacle!');
+            debug('🤖 Robot shield blocked obstacle!');
             return false; // No collision when shield is active
         }
     }
@@ -12034,7 +12070,7 @@ if (currentCharacter === 'creature') {
     // Check if this is an obstacle and player is jumping
     const isObstacle = obstacles.includes(object);
     if (isObstacle && jumping && player.position.y > 1.2) {
-        console.log('🦘 Creature jumped over obstacle at height:', player.position.y);
+        debug('🦘 Creature jumped over obstacle at height:', player.position.y);
         return false; // No collision with obstacles when jumping high enough
     }
     
@@ -12213,7 +12249,7 @@ function endGame() {
         }
         
     } catch (error) {
-        console.log('Audio stop error (non-critical):', error);
+        debug('Audio stop error (non-critical):', error);
     }
 
     // Create explosion effect
@@ -12228,63 +12264,63 @@ setTimeout(() => {
     
     // Update daily challenges progress
 if (dailyChallenges) {
-    console.log('📊 Updating daily challenges with game stats:');
+    debug('📊 Updating daily challenges with game stats:');
     
     // Calculate survival time in seconds
     survivalTime = Math.floor((Date.now() - gameStartTime) / 1000);
     
     // Update all challenge types
     if (typeof score !== 'undefined') {
-        console.log(`  - Distance: ${score} meters`);
+        debug(`  - Distance: ${score} meters`);
         dailyChallenges.updateProgress('distance', score);
     }
     
     if (typeof coinsCollectedThisRun !== 'undefined') {
-        console.log(`  - Coins collected: ${coinsCollectedThisRun}`);
+        debug(`  - Coins collected: ${coinsCollectedThisRun}`);
         dailyChallenges.updateProgress('coins', coinsCollectedThisRun);
     }
     
     if (typeof jumpCount !== 'undefined') {
-        console.log(`  - Jumps: ${jumpCount}`);
+        debug(`  - Jumps: ${jumpCount}`);
         dailyChallenges.updateProgress('jumps', jumpCount);
     }
     
     if (typeof powerupsCollectedThisRun !== 'undefined') {
-        console.log(`  - Powerups: ${powerupsCollectedThisRun}`);
+        debug(`  - Powerups: ${powerupsCollectedThisRun}`);
         dailyChallenges.updateProgress('powerups', powerupsCollectedThisRun);
     }
     
     if (typeof maxSpeedReached !== 'undefined') {
-        console.log(`  - Max speed level: ${maxSpeedReached}`);
+        debug(`  - Max speed level: ${maxSpeedReached}`);
         dailyChallenges.updateProgress('speed', maxSpeedReached);
     }
     
     if (typeof laneChangeCount !== 'undefined') {
-        console.log(`  - Lane changes: ${laneChangeCount}`);
+        debug(`  - Lane changes: ${laneChangeCount}`);
         dailyChallenges.updateProgress('laneChanges', laneChangeCount);
     }
     
     if (typeof survivalTime !== 'undefined') {
-        console.log(`  - Survival time: ${survivalTime} seconds`);
+        debug(`  - Survival time: ${survivalTime} seconds`);
         dailyChallenges.updateProgress('survivalTime', survivalTime);
     }
     
     if (typeof nearMissCount !== 'undefined') {
-        console.log(`  - Near misses: ${nearMissCount}`);
+        debug(`  - Near misses: ${nearMissCount}`);
         dailyChallenges.updateProgress('nearMisses', nearMissCount);
     }
 }
         
         // Check if it's a high score and show input form if needed
-        console.log('🏆 Checking if score is high score:', score);
+        debug('🏆 Checking if score is high score:', score);
         const isHighScore = checkHighScore(score);
-        console.log('🏆 Is high score result:', isHighScore);
+        debug('🏆 Is high score result:', isHighScore);
 
         if (isHighScore) {
-            console.log('🏆 Showing name entry form');
+            debug('🏆 Showing name entry form');
             document.getElementById('newHighScoreMessage').style.display = 'block';
         } else {
-            console.log('🏆 Not a high score - hiding name entry');
+            debug('🏆 Not a high score - hiding name entry');
             document.getElementById('newHighScoreMessage').style.display = 'none';
         }
         
@@ -12295,16 +12331,16 @@ if (dailyChallenges) {
 
 // Update daily challenges progress
 if (dailyChallenges) {
-    console.log('📊 FINAL GAME STATS:');
-    console.log(`  - Current Speed Level: ${currentSpeedLevel}`);
-    console.log(`  - Max Speed Reached: ${maxSpeedReached}`);
-    console.log(`  - Power-ups Collected: ${powerupsCollectedThisRun}`);
+    debug('📊 FINAL GAME STATS:');
+    debug(`  - Current Speed Level: ${currentSpeedLevel}`);
+    debug(`  - Max Speed Reached: ${maxSpeedReached}`);
+    debug(`  - Power-ups Collected: ${powerupsCollectedThisRun}`);
     
     // Log active challenges
-    console.log('📋 Active Challenges:');
+    debug('📋 Active Challenges:');
     dailyChallenges.challenges.forEach(challenge => {
         if (!challenge.completed) {
-            console.log(`  - ${challenge.type}: ${challenge.progress}/${challenge.target}`);
+            debug(`  - ${challenge.type}: ${challenge.progress}/${challenge.target}`);
         }
     });
     
@@ -12341,8 +12377,8 @@ function checkHighScore(currentScore) {
     // It's a high score if leaderboard has less than 10 entries OR current score beats the lowest score
     const isHighScore = leaderboard.length < 10 || currentScore > (leaderboard[leaderboard.length - 1]?.score || 0);
     
-    console.log(`Checking high score: ${currentScore}, is high score: ${isHighScore}`);
-    console.log(`Need to beat: ${leaderboard[leaderboard.length - 1]?.score || 0}`);
+    debug(`Checking high score: ${currentScore}, is high score: ${isHighScore}`);
+    debug(`Need to beat: ${leaderboard[leaderboard.length - 1]?.score || 0}`);
     return isHighScore;
 }
 
@@ -12414,7 +12450,7 @@ if (currentCharacter === 'dragon') {
                     scene.remove(obstacle);
                     obstacles.splice(obstacles.indexOf(obstacle), 1);
                     
-                    console.log('🔥 Obstacle destroyed by dragon breath in lane', currentLane);
+                    debug('🔥 Obstacle destroyed by dragon breath in lane', currentLane);
                     dragonFireCooldown = 240; // 4 second cooldown
                     break;
                 }
@@ -12428,13 +12464,13 @@ if (currentCharacter === 'ghost') {
     // Initialize charges if starting fresh
     if (ghostPhaseCharges === 0 && ghostPhaseCooldown <= 0) {
         ghostPhaseCharges = 3;
-        console.log('👻 Ghost starting with 3 phase charges!');
+        debug('👻 Ghost starting with 3 phase charges!');
     }
     
     // Restore charges over time (one charge every 5 seconds)
     if (ghostPhaseCharges < 3 && ghostPhaseCooldown <= 0) {
         ghostPhaseCooldown = 300; // 5 seconds to restore next charge
-        console.log('👻 Ghost charge restoration started...');
+        debug('👻 Ghost charge restoration started...');
     }
     
     // Auto-activate phase when about to hit obstacle (if charges available)
@@ -12472,7 +12508,7 @@ function activateRobotShield() {
     robotShieldActive = true;
     robotShieldCooldown = 600; // 10 second cooldown
     
-    console.log('🤖 Robot electromagnetic shield activated!');
+    debug('🤖 Robot electromagnetic shield activated!');
     
     // Visual effect - create bright shield dome and brighten particles
     createRobotShieldDome();
@@ -12489,7 +12525,7 @@ function activateRobotShield() {
 
 function deactivateRobotShield() {
     robotShieldActive = false;
-    console.log('🤖 Robot shield deactivated - cooldown: 10 seconds');
+    debug('🤖 Robot shield deactivated - cooldown: 10 seconds');
     
     // Remove shield dome
     if (player.userData.shieldDome) {
@@ -12560,7 +12596,7 @@ function activateDragonFire() {
     dragonFireActive = true;
     dragonFireCooldown = 480; // 8 second cooldown
     
-    console.log('🐉 Dragon fire breath activated!');
+    debug('🐉 Dragon fire breath activated!');
     
     // Make fire particles visible and reset them properly
     if (player.userData && player.userData.fireParticles) {
@@ -12582,7 +12618,7 @@ function activateDragonFire() {
 
 function deactivateDragonFire() {
     dragonFireActive = false;
-    console.log('🐉 Dragon fire breath deactivated - cooldown: 8 seconds');
+    debug('🐉 Dragon fire breath deactivated - cooldown: 8 seconds');
     
     // Hide and reset fire particles aggressively
     if (player.userData && player.userData.fireParticles) {
@@ -12626,7 +12662,7 @@ function deactivateDragonFire() {
         } else {
             scene.remove(particle);
         }
-        console.log('🔥 Removed stray fire particle');
+        debug('🔥 Removed stray fire particle');
     });
 }
 
@@ -12645,7 +12681,7 @@ function destroyObstaclesWithFire() {
             scene.remove(obstacle);
             obstacles.splice(i, 1);
             
-            console.log('🔥 Obstacle destroyed by dragon fire!');
+            debug('🔥 Obstacle destroyed by dragon fire!');
         }
     }
 }
@@ -12660,17 +12696,17 @@ function activateGhostPhase() {
         ghostPhaseCooldown = 300; // 5 seconds to restore first charge
     }
     
-    console.log(`👻 Ghost phase activated! Charges remaining: ${ghostPhaseCharges}/3`);
+    debug(`👻 Ghost phase activated! Charges remaining: ${ghostPhaseCharges}/3`);
 }
 
 function deactivateGhostPhase() {
     ghostPhaseActive = false;
-    console.log('👻 Ghost phase deactivated');
+    debug('👻 Ghost phase deactivated');
     
     // Start charge restoration immediately if we have no charges left
     if (ghostPhaseCharges <= 0 && ghostPhaseCooldown <= 0) {
         ghostPhaseCooldown = 300; // 5 seconds to restore next charge
-        console.log('👻 Starting charge restoration...');
+        debug('👻 Starting charge restoration...');
     }
 }
 // Create destruction effect for dragon fire - using existing explosion system
@@ -12679,7 +12715,7 @@ function createObstacleDestruction(position) {
     createSparkle(position);
     
     // Optional: Add a simple flash effect instead of particles
-    console.log('💥 Obstacle destroyed with sparkle effect!');
+    debug('💥 Obstacle destroyed with sparkle effect!');
 }
 
 // Performance helper - only animate objects near player
@@ -12698,7 +12734,7 @@ function shouldAnimateObject(object, maxDistance = 15) {
 
     // ADD THIS: Check if particles are running during gameplay
     if (gameState === "playing" && titleParticleSystem && titleParticleSystem.animationId) {
-        console.warn('⚠️ Particles still running during gameplay!');
+        debugWarn('⚠️ Particles still running during gameplay!');
         // Force stop them
         titleParticleSystem.destroy();
         titleParticleSystem = null;
@@ -13166,7 +13202,7 @@ if (currentCharacter === 'pumpkin') {
                             player.remove(player.userData.shieldEffect);
                             player.userData.shieldEffect = null;
                         }
-                        console.log('Shield deactivated!');
+                        debug('Shield deactivated!');
                     }
                 }
 
@@ -13174,7 +13210,7 @@ if (currentCharacter === 'pumpkin') {
                     powerUpTimers.coinMultiplier--;
                     if (powerUpTimers.coinMultiplier <= 0) {
                         coinMultiplierActive = false;
-                        console.log('Coin multiplier deactivated!');
+                        debug('Coin multiplier deactivated!');
                     }
                 }
 
@@ -13182,7 +13218,7 @@ if (currentCharacter === 'pumpkin') {
                     powerUpTimers.magnet--;
                     if (powerUpTimers.magnet <= 0) {
                         magnetActive = false;
-                        console.log('Magnet deactivated!');
+                        debug('Magnet deactivated!');
                     }
                 }
 
@@ -13245,17 +13281,17 @@ if (currentSpeedLevel >= 4) {
     meteorSpawnCounter++;
     
     if (meteorSpawnCounter >= meteorSpawnRate) {
-    console.log("METEOR SPAWNING NOW!");
+    debug("METEOR SPAWNING NOW!");
     createMeteor();
     meteorSpawnCounter = 0;
     // Randomize next meteor spawn time (slower)
     meteorSpawnRate = 400 + Math.floor(Math.random() * 400); // 400-800 frames (13-27 seconds)
-    console.log(`Next meteor in ${meteorSpawnRate} frames`);
+    debug(`Next meteor in ${meteorSpawnRate} frames`);
 }
     
     // Only log every 30 frames to reduce spam
     if (meteorSpawnCounter % 30 === 0) {
-        console.log(`Meteor spawn check - Level: ${currentSpeedLevel}, Counter: ${meteorSpawnCounter}, Rate: ${meteorSpawnRate}`);
+    debug(`Meteor spawn check - Level: ${currentSpeedLevel}, Counter: ${meteorSpawnCounter}, Rate: ${meteorSpawnRate}`);
     }
 }
                 
@@ -13299,20 +13335,20 @@ if (frameCount % powerUpSpawnRate === 0) {
     // Only spawn if we have available lanes
     if (availableLanes.length > 0) {
         const powerUpType = Math.random();
-        console.log("Spawning power-up at frame:", frameCount, "Available lanes:", availableLanes);
+        debug("Spawning power-up at frame:", frameCount, "Available lanes:", availableLanes);
         
         if (powerUpType < 0.33) {
             spawnShieldPowerUpInLane(availableLanes);
-            console.log("Shield power-up spawned");
+            debug("Shield power-up spawned");
         } else if (powerUpType < 0.66) {
             spawnCoinMultiplierPowerUpInLane(availableLanes);
-            console.log("Coin multiplier power-up spawned");
+            debug("Coin multiplier power-up spawned");
         } else {
             spawnMagnetPowerUpInLane(availableLanes);
-            console.log("Magnet power-up spawned");
+            debug("Magnet power-up spawned");
         }
     } else {
-        console.log("No available lanes for power-up spawn");
+        debug("No available lanes for power-up spawn");
     }
 }
 
@@ -13380,7 +13416,7 @@ if (coinDistance < 1.5 && checkCollision(coin)) {
 
     
     if (coinMultiplierActive) {
-        console.log('Coin collected with 2x multiplier!');
+        debug('Coin collected with 2x multiplier!');
     }
 }
                     
@@ -13443,9 +13479,9 @@ if (checkCollision(rareCoin)) {
     coinsCollectedThisRun += rareCoinBonus;
     
     
-    console.log(`RARE COIN COLLECTED! +${rareCoinBonus} coins!`);
+    debug(`RARE COIN COLLECTED! +${rareCoinBonus} coins!`);
     if (coinMultiplierActive) {
-        console.log('Rare coin got 2x multiplier bonus!');
+        debug('Rare coin got 2x multiplier bonus!');
     }
 }
                     
@@ -13497,7 +13533,7 @@ if (distance < 1.5) { // Simple distance-based collision
                     
                     // Remove power-ups that have passed the player
                     else if (powerUp.position.z > 5) {
-                        console.log(`Removing power-up ${powerUp.userData.type} that passed player`);
+                        debug(`Removing power-up ${powerUp.userData.type} that passed player`);
                         scene.remove(powerUp);
                         powerUps.splice(i, 1);
                     }
@@ -13516,7 +13552,7 @@ if (checkCollision(obstacle)) {
         // Shield protects - remove obstacle instead
         scene.remove(obstacle);
         obstacles.splice(i, 1);
-        console.log('Shield blocked collision!');
+        debug('Shield blocked collision!');
     } else {
         endGame();
     }
@@ -13771,7 +13807,7 @@ startAutoSave();
 // Navigation functions for the new main menu system
 
 function showMainMenu() {
-    console.log('🎮 Transitioning to main menu...');
+    debug('🎮 Transitioning to main menu...');
     
     // Update game state FIRST
     gameState = "mainMenu";
@@ -13851,7 +13887,7 @@ if (!isMobile) {
         debugParticles();
     }, 100);
     
-    console.log('✅ Main menu active');
+    debug('✅ Main menu active');
 }
 
 // Force particle system update when switching to main menu
@@ -13871,7 +13907,7 @@ function forceParticleResize() {
 
 // Navigation from main menu to other screens
 function showCharacterSelectFromMenu() {
-    console.log('👤 Transitioning to character select...');
+    debug('👤 Transitioning to character select...');
     
     // NUCLEAR PARTICLE CLEANUP
     nuclearParticleCleanup();
@@ -13904,7 +13940,7 @@ function showCharacterSelectFromMenu() {
 }
 
 function showWorldSelectFromMenu() {
-    console.log('🌍 Transitioning to world select...');
+    debug('🌍 Transitioning to world select...');
     
     // Keep particles visible during world select
 const canvas = document.getElementById('particle-canvas');
@@ -13967,7 +14003,7 @@ function showShopFromMenu() {
     // Initialize shop display
     initializeShopScreen();
 
-    console.log('🛍️ Shop shown');
+    debug('🛍️ Shop shown');
 setTimeout(() => debugParticleState(), 100);
 }
 
@@ -13978,7 +14014,7 @@ function showSettingsFromMenu() {
     gameState = "settings";
     initMainMenuSettings();
 
-    console.log('⚙️ Settings shown');
+    debug('⚙️ Settings shown');
 setTimeout(() => debugParticleState(), 100);
 }
 
@@ -14079,7 +14115,7 @@ function applyMainMenuDifficultyOverride() {
 
 // Placeholder for daily challenges (we'll implement this next)
 function showDailyChallenges() {
-    console.log('Daily challenges will be added in next step');
+    debug('Daily challenges will be added in next step');
     alert('Daily Challenges coming soon! 🏆');
 }
 
@@ -14407,7 +14443,7 @@ if (renderer && renderer.domElement) {
 }
     
     // Check if particles need to be restarted (don't destroy them)
-console.log('🔄 Checking particle system...');
+debug('🔄 Checking particle system...');
 
 const existingCanvas = document.getElementById('particle-canvas');
 
@@ -14427,10 +14463,10 @@ if (existingCanvas) {
         titleParticleSystem.animate();
     }
     
-    console.log('✅ Particles reactivated');
+    debug('✅ Particles reactivated');
 } else {
     // Only create new if canvas doesn't exist
-    console.log('🆕 Creating new particle system...');
+    debug('🆕 Creating new particle system...');
 }
     
     // Create fresh canvas
@@ -14468,16 +14504,16 @@ if (existingCanvas) {
     // Update coin display
     updateTotalCoins();
     
-    console.log('✅ Main menu restored with fresh particle system');
+    debug('✅ Main menu restored with fresh particle system');
 
-    console.log('🏠 Back to main menu');
+    debug('🏠 Back to main menu');
 setTimeout(() => debugParticleState(), 100);
 
 // Debug to track particle state
-console.log('🏠 Back to main menu');
+debug('🏠 Back to main menu');
 setTimeout(() => {
     const canvas = document.getElementById('particle-canvas');
-    console.log('Main menu particle check:', {
+    debug('Main menu particle check:', {
         canvas: !!canvas,
         display: canvas?.style.display,
         parent: canvas?.parentElement?.id
@@ -14487,7 +14523,7 @@ setTimeout(() => {
 }
 
 function showSettingsFromMenu() {
-    console.log('⚙️ Transitioning to settings...');
+    debug('⚙️ Transitioning to settings...');
     
     // Hide main menu
     document.getElementById('main-menu').style.display = 'none';
@@ -14518,10 +14554,10 @@ function showSettingsFromMenu() {
     gameState = "settings";
 
     // Debug to track particle state
-console.log('⚙️ Settings shown');
+debug('⚙️ Settings shown');
 setTimeout(() => {
     const canvas = document.getElementById('particle-canvas');
-    console.log('Settings particle check:', {
+    debug('Settings particle check:', {
         canvas: !!canvas,
         display: canvas?.style.display,
         parent: canvas?.parentElement?.id
@@ -14530,7 +14566,7 @@ setTimeout(() => {
 }
 
 function backFromSettings() {
-    console.log('⬅️ Returning from settings to main menu...');
+    debug('⬅️ Returning from settings to main menu...');
     
     // Hide settings with animation
     const settingsDiv = document.getElementById('settings');
@@ -14548,7 +14584,7 @@ function backFromSettings() {
 
 // Debug function to check particle system status
 function checkParticleStatus() {
-    console.log('🔍 Particle System Status:', {
+    debug('🔍 Particle System Status:', {
         titleParticleSystem: !!titleParticleSystem,
         animationId: titleParticleSystem?.animationId,
         canvas: !!document.getElementById('particle-canvas'),
@@ -14559,7 +14595,7 @@ function checkParticleStatus() {
 
 // Handle playTrack calls from jukebox buttons
 function playTrack(trackName) {
-    console.log(`🎵 Playing track: ${trackName}`);
+    debug(`🎵 Playing track: ${trackName}`);
     
     // Map the simple track names to your actual track IDs
     const trackMap = {
@@ -14829,7 +14865,7 @@ function initializeDailyChallenges() {
 
 // Replace the placeholder function with this working version
 function showDailyChallenges() {
-    console.log('📋 Opening daily challenges modal...');
+    debug('📋 Opening daily challenges modal...');
     
     const modal = document.getElementById('daily-challenges-modal');
     if (!modal) {
@@ -14847,7 +14883,7 @@ function showDailyChallenges() {
     
     // Update challenges display when modal opens
     if (dailyChallenges) {
-        console.log('✅ Updating challenge display...');
+        debug('✅ Updating challenge display...');
         dailyChallenges.updateChallengeDisplay();
         
         // Debug info
@@ -14900,29 +14936,29 @@ function updateChallengeButton() {
 
 // Debug function to check daily challenges state
 function debugDailyChallenges() {
-    console.log('🔍 Daily Challenges Debug:');
-    console.log('  - Instance exists:', !!dailyChallenges);
+    debug('🔍 Daily Challenges Debug:');
+    debug('  - Instance exists:', !!dailyChallenges);
     if (dailyChallenges) {
-        console.log('  - Challenges:', dailyChallenges.challenges);
-        console.log('  - Completed today:', dailyChallenges.completedToday);
-        console.log('  - Last reset date:', dailyChallenges.lastResetDate);
+        debug('  - Challenges:', dailyChallenges.challenges);
+        debug('  - Completed today:', dailyChallenges.completedToday);
+        debug('  - Last reset date:', dailyChallenges.lastResetDate);
     }
     
     // Check if container exists
     const container = document.getElementById('daily-challenges-container');
-    console.log('  - Container exists:', !!container);
+    debug('  - Container exists:', !!container);
     if (container) {
-        console.log('  - Container HTML:', container.innerHTML);
+        debug('  - Container HTML:', container.innerHTML);
     }
 }
 
 // Function to reset daily challenges (for debugging)
 function resetDailyChallenges() {
-    console.log('🔄 Resetting daily challenges...');
+    debug('🔄 Resetting daily challenges...');
     localStorage.removeItem('dashBlitzDailyChallenges');
     dailyChallenges = null;
     initializeDailyChallenges();
-    console.log('✅ Daily challenges reset complete');
+    debug('✅ Daily challenges reset complete');
 }
 
 // Temporary test function
@@ -14930,8 +14966,8 @@ function testChallengesModal() {
     const modal = document.getElementById('daily-challenges-modal');
     const container = document.getElementById('daily-challenges-container');
     
-    console.log('Modal element:', modal);
-    console.log('Container element:', container);
+    debug('Modal element:', modal);
+    debug('Container element:', container);
     
     if (container) {
         container.innerHTML = '<div style="color: white; padding: 20px;">TEST: If you see this, the container is working!</div>';
@@ -14963,11 +14999,11 @@ function forceDisableModMode() {
     
     // Save state
     saveGameData('mod_mode_reset');
-    console.log('🔒 Mod mode force disabled');
+    debug('🔒 Mod mode force disabled');
 }
 
 function debugWorldNavigation() {
-    console.log('🔧 Setting up world navigation debug...');
+    debug('🔧 Setting up world navigation debug...');
     
     const prevBtn = document.getElementById('prevWorldBtn');
     const nextBtn = document.getElementById('nextWorldBtn');
@@ -14986,20 +15022,20 @@ function debugWorldNavigation() {
     
     // Add simple test listeners
     document.getElementById('prevWorldBtn').onclick = function() {
-        console.log('✅ PREV CLICKED - Current index:', selectedWorldIndex);
+        debug('✅ PREV CLICKED - Current index:', selectedWorldIndex);
         selectedWorldIndex = (selectedWorldIndex - 1 + availableWorlds.length) % availableWorlds.length;
-        console.log('New index:', selectedWorldIndex);
+        debug('New index:', selectedWorldIndex);
         updateWorldDisplay();
     };
     
     document.getElementById('nextWorldBtn').onclick = function() {
-        console.log('✅ NEXT CLICKED - Current index:', selectedWorldIndex);
+        debug('✅ NEXT CLICKED - Current index:', selectedWorldIndex);
         selectedWorldIndex = (selectedWorldIndex + 1) % availableWorlds.length;
-        console.log('New index:', selectedWorldIndex);
+        debug('New index:', selectedWorldIndex);
         updateWorldDisplay();
     };
     
-    console.log('✅ Debug navigation set up!');
+    debug('✅ Debug navigation set up!');
 }
 
 // Run this from console
@@ -15035,9 +15071,9 @@ if (!('ontouchstart' in window)) {
 
 // Add this to see what's blocking the touches
 document.addEventListener('touchstart', function(e) {
-    console.log('Touch captured by:', e.target);
-    console.log('Element class:', e.target.className);
-    console.log('Element id:', e.target.id);
+    debug('Touch captured by:', e.target);
+    debug('Element class:', e.target.className);
+    debug('Element id:', e.target.id);
 }, true);
 
 // More aggressive cleanup
