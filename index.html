@@ -1914,29 +1914,31 @@ body.loading #swipeInstructions {
     box-shadow: 0 4px 15px rgba(15, 20, 25, 0.5), 0 0 10px rgba(79, 172, 254, 0.2);
 }
 
-/* Character & World Selection Screens - Glassmorphism Style */
+/* Character & World Selection Screens - Responsive Design */
 .selection-container {
     display: flex;
     flex-direction: column;
     align-items: center;
-    justify-content: space-between;
+    justify-content: flex-start;
     height: calc(100% - 80px);
     padding: 1rem 2rem;
     overflow-y: auto;
+    gap: 1rem;
 }
 
 .preview-area {
     display: flex;
     flex-direction: column;
     align-items: center;
-    gap: 2rem;
+    gap: 1rem;
     width: 100%;
     max-width: 800px;
 }
 
-.preview-box {
-    width: 400px;
-    height: 400px;
+/* Character preview box - responsive sizing */
+#characterSelectScreen .preview-box {
+    width: min(400px, 80vw);
+    height: min(300px, 40vh);
     background: rgba(15, 20, 25, 0.5);
     backdrop-filter: blur(25px);
     border: 1px solid rgba(79, 172, 254, 0.3);
@@ -1947,11 +1949,13 @@ body.loading #swipeInstructions {
     position: relative;
     box-shadow: 0 15px 35px rgba(15, 20, 25, 0.6), inset 0 1px 0 rgba(79, 172, 254, 0.1);
     overflow: hidden;
+    margin-top: 1rem;
 }
 
+/* World preview box - different aspect ratio */
 .preview-box.world-preview {
-    width: 500px;
-    height: 300px;
+    width: min(500px, 90vw);
+    height: min(300px, 40vh);
 }
 
 .preview-box::before {
@@ -1970,29 +1974,32 @@ body.loading #swipeInstructions {
     100% { transform: rotate(360deg); }
 }
 
-.preview-controls {
+/* Character preview controls - moved below preview */
+#characterSelectScreen .preview-controls {
     display: flex;
     align-items: center;
-    gap: 2rem;
+    gap: 1.5rem;
     width: 100%;
     justify-content: center;
+    margin-top: 1rem;
 }
 
 .nav-button {
-    width: 60px;
-    height: 60px;
+    width: 50px;
+    height: 50px;
     background: rgba(15, 20, 25, 0.6);
     backdrop-filter: blur(15px);
     border: 1px solid rgba(79, 172, 254, 0.3);
     border-radius: 50%;
     color: #43cbff;
-    font-size: 24px;
+    font-size: 20px;
     cursor: pointer;
     transition: all 0.3s ease;
     display: flex;
     align-items: center;
     justify-content: center;
     box-shadow: 0 8px 25px rgba(15, 20, 25, 0.6);
+    flex-shrink: 0;
 }
 
 .nav-button:hover {
@@ -2011,21 +2018,22 @@ body.loading #swipeInstructions {
     transform: scale(1.2);
 }
 
+/* Character info card - more compact and always visible */
 .character-info-card, .world-info-card {
     background: rgba(15, 20, 25, 0.6);
     backdrop-filter: blur(20px);
     border: 1px solid rgba(79, 172, 254, 0.2);
     border-radius: 15px;
-    padding: 2rem 3rem;
+    padding: 1rem 2rem;
     text-align: center;
-    min-width: 300px;
+    min-width: min(300px, 70vw);
     box-shadow: 0 10px 30px rgba(15, 20, 25, 0.6), inset 0 1px 0 rgba(79, 172, 254, 0.1);
 }
 
 .character-info-card h3, .world-info-card h3 {
     color: #43cbff;
-    font-size: 2rem;
-    margin-bottom: 0.5rem;
+    font-size: clamp(1.5rem, 4vw, 2rem);
+    margin-bottom: 0.3rem;
     font-family: 'Orbitron', 'Exo 2', sans-serif;
     text-shadow: 0 0 20px rgba(67, 203, 255, 0.4);
     letter-spacing: 1px;
@@ -2033,62 +2041,48 @@ body.loading #swipeInstructions {
 
 .character-subtitle, .world-subtitle {
     color: #b3c7e6;
-    font-size: 1.1rem;
-    margin-bottom: 1rem;
+    font-size: clamp(0.9rem, 2.5vw, 1.1rem);
+    margin-bottom: 0;
     opacity: 0.9;
     font-family: 'Exo 2', sans-serif;
 }
 
-.unlock-status {
+/* Hide unlock status in the info card */
+.character-info-card .unlock-status,
+.world-info-card .unlock-status {
+    display: none !important;
+}
+
+/* Action buttons - responsive positioning */
+.action-buttons-container {
     display: flex;
-    align-items: center;
+    gap: 1rem;
+    margin-top: auto;
+    margin-bottom: 2rem;
+    flex-wrap: wrap;
     justify-content: center;
-    gap: 0.5rem;
-    padding: 0.8rem 1.5rem;
-    background: rgba(15, 20, 25, 0.4);
-    border-radius: 25px;
-    margin-top: 1rem;
-    border: 1px solid rgba(79, 172, 254, 0.2);
-}
-
-.unlock-status.unlocked {
-    background: rgba(52, 199, 89, 0.2);
-    border-color: rgba(52, 199, 89, 0.4);
-}
-
-.unlock-status.locked {
-    background: rgba(255, 87, 34, 0.2);
-    border-color: rgba(255, 87, 34, 0.4);
-}
-
-.status-icon {
-    font-size: 1.2rem;
-}
-
-.status-text {
-    color: #e6edf3;
-    font-weight: 600;
-    font-family: 'Exo 2', sans-serif;
+    width: 100%;
+    padding: 0 1rem;
 }
 
 .action-button {
-    padding: 1.2rem 3rem;
+    padding: 1rem 2rem;
     background: rgba(15, 20, 25, 0.7);
     backdrop-filter: blur(20px);
     border: 2px solid rgba(79, 172, 254, 0.3);
     border-radius: 50px;
     color: #e6edf3;
-    font-size: 1.3rem;
+    font-size: clamp(1rem, 2.5vw, 1.3rem);
     font-weight: bold;
     cursor: pointer;
     transition: all 0.3s ease;
     position: relative;
     overflow: hidden;
-    margin-top: 2rem;
     font-family: 'Exo 2', sans-serif;
     letter-spacing: 1px;
     text-transform: uppercase;
     box-shadow: 0 10px 30px rgba(15, 20, 25, 0.6);
+    min-width: min(200px, 70vw);
 }
 
 .action-button.primary {
@@ -2106,65 +2100,230 @@ body.loading #swipeInstructions {
     background: linear-gradient(135deg, rgba(30, 64, 175, 0.9), rgba(55, 48, 163, 0.9), rgba(29, 78, 216, 0.9));
 }
 
-.button-glow {
-    position: absolute;
-    top: 50%;
-    left: 50%;
-    width: 300%;
-    height: 300%;
-    background: radial-gradient(circle, rgba(67, 203, 255, 0.2) 0%, transparent 70%);
-    transform: translate(-50%, -50%);
-    opacity: 0;
-    transition: opacity 0.3s ease;
+/* Responsive adjustments for different screen sizes */
+@media (max-width: 1024px) {
+    #characterSelectScreen .preview-box {
+        height: min(250px, 35vh);
+    }
+    
+    .character-info-card {
+        padding: 0.8rem 1.5rem;
+    }
 }
 
-.action-button:hover .button-glow {
-    opacity: 1;
-    animation: pulseGlow 2s ease-in-out infinite;
-}
-
-@keyframes pulseGlow {
-    0%, 100% { transform: translate(-50%, -50%) scale(1); }
-    50% { transform: translate(-50%, -50%) scale(1.1); }
-}
-
-.button-text {
-    position: relative;
-    z-index: 1;
-}
-
-/* Mobile Responsive Adjustments */
 @media (max-width: 768px) {
-    .preview-box {
-        width: 300px;
-        height: 300px;
+    .selection-container {
+        padding: 0.5rem 1rem;
+    }
+    
+    #characterSelectScreen .preview-box {
+        width: min(280px, 85vw);
+        height: min(200px, 30vh);
     }
     
     .preview-box.world-preview {
-        width: 350px;
-        height: 250px;
+        width: min(320px, 85vw);
+        height: min(200px, 30vh);
     }
     
-    .preview-controls {
-        flex-wrap: wrap;
+    #characterSelectScreen .preview-controls {
         gap: 1rem;
     }
     
-    .character-info-card, .world-info-card {
-        min-width: 250px;
-        padding: 1.5rem 2rem;
+    .nav-button {
+        width: 45px;
+        height: 45px;
+        font-size: 18px;
     }
     
-    .nav-button {
-        width: 50px;
-        height: 50px;
-        font-size: 20px;
+    .character-info-card, .world-info-card {
+        min-width: min(250px, 85vw);
+        padding: 0.8rem 1.2rem;
+    }
+    
+    .action-buttons-container {
+        flex-direction: column;
+        width: 100%;
+        max-width: 300px;
+        margin: 1rem auto 1.5rem;
+        gap: 0.8rem;
     }
     
     .action-button {
-        font-size: 1.1rem;
-        padding: 1rem 2rem;
+        width: 100%;
+        padding: 0.8rem 1.5rem;
+        font-size: 1rem;
     }
+}
+
+@media (max-width: 480px) {
+    #characterSelectScreen .preview-box {
+        width: min(240px, 90vw);
+        height: min(180px, 25vh);
+    }
+    
+    .character-info-card h3 {
+        font-size: 1.3rem;
+    }
+    
+    .character-subtitle {
+        font-size: 0.85rem;
+    }
+}
+
+/* Ensure proper canvas sizing */
+#characterDisplay canvas {
+    width: 100% !important;
+    height: 100% !important;
+    max-width: 100% !important;
+    max-height: 100% !important;
+}
+
+/* World Select Screen - Matching Character Select Layout */
+#worldSelectScreen .selection-container {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: flex-start;
+    height: calc(100% - 80px);
+    padding: 1rem 2rem;
+    overflow-y: auto;
+    gap: 1rem;
+}
+
+#worldSelectScreen .preview-area {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 1rem;
+    width: 100%;
+    max-width: 800px;
+}
+
+/* World preview box - matching character select style */
+#worldSelectScreen .preview-box {
+    width: min(500px, 85vw);
+    height: min(300px, 40vh);
+    background: rgba(15, 20, 25, 0.5);
+    backdrop-filter: blur(25px);
+    border: 1px solid rgba(79, 172, 254, 0.3);
+    border-radius: 20px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    position: relative;
+    box-shadow: 0 15px 35px rgba(15, 20, 25, 0.6), inset 0 1px 0 rgba(79, 172, 254, 0.1);
+    overflow: hidden;
+    margin-top: 1rem;
+}
+
+/* World preview controls - below preview */
+#worldSelectScreen .preview-controls {
+    display: flex;
+    align-items: center;
+    gap: 1.5rem;
+    width: 100%;
+    justify-content: center;
+    margin-top: 1rem;
+}
+
+/* World info card - matching character info style */
+#worldSelectScreen .world-info-card {
+    background: rgba(15, 20, 25, 0.6);
+    backdrop-filter: blur(20px);
+    border: 1px solid rgba(79, 172, 254, 0.2);
+    border-radius: 15px;
+    padding: 1rem 2rem;
+    text-align: center;
+    min-width: min(300px, 70vw);
+    box-shadow: 0 10px 30px rgba(15, 20, 25, 0.6), inset 0 1px 0 rgba(79, 172, 254, 0.1);
+}
+
+/* World start button - positioned at bottom */
+#worldSelectScreen #startGameFromWorldButton {
+    margin-top: auto;
+    margin-bottom: 2rem;
+    padding: 1rem 2rem;
+    background: rgba(15, 20, 25, 0.7);
+    backdrop-filter: blur(20px);
+    border: 2px solid rgba(79, 172, 254, 0.3);
+    border-radius: 50px;
+    color: #e6edf3;
+    font-size: clamp(1rem, 2.5vw, 1.3rem);
+    font-weight: bold;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    position: relative;
+    overflow: hidden;
+    font-family: 'Exo 2', sans-serif;
+    letter-spacing: 1px;
+    text-transform: uppercase;
+    box-shadow: 0 10px 30px rgba(15, 20, 25, 0.6);
+    min-width: min(250px, 70vw);
+}
+
+#worldSelectScreen #startGameFromWorldButton.primary {
+    background: linear-gradient(135deg, rgba(30, 58, 138, 0.8), rgba(55, 48, 163, 0.8), rgba(30, 64, 175, 0.8));
+    border-color: rgba(79, 172, 254, 0.5);
+}
+
+#worldSelectScreen #startGameFromWorldButton:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 20px 40px rgba(15, 20, 25, 0.8), 0 0 30px rgba(79, 172, 254, 0.4);
+    border-color: rgba(79, 172, 254, 0.7);
+}
+
+/* Responsive adjustments for world select */
+@media (max-width: 1024px) {
+    #worldSelectScreen .preview-box {
+        width: min(450px, 85vw);
+        height: min(250px, 35vh);
+    }
+}
+
+@media (max-width: 768px) {
+    #worldSelectScreen .preview-box {
+        width: min(320px, 85vw);
+        height: min(200px, 30vh);
+    }
+    
+    #worldSelectScreen .preview-controls {
+        gap: 1rem;
+    }
+    
+    #worldSelectScreen .world-info-card {
+        min-width: min(250px, 85vw);
+        padding: 0.8rem 1.2rem;
+    }
+    
+    #worldSelectScreen #startGameFromWorldButton {
+        width: 90%;
+        max-width: 300px;
+        margin: 1rem auto 1.5rem;
+    }
+}
+
+@media (max-width: 480px) {
+    #worldSelectScreen .preview-box {
+        width: min(280px, 90vw);
+        height: min(180px, 25vh);
+    }
+    
+    #worldSelectScreen .world-info-card h3 {
+        font-size: 1.3rem;
+    }
+    
+    #worldSelectScreen .world-subtitle {
+        font-size: 0.85rem;
+    }
+}
+
+/* Ensure world preview canvas fits properly */
+#worldPreview canvas {
+    width: 100% !important;
+    height: 100% !important;
+    max-width: 100% !important;
+    max-height: 100% !important;
 }
 
 /* Animations for screen transitions */
@@ -3180,6 +3339,8 @@ body[data-game-state="playing"] #touchArea {
         height: 160px !important; /* Match new height */
     }
 }
+
+
 
 /* ==================== WORLD SELECT MOBILE FIX ==================== */
 @media (max-width: 768px) {
@@ -6153,9 +6314,19 @@ function initCharacterSelectScreen() {
     selectCamera.position.set(0, 0, 3);
     
     // Create a renderer that fits in the preview box
-    const characterSelectRenderer = new THREE.WebGLRenderer({ alpha: true, antialias: true });
-    characterSelectRenderer.setSize(400, 400);
-    characterSelectRenderer.setClearColor(0x000000, 0);
+    const characterSelectRenderer = new THREE.WebGLRenderer({ 
+    alpha: true, 
+    antialias: true,
+    preserveDrawingBuffer: true
+});
+    // Get the actual dimensions of the preview box
+const previewBox = document.getElementById('characterDisplay');
+const boxWidth = previewBox.offsetWidth || 400;
+const boxHeight = previewBox.offsetHeight || 300;
+
+characterSelectRenderer.setSize(boxWidth, boxHeight);
+characterSelectRenderer.setClearColor(0x000000, 0);
+characterSelectRenderer.setPixelRatio(Math.min(window.devicePixelRatio, 2)); // Optimize for performance
     
     // Add renderer to the character display div
     characterDisplay.appendChild(characterSelectRenderer.domElement);
@@ -6221,9 +6392,10 @@ function initCharacterSelectScreen() {
             
             console.log(`✅ Created character: ${charType}`, charModel);
             
-            // Scale and position
-            charModel.scale.set(1.5, 1.5, 1.5);
-            charModel.position.set(0, 0, 0);
+            // Scale and position - responsive to screen size
+const baseScale = Math.min(window.innerHeight / 800, 1.5);
+charModel.scale.set(baseScale, baseScale, baseScale);
+charModel.position.set(0, -0.2, 0); // Slightly lower in the frame
             charModel.visible = false; // Hide all initially
             
             // Add to scene
@@ -6505,9 +6677,20 @@ function initWorldSelectScreen() {
     worldSelectCamera.lookAt(0, 0, 0);
     
     // Create a renderer
-    worldSelectRenderer = new THREE.WebGLRenderer({ alpha: true, antialias: true });
-    worldSelectRenderer.setSize(500, 300);
-    worldSelectRenderer.setClearColor(0x000000, 0);
+worldSelectRenderer = new THREE.WebGLRenderer({ 
+    alpha: true, 
+    antialias: true,
+    preserveDrawingBuffer: true
+});
+
+// Get the actual dimensions of the preview box
+const worldPreviewBox = document.getElementById('worldPreview');
+const boxWidth = worldPreviewBox.offsetWidth || 500;
+const boxHeight = worldPreviewBox.offsetHeight || 300;
+
+worldSelectRenderer.setSize(boxWidth, boxHeight);
+worldSelectRenderer.setClearColor(0x000000, 0);
+worldSelectRenderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
     
     // Style the renderer
     worldSelectRenderer.domElement.style.position = 'absolute';
@@ -10302,6 +10485,22 @@ if (renderer && renderer.domElement) {
     // NUCLEAR PARTICLE CLEANUP BEFORE GAME START
 nuclearParticleCleanup();
 
+// ADD THIS: More aggressive particle cleanup
+    console.log('🧹 Cleaning up particles for gameplay...');
+    
+    // Destroy particle system
+    if (window.titleParticleSystem) {
+        window.titleParticleSystem.destroy();
+        window.titleParticleSystem = null;
+    }
+    
+    // Remove ALL particle canvases
+    const allCanvases = document.querySelectorAll('#particle-canvas');
+    allCanvases.forEach(canvas => {
+        canvas.remove();
+        console.log('Removed particle canvas');
+    });
+
 // Reset power-up states at game start
 shieldActive = false;
 coinMultiplierActive = false;
@@ -12429,6 +12628,14 @@ function shouldAnimateObject(object, maxDistance = 15) {
         // Game animation loop
         function animate() {
     requestAnimationFrame(animate);
+
+    // ADD THIS: Check if particles are running during gameplay
+    if (gameState === "playing" && titleParticleSystem && titleParticleSystem.animationId) {
+        console.warn('⚠️ Particles still running during gameplay!');
+        // Force stop them
+        titleParticleSystem.destroy();
+        titleParticleSystem = null;
+    }
 
     // For title and main menu, let particles run but skip game rendering
     if (gameState === "title" || gameState === "mainMenu") {
