@@ -10559,8 +10559,21 @@ function forceCleanupParticles() {
         
         function startGame() {
 
+    
+
                 // ADD THIS LINE AT THE START
     saveGameData(); // Save current state when starting
+
+    // Kill particles immediately
+    if (titleParticleSystem) {
+        titleParticleSystem.destroy();
+        titleParticleSystem = null;
+        const canvas = document.getElementById('particle-canvas');
+        if (canvas) {
+            canvas.style.display = 'none';
+            canvas.remove();
+        }
+    }
 
     // Show the game renderer
 if (renderer && renderer.domElement) {
@@ -11803,6 +11816,13 @@ function fastCollisionCheck(object1, object2, threshold = 3.0) {
 
         // Optimized collision detection with caching
 function checkCollision(object) {
+
+    // Quick reject if too far
+    if (Math.abs(player.position.x - object.position.x) > 2) return false;
+    if (Math.abs(player.position.z - object.position.z) > 2) return false;
+    
+    // Only then do expensive collision check
+
     // For coins and power-ups, use simple distance-based collision (faster)
     const isCoin = coins.includes(object) || rareCoins.includes(object);
     const isPowerUp = powerUps.includes(object);
@@ -12744,13 +12764,7 @@ function shouldAnimateObject(object, maxDistance = 15) {
         function animate() {
     requestAnimationFrame(animate);
 
-    // ADD THIS: Check if particles are running during gameplay
-    if (gameState === "playing" && titleParticleSystem && titleParticleSystem.animationId) {
-        debugWarn('⚠️ Particles still running during gameplay!');
-        // Force stop them
-        titleParticleSystem.destroy();
-        titleParticleSystem = null;
-    }
+    
 
     // For title and main menu, let particles run but skip game rendering
     if (gameState === "title" || gameState === "mainMenu") {
