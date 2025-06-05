@@ -1460,6 +1460,8 @@ let dragonFireCooldown = 0;
 let ghostPhaseActive = false;
 let ghostPhaseCharges = 0;
 let ghostPhaseCooldown = 0;
+
+
         
         // Dynamic difficulty variables (time-based)
         let baseSpeed = 0.25;                    // Starting speed
@@ -1534,6 +1536,27 @@ let characterNames = [
     "apple", "carrot", "pumpkin", "happyface", "monster", "atom", "slime", "ufo", "robot", "dragon", "ghost", "creature"
     // END CHARACTER ROSTER INJECTION POINT
 ];
+
+// ==================== DEBUG SYSTEM ====================
+// Control all console logging from one place
+let DEBUG_MODE = false; // Set to true only when debugging
+
+function debug(message, ...args) {
+    if (DEBUG_MODE) {
+        debug(message, ...args);
+    }
+}
+
+function debugWarn(message, ...args) {
+    if (DEBUG_MODE) {
+        debugWarn(message, ...args);
+    }
+}
+
+function debugError(message, ...args) {
+    // Always show errors
+    console.error(message, ...args);
+}
 
 // World system variables
 let currentWorld = "classic";
@@ -1906,7 +1929,7 @@ if (currentSpeedLevel >= 3) {
                     updateSpeedIndicator();
                     
                     // Debug log to see what's happening
-                    console.log(`Speed Level: ${currentSpeedLevel}, Speed: ${currentSpeed.toFixed(2)}, Obstacle Rate: ${currentObstacleSpawnRate}, Stream Rate: ${currentStreamSpawnRate}`);
+                    debug(`Speed Level: ${currentSpeedLevel}, Speed: ${currentSpeed.toFixed(2)}, Obstacle Rate: ${currentObstacleSpawnRate}, Stream Rate: ${currentStreamSpawnRate}`);
                 }
             }
         }
@@ -1966,7 +1989,7 @@ function updateSpeedIndicator() {
             updateSpeedIndicator();
             
             // Debug log to confirm reset
-            console.log(`Game Reset - Speed: ${currentSpeed}, Obstacle Rate: ${currentObstacleSpawnRate}, Stream Rate: ${currentStreamSpawnRate}`);
+            debug(`Game Reset - Speed: ${currentSpeed}, Obstacle Rate: ${currentObstacleSpawnRate}, Stream Rate: ${currentStreamSpawnRate}`);
         }
         
         // Check if it's a mobile device
@@ -2084,11 +2107,11 @@ let targetMusicIntensity = 0;
     
     // Show the title screen
 document.getElementById('titleScreen').style.display = 'flex';
-console.log('Title screen should be visible now'); // Debug log
+debug('Title screen should be visible now'); // Debug log
 
 // Initialize the title screen
 initTitleScreen();
-console.log('Title screen initialized'); // Debug log
+debug('Title screen initialized'); // Debug log
             
             // Initialize new save system
 initializeSaveSystem();
@@ -2302,7 +2325,7 @@ function initializeJukebox() {
     document.getElementById('previewTrackBtn').addEventListener('click', previewSelectedTrack);
     document.getElementById('applyTrackBtn').addEventListener('click', applySelectedTrack);
     
-    console.log('🎵 Jukebox system initialized!');
+    debug('🎵 Jukebox system initialized!');
 }
 
 // Select a track in the jukebox
@@ -2328,13 +2351,13 @@ function selectTrack(trackId) {
     // Add selected class to clicked track
     document.querySelector(`[data-track-id="${trackId}"]`).classList.add('selected');
     
-    console.log(`🎵 Selected track: ${trackId}`);
+    debug(`🎵 Selected track: ${trackId}`);
 }
 
 // Preview the selected track
 // Preview the selected track
 function previewSelectedTrack() {
-    console.log(`🎧 Previewing track: ${selectedTrack}`);
+    debug(`🎧 Previewing track: ${selectedTrack}`);
     
     // Stop any existing preview
     if (window.previewMusic && window.previewMusic.playing) {
@@ -2343,7 +2366,7 @@ function previewSelectedTrack() {
     
     // Don't preview if it's already the current track
     if (selectedTrack === currentTrack && musicPlaying) {
-        console.log('🎵 Track already playing - no preview needed!');
+        debug('🎵 Track already playing - no preview needed!');
         alert(`🎵 "${availableTracks.find(t => t.id === selectedTrack)?.name}" is already playing!`);
         return;
     }
@@ -2373,7 +2396,7 @@ function startPreview(trackId) {
     }
     
     try {
-        console.log(`🎧 Starting preview of: ${trackId}`);
+        debug(`🎧 Starting preview of: ${trackId}`);
         
         // Create preview music layers
         window.previewMusic = {
@@ -2403,7 +2426,7 @@ function startPreview(trackId) {
             Tone.Transport.start();
         }
         
-        console.log(`✅ Preview started for: ${availableTracks.find(t => t.id === trackId)?.name}`);
+        debug(`✅ Preview started for: ${availableTracks.find(t => t.id === trackId)?.name}`);
         
     } catch (error) {
         console.error('❌ Error starting preview:', error);
@@ -2413,7 +2436,7 @@ function startPreview(trackId) {
 
 // Stop preview
 function stopPreview() {
-    console.log('🛑 Stopping preview...');
+    debug('🛑 Stopping preview...');
     
     if (window.previewMusic && window.previewMusic.layers) {
         // Stop and dispose all preview patterns
@@ -2441,12 +2464,12 @@ function stopPreview() {
     previewBtn.textContent = '🎧 Preview';
     previewBtn.onclick = previewSelectedTrack;
     
-    console.log('✅ Preview stopped');
+    debug('✅ Preview stopped');
 }
 
 // Preview versions of each track (shorter, simpler versions)
 function createPreviewMedieval() {
-    console.log('🎧 Creating medieval preview...');
+    debug('🎧 Creating medieval preview...');
     
     // Just drums and lute for preview
     const drumSynth = new Tone.MembraneSynth({
@@ -2482,7 +2505,7 @@ function createPreviewMedieval() {
 }
 
 function createPreviewElectronic() {
-    console.log('🎧 Creating electronic preview...');
+    debug('🎧 Creating electronic preview...');
     
     // Kick and lead synth for preview
     const kickSynth = new Tone.MembraneSynth({
@@ -2521,7 +2544,7 @@ function createPreviewElectronic() {
 }
 
 function createPreviewAmbient() {
-    console.log('🎧 Creating ambient preview...');
+    debug('🎧 Creating ambient preview...');
     
     // Drone and bells for preview
     const droneSynth = new Tone.Synth({
@@ -2564,11 +2587,11 @@ function createPreviewAmbient() {
 // Apply the selected track
 function applySelectedTrack() {
     if (selectedTrack === currentTrack) {
-        console.log('🎵 Track already playing!');
+        debug('🎵 Track already playing!');
         return;
     }
     
-    console.log(`🎵 Switching from ${currentTrack} to ${selectedTrack}`);
+    debug(`🎵 Switching from ${currentTrack} to ${selectedTrack}`);
     
     // Stop current music
     if (musicPlaying) {
@@ -2592,7 +2615,7 @@ function applySelectedTrack() {
     // Save preference
     saveGameData('settings_change');
     
-    console.log(`✅ Successfully switched to: ${availableTracks.find(t => t.id === currentTrack)?.name}`);
+    debug(`✅ Successfully switched to: ${availableTracks.find(t => t.id === currentTrack)?.name}`);
 }
         
 // Leaderboard functions - Updated with data preservation
@@ -2616,7 +2639,7 @@ function mergeLeaderboards() {
     localStorage.setItem('runningBlitzLeaderboard', JSON.stringify(uniqueLeaderboard));
     localStorage.setItem('endlessRunnerLeaderboard', JSON.stringify(uniqueLeaderboard));
     
-    console.log('Leaderboards merged:', uniqueLeaderboard);
+    debug('Leaderboards merged:', uniqueLeaderboard);
     return uniqueLeaderboard;
 }
 
@@ -2700,7 +2723,7 @@ function formatDate(dateString) {
     // Clear the input for next time
     document.getElementById('playerNameInput').value = '';
     
-    console.log('Score saved to leaderboard!', leaderboard);
+    debug('Score saved to leaderboard!', leaderboard);
 
     // ADD THIS LINE - Submit to global leaderboard
     submitToGlobalLeaderboard(playerName, currentScore, currentCharacter);
@@ -2726,7 +2749,7 @@ let playerGlobalRank = null;
 // Submit score to global leaderboard
 function submitToGlobalLeaderboard(playerName, score, character) {
     if (!cloudSaveEnabled || !playerId) {
-        console.log('⚠️ Cannot submit to global leaderboard - cloud save not available');
+        debug('⚠️ Cannot submit to global leaderboard - cloud save not available');
         return;
     }
     
@@ -2743,7 +2766,7 @@ function submitToGlobalLeaderboard(playerName, score, character) {
     // Submit to Firebase global leaderboard
     firebase.database().ref('globalLeaderboard').push(globalEntry)
         .then(() => {
-            console.log('🏆 Score submitted to global leaderboard!');
+            debug('🏆 Score submitted to global leaderboard!');
             loadGlobalLeaderboard(); // Refresh to see new rankings
         })
         .catch((error) => {
@@ -2768,13 +2791,13 @@ function loadGlobalLeaderboard() {
                     .sort((a, b) => b.score - a.score)
                     .slice(0, 50); // Keep top 50
                 
-                console.log(`🌍 Loaded ${globalLeaderboard.length} global scores`);
+                debug(`🌍 Loaded ${globalLeaderboard.length} global scores`);
                 
                 // Find player's rank
                 findPlayerGlobalRank();
             } else {
                 globalLeaderboard = [];
-                console.log('🌍 No global scores found - be the first!');
+                debug('🌍 No global scores found - be the first!');
             }
         })
         .catch((error) => {
@@ -2796,7 +2819,7 @@ function findPlayerGlobalRank() {
     }
     
     if (playerGlobalRank) {
-        console.log(`🏆 Your global rank: #${playerGlobalRank}`);
+        debug(`🏆 Your global rank: #${playerGlobalRank}`);
     }
 }
 
@@ -3014,7 +3037,7 @@ function createTitleScreenParticles() {
     characterTitleScene.add(particles); // Changed from window.titleScene
     characterTitleScene.userData.particles = particles; // Changed from window.titleScene
     
-    console.log('✨ Title screen particles created!'); // Debug log
+    debug('✨ Title screen particles created!'); // Debug log
 }
 
 // Animate title screen particles
@@ -3080,7 +3103,7 @@ function initTitleScreen() {
     titleRenderer.domElement.style.zIndex = '1';
     titleRenderer.domElement.style.pointerEvents = 'none'; // Allow clicks to pass through
     titleCanvas.appendChild(titleRenderer.domElement);
-    console.log('Title renderer canvas added to DOM'); // Debug log
+    debug('Title renderer canvas added to DOM'); // Debug log
     
     // Add lights to the title scene
     const ambientLight = new THREE.AmbientLight(0xffffff, 0.6);
@@ -3167,7 +3190,7 @@ function initTitleScreen() {
                         try {
                             charObj.model.lookAt(charObj.model.position.x, charObj.model.position.y, 5);
                         } catch (error) {
-                            console.warn('Error making character face outward:', error);
+                            debugWarn('Error making character face outward:', error);
                             charObj.model.rotation.z = 0;
                         }
                     }
@@ -3192,7 +3215,7 @@ createTitleScreenParticles();
 if (typeof createTitleParticles === 'function') {
     createTitleParticles();
 } else {
-    console.log('CSS particles already handling title screen effects');
+    debug('CSS particles already handling title screen effects');
 }
     
     // Add event listener to the start button
@@ -3204,7 +3227,7 @@ setTimeout(() => {
         const newStartButton = document.getElementById('titleStartButton');
         
         newStartButton.addEventListener('click', function() {
-            console.log('Start button clicked!');
+            debug('Start button clicked!');
             
             // Stop particles when leaving title screen (if function exists)
             if (typeof clearTitleParticles === 'function') {
@@ -3221,9 +3244,9 @@ setTimeout(() => {
             // Update game state
             gameState = "characterSelect";
         });
-        console.log('Start button event listener added successfully!');
+        debug('Start button event listener added successfully!');
     } else {
-        console.log('Start button not found!');
+        debug('Start button not found!');
     }
 }, 500); // Increased timeout to ensure DOM is ready
 
@@ -3259,7 +3282,7 @@ function createTitleCharacters() {
     case "creature": charModel = createCreatureCharacter(); break;
     // END CHARACTER SELECTION SWITCH INJECTION POINT
             default:
-                console.warn(`Unknown character type: ${charType}, using happyface instead`);
+                debugWarn(`Unknown character type: ${charType}, using happyface instead`);
                 charModel = createHappyFaceCharacter();
                 break;
         }
@@ -3370,7 +3393,7 @@ characterNames.forEach(charType => {
     case "creature": charModel = createCreatureCharacter(); break;
     // END CHARACTER SELECTION SWITCH INJECTION POINT
     default:
-        console.warn(`Character ${charType} not yet extracted - using Happy Face`);
+        debugWarn(`Character ${charType} not yet extracted - using Happy Face`);
         charModel = createHappyFaceCharacter();
         break;
 }
@@ -3381,7 +3404,7 @@ characterNames.forEach(charType => {
             charModel = createAppleCharacter();
         }
 
-        console.log(`✅ Created character: ${charType}`, charModel);
+        debug(`✅ Created character: ${charType}`, charModel);
         
         // Scale and position
 charModel.scale.set(1.5, 1.5, 1.5);
@@ -3396,7 +3419,7 @@ charModel.visible = false; // Hide all initially
             type: charType
         });
         
-        console.log(`✅ Created character: ${charType}`);
+        debug(`✅ Created character: ${charType}`);
         
     } catch (error) {
         console.error(`❌ Error creating character ${charType}:`, error);
@@ -4015,7 +4038,7 @@ function applyWorldSettings(world) {
     // IMPORTANT: Recreate the ground with the new world theme
     recreateGroundForWorld();
     
-    console.log(`Applied settings for world: ${world.name}`);
+    debug(`Applied settings for world: ${world.name}`);
 }
 
 // Recreate ground and background with current world theme
@@ -4039,7 +4062,7 @@ function recreateGroundForWorld() {
     createGround();
     createBackground();
     
-    console.log(`Ground and background recreated for world: ${currentWorld}`);
+    debug(`Ground and background recreated for world: ${currentWorld}`);
 }
 
 // Remove old background elements when switching worlds
@@ -4074,7 +4097,7 @@ function removeOldBackground() {
         scene.remove(element);
     });
     
-    console.log(`Removed ${elementsToRemove.length} old background elements`);
+    debug(`Removed ${elementsToRemove.length} old background elements`);
 }
 
         // Update character info display
@@ -5262,7 +5285,7 @@ function applyDifficultyOverride() {
         // Update visual speed indicator
         updateSpeedIndicator();
         
-        console.log(`Forced Level: ${currentSpeedLevel}, Speed: ${currentSpeed.toFixed(2)}, Obstacle Rate: ${currentObstacleSpawnRate}`);
+        debug(`Forced Level: ${currentSpeedLevel}, Speed: ${currentSpeed.toFixed(2)}, Obstacle Rate: ${currentObstacleSpawnRate}`);
     }
 }
         
@@ -6016,7 +6039,7 @@ if (currentWorld === 'desert') {
     case "creature": player = createCreatureCharacter(); break;
     // END CREATE PLAYER SWITCH INJECTION POINT
     default:
-        console.warn(`Character ${currentCharacter} not yet extracted - using Happy Face`);
+        debugWarn(`Character ${currentCharacter} not yet extracted - using Happy Face`);
         currentCharacter = "happyface";
         player = createHappyFaceCharacter();
         break;
@@ -6109,7 +6132,7 @@ function signInWithGoogle() {
     
     firebase.auth().signInWithPopup(provider)
         .then((result) => {
-            console.log('✅ Google sign-in successful!');
+            debug('✅ Google sign-in successful!');
             const user = result.user;
             
             // Update player info
@@ -6117,8 +6140,8 @@ function signInWithGoogle() {
             isGoogleUser = true;
             cloudSaveEnabled = true;
             
-            console.log('👤 Signed in as:', user.displayName);
-            console.log('📧 Email:', user.email);
+            debug('👤 Signed in as:', user.displayName);
+            debug('📧 Email:', user.email);
             
             // Merge anonymous data with Google account
             mergeAnonymousDataToGoogleAccount();
@@ -6150,7 +6173,7 @@ function signInWithGoogle() {
 function mergeAnonymousDataToGoogleAccount() {
     if (!currentProfile || !playerId) return;
     
-    console.log('🔄 Merging anonymous data to Google account...');
+    debug('🔄 Merging anonymous data to Google account...');
     
     // Check if Google account already has data
     firebase.database().ref('profiles/' + playerId + '/Default').once('value')
@@ -6174,14 +6197,14 @@ function mergeAnonymousDataToGoogleAccount() {
                 }
             } else {
                 // No Google data - upload current progress
-                console.log('📤 Uploading current progress to Google account...');
+                debug('📤 Uploading current progress to Google account...');
                 saveProfile();
             }
             
             showSaveIndicator('☁️ Google Synced');
         })
         .catch((error) => {
-            console.log('⚠️ Merge failed, saving current data:', error);
+            debug('⚠️ Merge failed, saving current data:', error);
             saveProfile();
         });
 }
@@ -6190,7 +6213,7 @@ function mergeAnonymousDataToGoogleAccount() {
 function signOutGoogle() {
     firebase.auth().signOut()
         .then(() => {
-            console.log('👋 Signed out of Google');
+            debug('👋 Signed out of Google');
             
             // Revert to anonymous auth
             initializeCloudSave();
@@ -6228,7 +6251,7 @@ function generateSaveCode() {
         const codeBase = encoded.substring(0, 12).toUpperCase();
         const saveCode = `BLITZ-${codeBase.substring(0, 4)}-${codeBase.substring(4, 8)}-${codeBase.substring(8, 12)}`;
         
-        console.log('💾 Save code generated:', saveCode);
+        debug('💾 Save code generated:', saveCode);
         return { code: saveCode, fullData: encoded };
         
     } catch (error) {
@@ -6254,7 +6277,7 @@ function useSaveCode(saveCode, fullData = null) {
         }
         
         if (decodedData.version !== SAVE_VERSION) {
-            console.log('⚠️ Save code is from different version, attempting migration...');
+            debug('⚠️ Save code is from different version, attempting migration...');
         }
         
         // Validate the data
@@ -6262,9 +6285,9 @@ function useSaveCode(saveCode, fullData = null) {
             throw new Error('Invalid save code data');
         }
         
-        console.log('📥 Restoring save from code...');
-        console.log(`💰 Restoring ${decodedData.profile.totalCoins} coins`);
-        console.log(`👤 Restoring character: ${decodedData.profile.currentCharacter}`);
+        debug('📥 Restoring save from code...');
+        debug(`💰 Restoring ${decodedData.profile.totalCoins} coins`);
+        debug(`👤 Restoring character: ${decodedData.profile.currentCharacter}`);
         
         // Apply the restored profile
         currentProfile = validateAndMigrateProfile(decodedData.profile);
@@ -6374,8 +6397,8 @@ function restoreFromInputs() {
     try {
         const decodedData = JSON.parse(atob(data));
         
-        console.log('📥 Restoring save from code...');
-        console.log(`💰 Restoring ${decodedData.profile.totalCoins} coins`);
+        debug('📥 Restoring save from code...');
+        debug(`💰 Restoring ${decodedData.profile.totalCoins} coins`);
         
         currentProfile = validateAndMigrateProfile(decodedData.profile);
         currentProfileName = decodedData.profileName || "Restored";
@@ -6563,13 +6586,13 @@ function initializeCloudSave() {
         .then((userCredential) => {
             playerId = userCredential.user.uid;
             cloudSaveEnabled = true;
-            console.log('🔥 Cloud save enabled! Player ID:', playerId.substring(0, 8) + '...');
+            debug('🔥 Cloud save enabled! Player ID:', playerId.substring(0, 8) + '...');
             
             // Try to sync existing profile with cloud
             syncProfileWithCloud();
         })
         .catch((error) => {
-            console.log('⚠️ Cloud save unavailable, using local storage:', error);
+            debug('⚠️ Cloud save unavailable, using local storage:', error);
             cloudSaveEnabled = false;
         });
 }
@@ -6618,21 +6641,21 @@ function syncProfileWithCloud() {
                 const localTime = new Date(currentProfile.lastPlayed || 0).getTime();
                 
                 if (cloudTime > localTime) {
-                    console.log('☁️ Cloud profile is newer, syncing down...');
+                    debug('☁️ Cloud profile is newer, syncing down...');
                     currentProfile = validateAndMigrateProfile(cloudProfile);
                     syncProfileToGameState();
                     showSaveIndicator('☁️ Cloud Synced');
                 } else {
-                    console.log('💾 Local profile is newer, syncing up...');
+                    debug('💾 Local profile is newer, syncing up...');
                     saveProfile(); // This will upload to cloud
                 }
             } else {
-                console.log('☁️ No cloud profile found, uploading local...');
+                debug('☁️ No cloud profile found, uploading local...');
                 saveProfile(); // Upload current profile to cloud
             }
         })
         .catch((error) => {
-            console.log('⚠️ Cloud sync failed:', error);
+            debug('⚠️ Cloud sync failed:', error);
         });
 }
 
@@ -6640,7 +6663,7 @@ function syncProfileWithCloud() {
 
 // Initialize save system
 function initializeSaveSystem() {
-    console.log('🗄️ Initializing future-proof save system...');
+    debug('🗄️ Initializing future-proof save system...');
     
     // Check for legacy save data and migrate
     migrateLegacySaveData();
@@ -6660,7 +6683,7 @@ function initializeSaveSystem() {
         }
     }, 3000);
     
-    console.log('✅ Save system initialized successfully!');
+    debug('✅ Save system initialized successfully!');
 }
 
 // Migrate old save data to new profile system
@@ -6669,7 +6692,7 @@ function migrateLegacySaveData() {
         // Check if migration has already been completed
         const migrationComplete = localStorage.getItem('runningBlitzEndlessRunner_migrationComplete');
         if (migrationComplete) {
-            console.log('ℹ️ Legacy migration already completed - skipping');
+            debug('ℹ️ Legacy migration already completed - skipping');
             return;
         }
         
@@ -6678,7 +6701,7 @@ function migrateLegacySaveData() {
         const legacyLeaderboard = localStorage.getItem('endlessRunnerLeaderboard');
         
         if (legacySaveData) {
-            console.log('📦 Found legacy save data - migrating...');
+            debug('📦 Found legacy save data - migrating...');
             
             const oldData = JSON.parse(legacySaveData);
             
@@ -6715,7 +6738,7 @@ function migrateLegacySaveData() {
                     const oldLeaderboard = JSON.parse(legacyLeaderboard);
                     migratedProfile.personalBests = oldLeaderboard;
                 } catch (e) {
-                    console.log('⚠️ Could not migrate leaderboard data');
+                    debug('⚠️ Could not migrate leaderboard data');
                 }
             }
             
@@ -6724,9 +6747,9 @@ function migrateLegacySaveData() {
             localStorage.setItem(saveKey, JSON.stringify(migratedProfile));
             updateProfileList("Default");
             
-            console.log('✅ Legacy data migrated successfully!');
-            console.log(`💰 Restored ${migratedProfile.totalCoins} coins`);
-            console.log(`👤 Restored character: ${migratedProfile.currentCharacter}`);
+            debug('✅ Legacy data migrated successfully!');
+            debug(`💰 Restored ${migratedProfile.totalCoins} coins`);
+            debug(`👤 Restored character: ${migratedProfile.currentCharacter}`);
             
             // Keep the old data for a while as backup, but mark it as migrated
             localStorage.setItem('endlessRunnerData_migrated', legacySaveData);
@@ -6735,14 +6758,14 @@ function migrateLegacySaveData() {
             localStorage.setItem('runningBlitzEndlessRunner_migrationComplete', 'true');
             
         } else {
-            console.log('ℹ️ No legacy save data found - starting fresh');
+            debug('ℹ️ No legacy save data found - starting fresh');
             // Still mark migration as complete so we don't check again
             localStorage.setItem('runningBlitzEndlessRunner_migrationComplete', 'true');
         }
         
     } catch (error) {
         console.error('❌ Error during legacy migration:', error);
-        console.log('🔄 Creating fresh profile instead');
+        debug('🔄 Creating fresh profile instead');
         // Mark migration as complete even if it failed
         localStorage.setItem('runningBlitzEndlessRunner_migrationComplete', 'true');
     }
@@ -6806,13 +6829,13 @@ function saveProfile(profileName = currentProfileName, saveReason = 'general') {
         if (cloudSaveEnabled && playerId) {
             firebase.database().ref('profiles/' + playerId + '/' + profileName).set(currentProfile)
                 .then(() => {
-                    console.log(`☁️ Profile "${profileName}" saved to cloud! (${saveReason})`);
+                    debug(`☁️ Profile "${profileName}" saved to cloud! (${saveReason})`);
                     if (showIndicator) {
                         showSaveIndicator('☁️ Progress Saved');
                     }
                 })
                 .catch((error) => {
-                    console.log('⚠️ Cloud save failed, local backup saved:', error);
+                    debug('⚠️ Cloud save failed, local backup saved:', error);
                     if (showIndicator) {
                         showSaveIndicator('💾 Local Saved');
                     }
@@ -6823,7 +6846,7 @@ function saveProfile(profileName = currentProfileName, saveReason = 'general') {
             }
         }
         
-        console.log(`💾 Profile "${profileName}" saved successfully! (${saveReason})`);
+        debug(`💾 Profile "${profileName}" saved successfully! (${saveReason})`);
         return true;
         
     } catch (error) {
@@ -6839,7 +6862,7 @@ function loadProfile(profileName) {
         const savedData = localStorage.getItem(saveKey);
         
         if (savedData) {
-            console.log(`📂 Loading profile "${profileName}"...`);
+            debug(`📂 Loading profile "${profileName}"...`);
             
             const profile = JSON.parse(savedData);
             
@@ -6850,13 +6873,13 @@ function loadProfile(profileName) {
             // Apply profile data to game state
             syncProfileToGameState();
             
-            console.log(`✅ Profile "${profileName}" loaded successfully!`);
-console.log(`💰 Current balance: ${currentProfile.totalCoins} coins`);
-console.log(`👤 Current character: ${currentProfile.currentCharacter}`);
+            debug(`✅ Profile "${profileName}" loaded successfully!`);
+debug(`💰 Current balance: ${currentProfile.totalCoins} coins`);
+debug(`👤 Current character: ${currentProfile.currentCharacter}`);
             
         } else {
             // Create new profile
-            console.log(`🆕 Creating new profile "${profileName}"...`);
+            debug(`🆕 Creating new profile "${profileName}"...`);
             
             currentProfile = createProfile(profileName);
             currentProfileName = profileName;
@@ -6884,7 +6907,7 @@ console.log(`👤 Current character: ${currentProfile.currentCharacter}`);
 
 // Validate and migrate profile data
 function validateAndMigrateProfile(profile) {
-    console.log(`🔄 Validating profile (version: ${profile.version || 'unknown'})...`);
+    debug(`🔄 Validating profile (version: ${profile.version || 'unknown'})...`);
     
     // Create a clean profile with current structure
     const migratedProfile = JSON.parse(JSON.stringify(DEFAULT_PROFILE));
@@ -6950,7 +6973,7 @@ if (profile.unlockedWorlds) {
     // Update version
     migratedProfile.version = SAVE_VERSION;
     
-    console.log('✅ Profile validation and migration completed!');
+    debug('✅ Profile validation and migration completed!');
     return migratedProfile;
 }
 
@@ -6958,9 +6981,9 @@ if (profile.unlockedWorlds) {
 function syncGameStateToProfile() {
     if (!currentProfile) return;
 
-    console.log('🔄 Syncing game state to profile...');
-    console.log('Current totalCoins in game:', totalCoins);
-    console.log('Current totalCoins in profile before sync:', currentProfile.totalCoins);
+    debug('🔄 Syncing game state to profile...');
+    debug('Current totalCoins in game:', totalCoins);
+    debug('Current totalCoins in profile before sync:', currentProfile.totalCoins);
     
     currentProfile.totalCoins = totalCoins;
     currentProfile.currentCharacter = currentCharacter;
@@ -6972,7 +6995,7 @@ function syncGameStateToProfile() {
     currentProfile.modModeEnabled = modModeEnabled;
     currentProfile.currentTrack = currentTrack;
 
-    console.log('Current totalCoins in profile after sync:', currentProfile.totalCoins);
+    debug('Current totalCoins in profile after sync:', currentProfile.totalCoins);
 
     
     // Update high score
@@ -6988,9 +7011,9 @@ function syncGameStateToProfile() {
 function syncProfileToGameState() {
     if (!currentProfile) return;
 
-    console.log('📂 Syncing profile to game state...');
-    console.log('Profile totalCoins:', currentProfile.totalCoins);
-    console.log('Game totalCoins before sync:', totalCoins);
+    debug('📂 Syncing profile to game state...');
+    debug('Profile totalCoins:', currentProfile.totalCoins);
+    debug('Game totalCoins before sync:', totalCoins);
     
     totalCoins = currentProfile.totalCoins || 0;
     currentCharacter = currentProfile.currentCharacter || 'apple';
@@ -7003,7 +7026,7 @@ function syncProfileToGameState() {
     currentTrack = currentProfile.currentTrack || 'ambient';
     selectedTrack = currentTrack;
 
-    console.log('Game totalCoins after sync:', totalCoins);
+    debug('Game totalCoins after sync:', totalCoins);
 
     
     // Sync leaderboard
@@ -7174,7 +7197,7 @@ function importProfile(exportedData, newProfileName = null) {
         
         updateProfileList(profileName);
         
-        console.log(`📥 Profile "${profileName}" imported successfully!`);
+        debug(`📥 Profile "${profileName}" imported successfully!`);
         return true;
         
     } catch (error) {
@@ -7257,13 +7280,13 @@ if (selectedWorld) {
             updateScore();
 
 // Start background music with debugging and fallback
-console.log('🎵 Attempting to start background music...');
-console.log('🎵 Audio initialized:', audioInitialized);
-console.log('🎵 Background music enabled:', backgroundMusicEnabled);
-console.log('🎵 Music playing:', musicPlaying);
+debug('🎵 Attempting to start background music...');
+debug('🎵 Audio initialized:', audioInitialized);
+debug('🎵 Background music enabled:', backgroundMusicEnabled);
+debug('🎵 Music playing:', musicPlaying);
 
 if (!backgroundMusic) {
-    console.log('🎵 Creating background music...');
+    debug('🎵 Creating background music...');
     createBackgroundMusic();
 }
 startBackgroundMusic();
@@ -7271,7 +7294,7 @@ startBackgroundMusic();
 // Fallback: try again after a short delay if music didn't start
 setTimeout(() => {
     if (!musicPlaying && backgroundMusicEnabled && audioInitialized) {
-        console.log('🎵 Fallback: Retrying music start...');
+        debug('🎵 Fallback: Retrying music start...');
         if (!backgroundMusic) {
             createBackgroundMusic();
         }
@@ -7308,7 +7331,7 @@ if (player && player.userData && player.userData.shieldEffect) {
 }
 
 // Force log to confirm reset
-console.log('Power-ups reset - Shield:', shieldActive, 'Multiplier:', coinMultiplierActive, 'Magnet:', magnetActive);
+debug('Power-ups reset - Shield:', shieldActive, 'Multiplier:', coinMultiplierActive, 'Magnet:', magnetActive);
             
             waterStreams.forEach(stream => scene.remove(stream));
             waterStreams = [];
@@ -7416,6 +7439,12 @@ dragonFireCooldown = 0;
                 toggleSettingsScreen();
                 return;
             }
+
+            // Add this to your keyboard controls
+            if (event.key === 'd' || event.key === 'D') {
+                DEBUG_MODE = !DEBUG_MODE;
+                console.log('Debug mode:', DEBUG_MODE ? 'ON' : 'OFF');
+            }
             
             if (!gameStarted || gamePaused) return;
         
@@ -7469,7 +7498,7 @@ function togglePause() {
                 
                 musicPlaying = false;
             } catch (error) {
-                console.log('Audio pause error (non-critical):', error);
+                debug('Audio pause error (non-critical):', error);
             }
         }
         
@@ -7478,7 +7507,7 @@ function togglePause() {
             try {
                 stopPreview();
             } catch (error) {
-                console.log('Preview stop error (non-critical):', error);
+                debug('Preview stop error (non-critical):', error);
             }
         }
         
@@ -7497,7 +7526,7 @@ function togglePause() {
                 createBackgroundMusic();
                 startBackgroundMusic();
             } catch (error) {
-                console.log('Audio resume error (non-critical):', error);
+                debug('Audio resume error (non-critical):', error);
             }
         }
     }
@@ -8335,7 +8364,7 @@ if (isAncientRuin) {
         mainPillar.getWorldPosition(pillarPos);
         
         const distance = playerPos.distanceTo(pillarPos);
-        console.log('🏛️ Ancient pillar distance check:', distance, 'Player at:', playerPos.x, 'Pillar at:', pillarPos.x);
+debug('🏛️ Ancient pillar distance check:', distance, 'Player at:', playerPos.x, 'Pillar at:', pillarPos.x);
         
         // Only check collision if player is very close to the pillar
         if (distance < 2.0) {
@@ -8353,13 +8382,13 @@ if (isAncientRuin) {
             
             // Can jump over pillars if high enough
             if (jumping && player.position.y > 1.2) {
-                console.log('🦘 Jumped over ancient pillar!');
+                debug('🦘 Jumped over ancient pillar!');
                 return false;
             }
             
             const collision = playerBox.intersectsBox(pillarBox);
             if (collision) {
-                console.log('🏛️ Hit ancient pillar!');
+                debug('🏛️ Hit ancient pillar!');
             }
             return collision;
         }
@@ -8386,16 +8415,16 @@ if (isQuicksand) {
         mainPit.getWorldPosition(pitPos);
         
         const distance = playerPos.distanceTo(pitPos);
-        console.log('🏜️ Quicksand distance check:', distance, 'Player at:', playerPos.x, 'Pit at:', pitPos.x);
+        debug('🏜️ Quicksand distance check:', distance, 'Player at:', playerPos.x, 'Pit at:', pitPos.x);
         
         // Only check collision if player is close to the pit center
         if (distance < 1.0) {
             // Can jump over quicksand if high enough
             if (jumping && player.position.y > 0.8) {
-                console.log('🦘 Jumped over quicksand!');
+                debug('🦘 Jumped over quicksand!');
                 return false;
             }
-            console.log('💥 Hit quicksand pit!');
+            debug('💥 Hit quicksand pit!');
             return true;
         }
         return false; // No collision if too far from pit center
@@ -8509,16 +8538,16 @@ if (isFallenTree) {
         
         // Only check collision if player is close to the trunk's actual position
         const distance = playerPos.distanceTo(trunkPos);
-        console.log('🌳 Fallen tree distance check:', distance, 'Player at:', playerPos.x, 'Trunk at:', trunkPos.x);
+        debug('🌳 Fallen tree distance check:', distance, 'Player at:', playerPos.x, 'Trunk at:', trunkPos.x);
         
         // Much stricter collision - only collide if very close to trunk center
         if (distance < 1.0) {
             // Can jump over fallen trees
             if (jumping && player.position.y > 1.0) {
-                console.log('🦘 Jumped over fallen tree!');
+                debug('🦘 Jumped over fallen tree!');
                 return false;
             }
-            console.log('💥 Hit fallen tree trunk!');
+            debug('💥 Hit fallen tree trunk!');
             return true;
         }
         return false; // No collision if too far from trunk
@@ -8549,7 +8578,7 @@ if (currentCharacter === 'robot') {
     // Check if this is an obstacle and player is jumping
     const isObstacle = obstacles.includes(object);
     if (isObstacle && jumping && player.position.y > 1.2) {
-        console.log('🦘 Robot jumped over obstacle at height:', player.position.y);
+        debug('🦘 Robot jumped over obstacle at height:', player.position.y);
         return false; // No collision with obstacles when jumping high enough
     }
     
@@ -8562,7 +8591,7 @@ if (currentCharacter === 'robot') {
         if (isObstacle || isStream || isMeteor) {
             // Create shield spark effect when blocking
             createShieldSparkEffect(object.position);
-            console.log('🤖 Robot shield blocked obstacle!');
+            debug('🤖 Robot shield blocked obstacle!');
             return false; // No collision when shield is active
         }
     }
@@ -8592,7 +8621,7 @@ if (currentCharacter === 'creature') {
     // Check if this is an obstacle and player is jumping
     const isObstacle = obstacles.includes(object);
     if (isObstacle && jumping && player.position.y > 1.2) {
-        console.log('🦘 Creature jumped over obstacle at height:', player.position.y);
+        debug('🦘 Creature jumped over obstacle at height:', player.position.y);
         return false; // No collision with obstacles when jumping high enough
     }
     
@@ -8753,7 +8782,7 @@ function endGame() {
         }
         
     } catch (error) {
-        console.log('Audio stop error (non-critical):', error);
+        debug('Audio stop error (non-critical):', error);
     }
 
     // Create explosion effect
@@ -8767,15 +8796,15 @@ function endGame() {
         document.getElementById('coinsCollected').textContent = `Final Balance: ${totalCoins} coins`;
         
         // Check if it's a high score and show input form if needed
-        console.log('🏆 Checking if score is high score:', score);
+        debug('🏆 Checking if score is high score:', score);
         const isHighScore = checkHighScore(score);
-        console.log('🏆 Is high score result:', isHighScore);
+        debug('🏆 Is high score result:', isHighScore);
 
         if (isHighScore) {
-            console.log('🏆 Showing name entry form');
+            debug('🏆 Showing name entry form');
             document.getElementById('newHighScoreMessage').style.display = 'block';
         } else {
-            console.log('🏆 Not a high score - hiding name entry');
+            debug('🏆 Not a high score - hiding name entry');
             document.getElementById('newHighScoreMessage').style.display = 'none';
         }
         
@@ -8792,8 +8821,8 @@ function checkHighScore(currentScore) {
     // It's a high score if leaderboard has less than 10 entries OR current score beats the lowest score
     const isHighScore = leaderboard.length < 10 || currentScore > (leaderboard[leaderboard.length - 1]?.score || 0);
     
-    console.log(`Checking high score: ${currentScore}, is high score: ${isHighScore}`);
-    console.log(`Need to beat: ${leaderboard[leaderboard.length - 1]?.score || 0}`);
+    debug(`Checking high score: ${currentScore}, is high score: ${isHighScore}`);
+    debug(`Need to beat: ${leaderboard[leaderboard.length - 1]?.score || 0}`);
     return isHighScore;
 }
 
@@ -8865,7 +8894,7 @@ if (currentCharacter === 'dragon') {
                     scene.remove(obstacle);
                     obstacles.splice(obstacles.indexOf(obstacle), 1);
                     
-                    console.log('🔥 Obstacle destroyed by dragon breath in lane', currentLane);
+                    debug('🔥 Obstacle destroyed by dragon breath in lane', currentLane);
                     dragonFireCooldown = 240; // 4 second cooldown
                     break;
                 }
@@ -8879,13 +8908,13 @@ if (currentCharacter === 'ghost') {
     // Initialize charges if starting fresh
     if (ghostPhaseCharges === 0 && ghostPhaseCooldown <= 0) {
         ghostPhaseCharges = 3;
-        console.log('👻 Ghost starting with 3 phase charges!');
+        debug('👻 Ghost starting with 3 phase charges!');
     }
     
     // Restore charges over time (one charge every 5 seconds)
     if (ghostPhaseCharges < 3 && ghostPhaseCooldown <= 0) {
         ghostPhaseCooldown = 300; // 5 seconds to restore next charge
-        console.log('👻 Ghost charge restoration started...');
+        debug('👻 Ghost charge restoration started...');
     }
     
     // Auto-activate phase when about to hit obstacle (if charges available)
@@ -8923,7 +8952,7 @@ function activateRobotShield() {
     robotShieldActive = true;
     robotShieldCooldown = 600; // 10 second cooldown
     
-    console.log('🤖 Robot electromagnetic shield activated!');
+    debug('🤖 Robot electromagnetic shield activated!');
     
     // Visual effect - create bright shield dome and brighten particles
     createRobotShieldDome();
@@ -8940,7 +8969,7 @@ function activateRobotShield() {
 
 function deactivateRobotShield() {
     robotShieldActive = false;
-    console.log('🤖 Robot shield deactivated - cooldown: 10 seconds');
+    debug('🤖 Robot shield deactivated - cooldown: 10 seconds');
     
     // Remove shield dome
     if (player.userData.shieldDome) {
@@ -9011,7 +9040,7 @@ function activateDragonFire() {
     dragonFireActive = true;
     dragonFireCooldown = 480; // 8 second cooldown
     
-    console.log('🐉 Dragon fire breath activated!');
+    debug('🐉 Dragon fire breath activated!');
     
     // Make fire particles visible and reset them properly
     if (player.userData && player.userData.fireParticles) {
@@ -9033,7 +9062,7 @@ function activateDragonFire() {
 
 function deactivateDragonFire() {
     dragonFireActive = false;
-    console.log('🐉 Dragon fire breath deactivated - cooldown: 8 seconds');
+    debug('🐉 Dragon fire breath deactivated - cooldown: 8 seconds');
     
     // Hide and reset fire particles aggressively
     if (player.userData && player.userData.fireParticles) {
@@ -9077,7 +9106,7 @@ function deactivateDragonFire() {
         } else {
             scene.remove(particle);
         }
-        console.log('🔥 Removed stray fire particle');
+        debug('🔥 Removed stray fire particle');
     });
 }
 
@@ -9096,7 +9125,7 @@ function destroyObstaclesWithFire() {
             scene.remove(obstacle);
             obstacles.splice(i, 1);
             
-            console.log('🔥 Obstacle destroyed by dragon fire!');
+            debug('🔥 Obstacle destroyed by dragon fire!');
         }
     }
 }
@@ -9111,17 +9140,17 @@ function activateGhostPhase() {
         ghostPhaseCooldown = 300; // 5 seconds to restore first charge
     }
     
-    console.log(`👻 Ghost phase activated! Charges remaining: ${ghostPhaseCharges}/3`);
+    debug(`👻 Ghost phase activated! Charges remaining: ${ghostPhaseCharges}/3`);
 }
 
 function deactivateGhostPhase() {
     ghostPhaseActive = false;
-    console.log('👻 Ghost phase deactivated');
+    debug('👻 Ghost phase deactivated');
     
     // Start charge restoration immediately if we have no charges left
     if (ghostPhaseCharges <= 0 && ghostPhaseCooldown <= 0) {
         ghostPhaseCooldown = 300; // 5 seconds to restore next charge
-        console.log('👻 Starting charge restoration...');
+        debug('👻 Starting charge restoration...');
     }
 }
 // Create destruction effect for dragon fire - using existing explosion system
@@ -9130,7 +9159,7 @@ function createObstacleDestruction(position) {
     createSparkle(position);
     
     // Optional: Add a simple flash effect instead of particles
-    console.log('💥 Obstacle destroyed with sparkle effect!');
+    debug('💥 Obstacle destroyed with sparkle effect!');
 }
 
 // Performance helper - only animate objects near player
@@ -9515,7 +9544,7 @@ if (currentCharacter === 'pumpkin') {
                             player.remove(player.userData.shieldEffect);
                             player.userData.shieldEffect = null;
                         }
-                        console.log('Shield deactivated!');
+                        debug('Shield deactivated!');
                     }
                 }
 
@@ -9523,7 +9552,7 @@ if (currentCharacter === 'pumpkin') {
                     powerUpTimers.coinMultiplier--;
                     if (powerUpTimers.coinMultiplier <= 0) {
                         coinMultiplierActive = false;
-                        console.log('Coin multiplier deactivated!');
+                        debug('Coin multiplier deactivated!');
                     }
                 }
 
@@ -9531,7 +9560,7 @@ if (currentCharacter === 'pumpkin') {
                     powerUpTimers.magnet--;
                     if (powerUpTimers.magnet <= 0) {
                         magnetActive = false;
-                        console.log('Magnet deactivated!');
+                        debug('Magnet deactivated!');
                     }
                 }
 
@@ -9594,18 +9623,18 @@ if (currentSpeedLevel >= 4) {
     meteorSpawnCounter++;
     
     if (meteorSpawnCounter >= meteorSpawnRate) {
-    console.log("METEOR SPAWNING NOW!");
+    debug("METEOR SPAWNING NOW!");
     createMeteor();
     meteorSpawnCounter = 0;
     // Randomize next meteor spawn time (slower)
     meteorSpawnRate = 400 + Math.floor(Math.random() * 400); // 400-800 frames (13-27 seconds)
-    console.log(`Next meteor in ${meteorSpawnRate} frames`);
+    debug(`Next meteor in ${meteorSpawnRate} frames`);
 }
     
     // Only log every 30 frames to reduce spam
     if (meteorSpawnCounter % 30 === 0) {
-        console.log(`Meteor spawn check - Level: ${currentSpeedLevel}, Counter: ${meteorSpawnCounter}, Rate: ${meteorSpawnRate}`);
-    }
+    debug(`Meteor spawn check - Level: ${currentSpeedLevel}, Counter: ${meteorSpawnCounter}, Rate: ${meteorSpawnRate}`);
+}
 }
                 
                 // Track stream spawning
@@ -9648,20 +9677,20 @@ if (frameCount % powerUpSpawnRate === 0) {
     // Only spawn if we have available lanes
     if (availableLanes.length > 0) {
         const powerUpType = Math.random();
-        console.log("Spawning power-up at frame:", frameCount, "Available lanes:", availableLanes);
+        debug("Spawning power-up at frame:", frameCount, "Available lanes:", availableLanes);
         
         if (powerUpType < 0.33) {
             spawnShieldPowerUpInLane(availableLanes);
-            console.log("Shield power-up spawned");
+            debug("Shield power-up spawned");
         } else if (powerUpType < 0.66) {
             spawnCoinMultiplierPowerUpInLane(availableLanes);
-            console.log("Coin multiplier power-up spawned");
+            debug("Coin multiplier power-up spawned");
         } else {
             spawnMagnetPowerUpInLane(availableLanes);
-            console.log("Magnet power-up spawned");
+            debug("Magnet power-up spawned");
         }
     } else {
-        console.log("No available lanes for power-up spawn");
+        debug("No available lanes for power-up spawn");
     }
 }
 
@@ -9728,7 +9757,7 @@ if (coinDistance < 1.5 && checkCollision(coin)) {
 
     
     if (coinMultiplierActive) {
-        console.log('Coin collected with 2x multiplier!');
+        debug('Coin collected with 2x multiplier!');
     }
 }
                     
@@ -9789,9 +9818,9 @@ if (checkCollision(rareCoin)) {
     updateTotalCoins();
     
     
-    console.log(`RARE COIN COLLECTED! +${rareCoinBonus} coins!`);
+    debug(`RARE COIN COLLECTED! +${rareCoinBonus} coins!`);
     if (coinMultiplierActive) {
-        console.log('Rare coin got 2x multiplier bonus!');
+        debug('Rare coin got 2x multiplier bonus!');
     }
 }
                     
@@ -9841,7 +9870,7 @@ if (distance < 1.5) { // Simple distance-based collision
                     
                     // Remove power-ups that have passed the player
                     else if (powerUp.position.z > 5) {
-                        console.log(`Removing power-up ${powerUp.userData.type} that passed player`);
+                        debug(`Removing power-up ${powerUp.userData.type} that passed player`);
                         scene.remove(powerUp);
                         powerUps.splice(i, 1);
                     }
@@ -9860,7 +9889,7 @@ if (checkCollision(obstacle)) {
         // Shield protects - remove obstacle instead
         scene.remove(obstacle);
         obstacles.splice(i, 1);
-        console.log('Shield blocked collision!');
+        debug('Shield blocked collision!');
     } else {
         endGame();
     }
@@ -10029,7 +10058,7 @@ function startAutoSave() {
     
     autoSaveInterval = setInterval(() => {
         if (gameState === "playing" && !gamePaused) {
-            console.log('🔄 Auto-saving game progress...');
+            debug('🔄 Auto-saving game progress...');
             saveGameData();
         }
     }, 30000); // Every 30 seconds
@@ -10044,21 +10073,21 @@ function stopAutoSave() {
 
 // Save when page is about to close
 window.addEventListener('beforeunload', function(event) {
-    console.log('💾 Saving game data before page closes...');
+    debug('💾 Saving game data before page closes...');
     saveGameData();
 });
 
 // Save when page becomes hidden (mobile/tab switching)
 document.addEventListener('visibilitychange', function() {
     if (document.hidden) {
-        console.log('💾 Saving game data (page hidden)...');
+        debug('💾 Saving game data (page hidden)...');
         saveGameData();
     }
 });
 
 // Save when window loses focus
 window.addEventListener('blur', function() {
-    console.log('💾 Saving game data (window lost focus)...');
+    debug('💾 Saving game data (window lost focus)...');
     saveGameData();
 });
 
