@@ -3771,6 +3771,16 @@ body[data-game-state="playing"] #touchArea {
     z-index: 250; /* Higher when actually shown */
 }
 
+/* Temporarily disable expensive CSS on mobile during gameplay */
+@media (max-width: 768px) {
+    .game-playing * {
+        backdrop-filter: none !important;
+        filter: none !important;
+        box-shadow: none !important;
+        text-shadow: none !important;
+    }
+}
+
 
     </style>
 </head>
