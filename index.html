@@ -4610,6 +4610,36 @@ function initializeObjectPools() {
     }
 }
 
+// Aggressive cleanup for mobile
+function performMobileCleanup() {
+    const cleanupDistance = isMobile ? 20 : 30; // More aggressive on mobile
+    
+    // Clean up all object types
+    const objectArrays = [obstacles, coins, rareCoins, powerUps, sceneryObjects, weatherParticles];
+    
+    objectArrays.forEach(array => {
+        for (let i = array.length - 1; i >= 0; i--) {
+            if (array[i].position.z > player.position.z + cleanupDistance) {
+                // Dispose of resources
+                if (array[i].geometry && array[i].geometry.dispose) {
+                    array[i].geometry.dispose();
+                }
+                if (array[i].material) {
+                    if (array[i].material.dispose) {
+                        array[i].material.dispose();
+                    }
+                    if (array[i].material.map && array[i].material.map.dispose) {
+                        array[i].material.map.dispose();
+                    }
+                }
+                
+                scene.remove(array[i]);
+                array.splice(i, 1);
+            }
+        }
+    });
+}
+
 // Coin pool for performance
 let coinPool = [];
 let coinPoolSize = 20;
@@ -5053,10 +5083,12 @@ document.getElementById('startScreen').style.display = 'none';
 // Show the new title screen
 document.getElementById('titleScreen').style.display = 'flex';
 document.getElementById('titleScreen').classList.add('active');
-// Initialize advanced particle system
-setTimeout(() => {
-    createTitleParticles();
-}, 100);
+// Initialize advanced particle system (desktop only)
+if (!isMobile) {
+    setTimeout(() => {
+        createTitleParticles();
+    }, 100);
+}
 console.log('New title screen should be visible now');
 
 // Add particle burst effects on clicks
@@ -12715,12 +12747,12 @@ if (gameState === "mainMenu" && !titleParticleSystem?.animationId) {
 }
 
     // Staggered updates for performance - different systems update on different frames
-    const updateSchedule = {
-        weather: frameCount % 3 === 0,      // Update weather every 3rd frame
-        butterflies: frameCount % 4 === 0,   // Update butterflies every 4th frame  
-        scenery: frameCount % 2 === 0,       // Update scenery every 2nd frame
-        particles: frameCount % 2 === 1      // Update particles on alternating frames
-    };
+const updateSchedule = {
+    weather: frameCount % (isMobile ? 10 : 3) === 0,      // Less frequent on mobile
+    butterflies: frameCount % (isMobile ? 20 : 4) === 0,   // Much less on mobile
+    scenery: frameCount % (isMobile ? 5 : 2) === 0,       // Less frequent on mobile
+    particles: frameCount % (isMobile ? 8 : 2) === 1      // Less frequent on mobile
+};
     
     // Handle world select screen state
 if (gameState === "worldSelect") {
@@ -13052,6 +13084,11 @@ else if (currentCharacter === 'atom') {
 } else if (!jumping && currentCharacter !== 'dragon' && currentCharacter !== 'ghost') {
     // Standard rotation for other characters when not jumping (except robot, dragon, and ghost)
     player.rotation.y += 0.02;
+}
+
+// Perform cleanup more frequently on mobile
+if (frameCount % (isMobile ? 30 : 60) === 0) {
+    performMobileCleanup();
 }
 
 // Handle character-specific abilities
@@ -13795,11 +13832,13 @@ function showMainMenu() {
     canvas.width = window.innerWidth;
     canvas.height = window.innerHeight;
     
-    // Create or restart particle system
+    // Create or restart particle system (desktop only)
+if (!isMobile) {
     if (!titleParticleSystem) {
         titleParticleSystem = new TitleParticleSystem();
         titleParticleSystem.init();
-    } else if (!titleParticleSystem.animationId) {
+    }
+} else if (!titleParticleSystem.animationId) {
         titleParticleSystem.animate();
     } else {
     }
