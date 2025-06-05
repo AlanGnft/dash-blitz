@@ -6341,13 +6341,21 @@ function showGlobalLeaderboard() {
         
         // Weather systems with smooth transitions
         function initializeWeatherSystems() {
-            // Initialize with clear weather
-            currentWeather = "clear";
-            targetWeather = "clear";
-            weatherTransitionProgress = 1; // Fully transitioned to start
-            
-            setWeather("clear");
-        }
+    // Disable weather completely on mobile for performance
+    if (isMobile) {
+        currentWeather = "clear";
+        targetWeather = "clear";
+        weatherTransitionProgress = 1;
+        return; // Exit early - no weather on mobile
+    }
+    
+    // Initialize with clear weather
+    currentWeather = "clear";
+    targetWeather = "clear";
+    weatherTransitionProgress = 1; // Fully transitioned to start
+    
+    setWeather("clear");
+}
         
         function setWeather(weatherType) {
             // Start transition to new weather
@@ -7936,6 +7944,10 @@ function createRainSystem() {
         }
         
         function updateWeather() {
+
+            // Skip weather updates on mobile
+                if (isMobile) return;
+
             // Progress the transition between weather types
             if (weatherTransitionProgress < 1) {
                 weatherTransitionProgress += 0.005; // Slow transition
@@ -11504,7 +11516,7 @@ const coinMaterial = new THREE.MeshStandardMaterial({
     emissive: 0xFFD700, // Golden glow
     emissiveIntensity: 0.4
 });
-const coin = new THREE.Mesh(coinGeometry, coinMaterial);
+const coin = new THREE.Mesh(coinGeometry, SharedMaterials.coin);
 coin.rotation.x = Math.PI / 2;
 coinGroup.add(coin);
 
@@ -11517,7 +11529,7 @@ const edgeMaterial = new THREE.MeshStandardMaterial({
     emissive: 0xFFD700,
     emissiveIntensity: 0.3
 });
-const edge = new THREE.Mesh(edgeGeometry, edgeMaterial);
+const edge = new THREE.Mesh(edgeGeometry, SharedMaterials.coinEdge);
 // No rotation needed - both coin and edge are now in the same orientation
 coinGroup.add(edge);
 
