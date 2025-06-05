@@ -43,11 +43,11 @@ function initializeAudio() {
             try {
                 await Tone.start();
                 audioInitialized = true;
-                console.log('✅ Audio context started successfully!');
-                console.log('✅ Audio system ready');
+                debug('✅ Audio context started successfully!');
+                debug('✅ Audio system ready');
             } catch (error) {
                 console.error('❌ Failed to start audio:', error);
-                console.log('❌ Audio system not ready');
+                debug('❌ Audio system not ready');
             }
         }
     };
@@ -75,15 +75,15 @@ function initializeAudio() {
 function playCoinSound() {
     if (!audioInitialized || !soundEffectsEnabled) {
         if (!soundEffectsEnabled) {
-            console.log('🔇 Sound effects disabled - coin sound skipped');
+            debug('🔇 Sound effects disabled - coin sound skipped');
         } else {
-            console.log('🔇 Audio not ready - coin sound skipped');
+            debug('🔇 Audio not ready - coin sound skipped');
         }
         return;
     }
     
     try {
-        console.log('🎵 Playing coin sound...');
+        debug('🎵 Playing coin sound...');
 
         // Create a crisp, Sonic-style ring collection sound
         const synth = new Tone.Synth({
@@ -123,7 +123,7 @@ function playJumpSound() {
     if (!audioInitialized || !soundEffectsEnabled) return;
     
     try {
-        console.log('🎵 Playing jump sound...'); // Debug log
+        debug('🎵 Playing jump sound...'); // Debug log
         
         // Soft, bouncy jump sound
         const synth = new Tone.Synth({
@@ -204,7 +204,7 @@ function createBackgroundMusic() {
     if (!audioInitialized) return;
     
     try {
-        console.log(`🎵 Creating ${currentTrack} background music...`);
+        debug(`🎵 Creating ${currentTrack} background music...`);
         
         // SET CORRECT TEMPO IMMEDIATELY - before creating patterns!
         let baseTempo;
@@ -218,7 +218,7 @@ function createBackgroundMusic() {
         
         // Apply tempo immediately
         Tone.Transport.bpm.value = baseTempo;
-        console.log(`🎵 Set initial tempo to ${baseTempo} BPM for ${currentTrack}`);
+        debug(`🎵 Set initial tempo to ${baseTempo} BPM for ${currentTrack}`);
         
         // Create different music based on selected track
         musicLayers = [];
@@ -231,7 +231,7 @@ function createBackgroundMusic() {
             createAmbientMusic();
         }
         
-        console.log(`✅ ${currentTrack} music layers created with correct tempo!`);
+        debug(`✅ ${currentTrack} music layers created with correct tempo!`);
         
     } catch (error) {
         console.error(`❌ Error creating ${currentTrack} music:`, error);
@@ -240,7 +240,7 @@ function createBackgroundMusic() {
 
 // Original medieval/fantasy music
 function createMedievalMusic() {
-    console.log('🎵 Creating extended medieval/fantasy music...');
+    debug('🎵 Creating extended medieval/fantasy music...');
     
     // Layer 1: Deep war drums with varied rhythm
     const drumSynth = new Tone.MembraneSynth({
@@ -352,11 +352,11 @@ function createMedievalMusic() {
     epicSynth.volume.value = -40;
     musicLayers.push({ name: "epic", pattern: epicPattern, synth: epicSynth, volume: 0.6 });
     
-    console.log('✅ Extended medieval music created with longer, more epic patterns!');
+    debug('✅ Extended medieval music created with longer, more epic patterns!');
 }
 
 function createElectronicMusic() {
-    console.log('🌈 Creating extended neon synthwave music...');
+    debug('🌈 Creating extended neon synthwave music...');
     
     // Layer 1: Kick drum with varied pattern
     const kickSynth = new Tone.MembraneSynth({
@@ -441,12 +441,12 @@ function createElectronicMusic() {
     padSynth.volume.value = -30;
     musicLayers.push({ name: "pad", pattern: padPattern, synth: padSynth, volume: 0.3 });
     
-    console.log('✅ Extended electronic music created with longer patterns!');
+    debug('✅ Extended electronic music created with longer patterns!');
 }
 
 // NEW: Ethereal lofi ambient music - dreamy and atmospheric
 function createAmbientMusic() {
-    console.log('🌌 Creating ethereal lofi ambient music...');
+    debug('🌌 Creating ethereal lofi ambient music...');
     
     // Layer 1: Soft ambient pad (foundation layer)
     const padSynth = new Tone.Synth({
@@ -530,46 +530,46 @@ function createAmbientMusic() {
     highPadSynth.volume.value = -32;
     musicLayers.push({ name: "highpad", pattern: highPadPattern, synth: highPadSynth, volume: 0.4 });
     
-    console.log('✅ Ethereal lofi ambient music created! 🌌🎵');
+    debug('✅ Ethereal lofi ambient music created! 🌌🎵');
 }
 
 function startBackgroundMusic() {
-    console.log('🎵 startBackgroundMusic called - Audio:', audioInitialized, 'Playing:', musicPlaying, 'Enabled:', backgroundMusicEnabled);
+    debug('🎵 startBackgroundMusic called - Audio:', audioInitialized, 'Playing:', musicPlaying, 'Enabled:', backgroundMusicEnabled);
     
     if (!audioInitialized) {
-        console.log('❌ Audio not initialized - cannot start music');
+        debug('❌ Audio not initialized - cannot start music');
         return;
     }
     
     if (musicPlaying) {
-        console.log('🎵 Music already playing');
+        debug('🎵 Music already playing');
         return;
     }
     
     if (!backgroundMusicEnabled) {
-        console.log('🎵 Background music disabled in settings');
+        debug('🎵 Background music disabled in settings');
         return;
     }
     
     if (!musicLayers || musicLayers.length === 0) {
-        console.log('❌ No music layers available - recreating...');
+        debug('❌ No music layers available - recreating...');
         createBackgroundMusic();
     }
     
     try {
-        console.log('🎵 Starting background music...');
+        debug('🎵 Starting background music...');
         
         // Start transport
         Tone.Transport.start();
         
         // Start all patterns
         musicLayers.forEach((layer, index) => {
-            console.log(`🎵 Starting layer ${index}:`, layer.name);
+            debug(`🎵 Starting layer ${index}:`, layer.name);
             layer.pattern.start(0);
         });
         
         musicPlaying = true;
-        console.log('✅ Background music started successfully!');
+        debug('✅ Background music started successfully!');
         
     } catch (error) {
         console.error('❌ Error starting background music:', error);
@@ -581,7 +581,7 @@ function stopBackgroundMusic() {
     if (!musicPlaying) return;
     
     try {
-        console.log('🎵 Stopping background music...');
+        debug('🎵 Stopping background music...');
         
         // Stop all patterns
         musicLayers.forEach(layer => {
@@ -592,7 +592,7 @@ function stopBackgroundMusic() {
         Tone.Transport.stop();
         
         musicPlaying = false;
-        console.log('✅ Background music stopped!');
+        debug('✅ Background music stopped!');
         
     } catch (error) {
         console.error('❌ Error stopping background music:', error);

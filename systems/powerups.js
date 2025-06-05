@@ -321,7 +321,7 @@ function spawnMagnetPowerUpInLane(availableLanes) {
     
     scene.add(magnetGroup);
     powerUps.push(magnetGroup);
-    console.log('Magnet power-up created and added to scene at position:', magnetGroup.position);
+    debug('Magnet power-up created and added to scene at position:', magnetGroup.position);
 }
 
 // Activate power-up effects
@@ -332,19 +332,19 @@ function activatePowerUp(type) {
             shieldActive = true;
             powerUpTimers.shield = 600; // 10 seconds at 60fps
             createShieldEffect();
-            console.log('Shield activated for 10 seconds!');
+            debug('Shield activated for 10 seconds!');
             break;
             
         case 'coinMultiplier':
             coinMultiplierActive = true;
             powerUpTimers.coinMultiplier = 600; // 10 seconds at 60fps
-            console.log('Coin multiplier activated for 10 seconds! Coins worth 2x!');
+            debug('Coin multiplier activated for 10 seconds! Coins worth 2x!');
             break;
             
         case 'magnet':
             magnetActive = true;
             powerUpTimers.magnet = 600; // 10 seconds at 60fps
-            console.log('Magnet activated for 10 seconds! Coins will be attracted!');
+            debug('Magnet activated for 10 seconds! Coins will be attracted!');
             break;
     }
 }

@@ -86,7 +86,7 @@ function spawnObstacle() {
             scene.add(fallenTree);
             obstacles.push(fallenTree);
             
-            console.log('🌳 Fallen tree spawned at position:', fallenTree.position);
+            debug('🌳 Fallen tree spawned at position:', fallenTree.position);
             
             // Skip the normal obstacle spawning since we spawned a fallen tree
             return;
@@ -167,7 +167,7 @@ function spawnObstacle() {
         obstacle.position.z = -50; // Spawn far away
         scene.add(obstacle);
         obstacles.push(obstacle);
-        console.log('🏗️ Spawned obstacle at lane', laneIndex, 'position:', obstacle.position, 'type: normal obstacle');
+        debug('🏗️ Spawned obstacle at lane', laneIndex, 'position:', obstacle.position, 'type: normal obstacle');
     }
 }
 
@@ -648,7 +648,7 @@ function createFallenTree() {
 
 // Create falling meteor - exclusive to Maximum Chaos level
 function createMeteor() {
-    console.log("createMeteor function called!");
+    debug("createMeteor function called!");
     const meteorGroup = new THREE.Group();
     
     // Main meteor body - rough, rocky appearance (bigger and brighter)
@@ -756,8 +756,8 @@ function createMeteor() {
    
    scene.add(meteorGroup);
    meteors.push(meteorGroup);
-   console.log(`Meteor created at position: ${meteorGroup.position.x}, ${meteorGroup.position.y}, ${meteorGroup.position.z}`);
-   console.log(`Total meteors: ${meteors.length}`);
+   debug(`Meteor created at position: ${meteorGroup.position.x}, ${meteorGroup.position.y}, ${meteorGroup.position.z}`);
+   debug(`Total meteors: ${meteors.length}`);
 }
 
 // Create impact effect when meteor hits ground
