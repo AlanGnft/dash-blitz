@@ -8628,8 +8628,15 @@ if (meteors.includes(object)) {
 const isFallenTree = obstacles.includes(object) && object.userData.obstacleType === 'fallenTree';
 
 if (isFallenTree) {
-    // Find the trunk specifically
-    const trunk = object.children.find(child => child.userData && child.userData.isMainTrunk);
+    // Find the trunk mesh in the GLB model
+    let trunk = null;
+    object.traverse((child) => {
+        if (child.isMesh && child.name && 
+            (child.name.includes('trunk') || 
+             child.name.includes('fallenTree_mesh') && !child.name.includes('leaf'))) {
+            trunk = child;
+        }
+    });
     if (trunk) {
         // Get world positions
         const playerPos = new THREE.Vector3();
@@ -9257,23 +9264,7 @@ function shouldAnimateObject(object, maxDistance = 15) {
     return object.position.distanceTo(player.position) < maxDistance;
 }
 
-// Temporary collision detection functions
-function checkCollision(object) {
-    if (!player || !object) return false;
-    
-    // For coins and power-ups, use simple distance-based collision
-    const isCoin = coins.includes(object) || rareCoins.includes(object);
-    const isPowerUp = powerUps.includes(object);
-    
-    if (isCoin || isPowerUp) {
-        return checkSimpleCollision(object, player, 1.5);
-    }
-    
-    // For obstacles, use bounding box
-    const playerBox = new THREE.Box3().setFromObject(player);
-    const objectBox = new THREE.Box3().setFromObject(object);
-    return playerBox.intersectsBox(objectBox);
-}
+
 
 function checkSimpleCollision(obj1, obj2, threshold = 1.5) {
     if (!obj1 || !obj2) return false;
