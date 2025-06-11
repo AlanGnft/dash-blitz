@@ -326,7 +326,7 @@ function spawnMagnetPowerUpInLane(availableLanes) {
 
 // Activate power-up effects
 function activatePowerUp(type) {
-    playPowerUpSound(); // Add this line at the start
+    window.AudioSystem.playPowerUpSound()
     switch (type) {
         case 'shield':
             shieldActive = true;
