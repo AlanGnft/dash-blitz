@@ -76,98 +76,67 @@ function spawnObstacle() {
         let obstacle;
         
         // 5% chance of spawning fallen tree (spans 2 lanes) - check this BEFORE determining obstacle count
-        if (Math.random() < 0.05) {
-            // Spawn fallen tree across 2 adjacent lanes
-            const startLane = Math.floor(Math.random() * 2); // 0 or 1 (so we can span to 1 or 2)
-            
-            const fallenTree = createFallenTree();
-            fallenTree.position.x = lanes[startLane] + 1; // Position between the two lanes
-            fallenTree.position.z = -50;
-            scene.add(fallenTree);
-            obstacles.push(fallenTree);
-            
-            debug('🌳 Fallen tree spawned at position:', fallenTree.position);
-            
-            // Skip the normal obstacle spawning since we spawned a fallen tree
-            return;
-        }
+if (Math.random() < 0.05) {
+    // ONLY spawn fallen tree in classic and forest worlds
+    if (currentWorld === 'classic' || currentWorld === 'forest') {
+        // Spawn fallen tree across 2 adjacent lanes
+        const startLane = Math.floor(Math.random() * 2); // 0 or 1 (so we can span to 1 or 2)
+        
+        const fallenTree = createFallenTree();
+        fallenTree.position.x = lanes[startLane] + 1; // Position between the two lanes
+        fallenTree.position.z = -50;
+        fallenTree.userData.obstacleType = 'fallenTree'; // Make sure to set the type
+        scene.add(fallenTree);
+        obstacles.push(fallenTree);
+        
+        debug('🌳 Fallen tree spawned at position:', fallenTree.position);
+        
+        // Skip the normal obstacle spawning since we spawned a fallen tree
+        return;
+    }
+    // If we're in desert world, don't spawn fallen tree, continue to normal obstacles
+}
 
-        // Check current world for unique obstacles
-        if (currentWorld === 'forest' && window.ForestWorld) {
-            // Forest-specific obstacles
-            const forestObstacles = window.ForestWorld.createObstacles();
-            const randomIndex = Math.floor(Math.random() * forestObstacles.length);
-            const forestType = forestObstacles[randomIndex];
+        // Check if obstacles are loaded
+if (!currentWorldObstaclesLoaded) {
+    console.warn('Obstacles not loaded yet');
+    return;
+}
 
-            switch (forestType) {
-                case 'treeRoot':
-                    obstacle = window.createTreeRoot();
-                    break;
-                case 'thornBush':
-                    obstacle = window.createThornBush();
-                    break;
-                case 'fallenBranch':
-                    obstacle = window.createFallenBranch();
-                    break;
-                case 'mushroomRing':
-                    obstacle = window.createMushroomRing();
-                    break;
-                case 'puddlePatch':
-                    obstacle = window.createPuddlePatch();
-                    break;
-                default:
-                    obstacle = createRock(); // Fallback
-                    break;
-            }
-        } else if (currentWorld === 'desert' && window.DesertWorld) {
-            // Desert-specific obstacles
-            const desertObstacles = ['cactus', 'sandDune', 'quicksand', 'ancientRuin'];
-            const desertType = desertObstacles[Math.floor(Math.random() * desertObstacles.length)];
-            
-            switch (desertType) {
-                case 'cactus':
-                    obstacle = window.createCactus();
-                    break;
-                case 'sandDune':
-                    obstacle = window.createSandDune();
-                    break;
-                case 'quicksand':
-                    obstacle = window.createQuicksand();
-                    break;
-                case 'ancientRuin':
-                    obstacle = window.createAncientRuin();
-                    break;
-                default:
-                    obstacle = createRock(); // Fallback
-                    break;
-            }
-        } else {
-            // Classic world obstacles
-            const obstacleType = Math.floor(Math.random() * 5);
-            switch (obstacleType) {
-                case 0: // Rock
-                    obstacle = createRock();
-                    break;
-                case 1: // Tree stump
-                    obstacle = createTreeStump();
-                    break;
-                case 2: // Log
-                    obstacle = createLog();
-                    break;
-                case 3: // Bush
-                    obstacle = createBush();
-                    break;
-                case 4: // Spikes
-                    obstacle = createSpikes();
-                    break;
-            }
-        }
+// Get all available mesh names
+const availableMeshes = Array.from(obstacleModels.keys());
+if (availableMeshes.length === 0) {
+    console.error('No obstacles loaded!');
+    return;
+}
+
+// Pick a random mesh
+const randomMesh = availableMeshes[Math.floor(Math.random() * availableMeshes.length)];
+
+// Get obstacle from GLB pack
+obstacle = getObstacleFromGLB(randomMesh);
+
+if (!obstacle) {
+    console.error(`Failed to spawn obstacle: ${randomMesh}`);
+    continue;
+}
+
+// Add metadata for collision detection based on obstacle name
+if (randomMesh === 'fallenTree') {
+    obstacle.userData.obstacleType = 'fallenTree';
+} else if (randomMesh === 'ancientRuin') {
+    obstacle.userData.obstacleType = 'ancientRuin';
+} else if (randomMesh === 'quicksand') {
+    obstacle.userData.obstacleType = 'quicksand';
+} else {
+    obstacle.userData.obstacleType = randomMesh; // Use the actual obstacle name
+}
         
         obstacle.position.x = lanes[laneIndex];
         obstacle.position.z = -50; // Spawn far away
         scene.add(obstacle);
         obstacles.push(obstacle);
-        debug('🏗️ Spawned obstacle at lane', laneIndex, 'position:', obstacle.position, 'type: normal obstacle');
+        debug('🏗️ Spawned', randomMesh, 'from GLB at lane', laneIndex, 'position:', obstacle.position);
     }
 }
 
