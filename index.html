@@ -1399,6 +1399,14 @@ firebase.initializeApp(firebaseConfig);
 
 
     <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+
+    <!-- ADD THIS LINE - GLTFExporter -->
+<script src="https://cdn.jsdelivr.net/gh/mrdoob/three.js@r128/examples/js/exporters/GLTFExporter.js"></script>
+
+<!-- Add this line after your THREE.js script -->
+<script src="https://cdn.jsdelivr.net/gh/mrdoob/three.js@r128/examples/js/loaders/GLTFLoader.js"></script>
+
+
  
 
 <!-- Character System - New Modular Approach -->
@@ -1419,6 +1427,7 @@ firebase.initializeApp(firebaseConfig);
 <script src="worlds/forest.js"></script>
 <script src="worlds/desert.js"></script>
 <script src="systems/obstacles.js"></script>
+<!--<script src="obstacle-pack-converter.js"></script>   OBSTACLE GLB CONVERTER -->
 <script src="systems/audio.js"></script>
 <script src="systems/powerups.js"></script>
 
@@ -1536,6 +1545,123 @@ let characterNames = [
     "apple", "carrot", "pumpkin", "happyface", "monster", "atom", "slime", "ufo", "robot", "dragon", "ghost", "creature"
     // END CHARACTER ROSTER INJECTION POINT
 ];
+
+
+// ==================== GLB OBSTACLE SYSTEM ====================
+// Add this with your other game variables at the top
+
+// GLB Obstacle Loading System
+const obstacleModels = new Map();
+const worldObstaclePacks = {
+    classic: 'assets/obstacles/obstacles_classic_mobile.glb',
+    forest: 'assets/obstacles/obstacles_forest_mobile.glb',
+    desert: 'assets/obstacles/obstacles_desert_mobile.glb'
+};
+let currentWorldObstaclesLoaded = false;
+
+// Load obstacle pack for a specific world
+async function loadWorldObstacles(worldName) {
+    console.log(`📦 Loading ${worldName} obstacles...`);
+    
+    // Clear previous obstacles from cache
+    obstacleModels.clear();
+    currentWorldObstaclesLoaded = false;
+    
+    return new Promise((resolve, reject) => {
+        const loader = new THREE.GLTFLoader();
+        const packPath = worldObstaclePacks[worldName] || worldObstaclePacks.classic;
+        
+        loader.load(
+            packPath,
+            function(gltf) {
+                console.log(`✅ Loaded ${worldName} obstacle pack`);
+
+                // Debug the GLB structure
+console.log('=== GLB STRUCTURE ===');
+console.log('Root scene:', gltf.scene);
+console.log('Direct children of scene:', gltf.scene.children.map(child => ({
+    name: child.name,
+    type: child.type,
+    childCount: child.children?.length || 0
+})));
+
+// Look for groups that contain the actual obstacles
+gltf.scene.children.forEach(child => {
+    if (child.isGroup && child.children.length > 0) {
+        console.log(`Group "${child.name}" contains:`, child.children.map(c => c.name));
+    }
+});
+console.log('=== END STRUCTURE ===');
+                
+                // Store each obstacle type in the cache
+                    gltf.scene.traverse((child) => {
+                        // Debug what we're getting
+                        console.log('Found in GLB:', child.type, child.name, 'parent:', child.parent?.name);
+                        
+                        // Skip if this is a leaf or decorative element
+                        const isDecorative = child.name && (
+                            child.name.includes('leaf') || 
+                            child.name.includes('Leaf') ||
+                            child.name.includes('moss') ||
+                            child.name.includes('berry') ||
+                            child.name.includes('twig') ||
+                            child.name.includes('mesh_') && child.parent && child.parent.name !== 'Scene'
+                        );
+                        
+                        if (isDecorative) {
+                            console.log('Skipping decorative element:', child.name);
+                            return;
+                        }
+                        
+                        // Only cache main obstacle groups or standalone meshes that are direct children of the scene
+                        if (child.isMesh && child.parent && child.parent.name === 'Scene') {
+                            // This is a standalone mesh at the root level
+                            obstacleModels.set(child.name, child);
+                            console.log(`📦 Cached obstacle: ${child.name}`);
+                            console.log('GLB Structure:', gltf.scene);
+                        } else if (child.isGroup && child.children.length > 0 && child.name !== 'Scene') {
+                            // This is a group containing multiple meshes (like fallen tree with leaves)
+                            obstacleModels.set(child.name, child);
+                            console.log(`📦 Cached obstacle group: ${child.name} with ${child.children.length} children`);
+                            console.log('GLB Structure:', gltf.scene);
+                        }
+                    });
+                
+                currentWorldObstaclesLoaded = true;
+                resolve();
+            },
+            function(progress) {
+                // Progress callback
+                if (progress.total > 0) {
+                    const percent = (progress.loaded / progress.total * 100).toFixed(0);
+                    console.log(`Loading ${worldName} obstacles: ${percent}%`);
+                }
+            },
+            function(error) {
+                console.error(`Failed to load ${worldName} obstacles:`, error);
+                currentWorldObstaclesLoaded = false;
+                reject(error);
+            }
+        );
+    });
+}
+
+// Get a clone of a specific obstacle type
+function getObstacleFromGLB(obstacleType) {
+    const model = obstacleModels.get(obstacleType);
+    if (model) {
+        const clone = model.clone();
+        // Ensure material is also cloned for independent manipulation
+        if (clone.material) {
+            clone.material = clone.material.clone();
+        }
+        return clone;
+    }
+    console.warn(`Obstacle type "${obstacleType}" not found in pack`);
+    return null;
+}
+
+
 
 // ==================== DEBUG SYSTEM ====================
 // Control all console logging from one place
@@ -2125,6 +2251,14 @@ loadLeaderboard();
 
 // Initialize object pools for performance
 initializeObjectPools();
+
+// ADD THIS: Load obstacles for the default world
+loadWorldObstacles(currentWorld || 'classic').then(() => {
+    console.log('✅ Initial obstacles loaded');
+}).catch(error => {
+    console.error('Failed to load initial obstacles:', error);
+    // Game can continue without obstacles in case of error
+});
             
             // Create scene
             scene = new THREE.Scene();
@@ -8337,55 +8471,36 @@ function checkCollision(object) {
     }
 
     // For ancient ruins (desert pillars), only check collision with the main pillar - HANDLE FIRST
-const isAncientRuin = obstacles.includes(object) && object.children.some(child => child.userData && child.userData.isMainPillar);
+const isAncientRuin = obstacles.includes(object) && object.userData.obstacleType === 'ancientRuin';
 
 if (isAncientRuin) {
-    // Find the main pillar specifically
-    const mainPillar = object.children.find(child => child.userData && child.userData.isMainPillar);
-    if (mainPillar) {
-        // Get world positions to check distance first
-        const playerPos = new THREE.Vector3();
-        const pillarPos = new THREE.Vector3();
-        player.getWorldPosition(playerPos);
-        mainPillar.getWorldPosition(pillarPos);
-        
-        const distance = playerPos.distanceTo(pillarPos);
-debug('🏛️ Ancient pillar distance check:', distance, 'Player at:', playerPos.x, 'Pillar at:', pillarPos.x);
-        
-        // Only check collision if player is very close to the pillar
-        if (distance < 2.0) {
-            // Create a smaller collision box for just the pillar core
-            const pillarBox = new THREE.Box3().setFromObject(mainPillar);
-            
-            // Shrink the collision box to make it more forgiving
-            const shrinkAmount = 0.3; // Make collision 30% smaller
-            pillarBox.min.x += shrinkAmount;
-            pillarBox.max.x -= shrinkAmount;
-            pillarBox.min.z += shrinkAmount;
-            pillarBox.max.z -= shrinkAmount;
-            
-            const playerBox = new THREE.Box3().setFromObject(player);
-            
-            // Can jump over pillars if high enough
-            if (jumping && player.position.y > 1.2) {
-                debug('🦘 Jumped over ancient pillar!');
-                return false;
-            }
-            
-            const collision = playerBox.intersectsBox(pillarBox);
-            if (collision) {
-                debug('🏛️ Hit ancient pillar!');
-            }
-            return collision;
+    // Get world positions to check distance first
+    const playerPos = new THREE.Vector3();
+    const obstaclePos = new THREE.Vector3();
+    player.getWorldPosition(playerPos);
+    object.getWorldPosition(obstaclePos);
+    
+    const distance = playerPos.distanceTo(obstaclePos);
+    
+    // Only check collision if player is very close
+    if (distance < 2.0) {
+        // Can jump over pillars if high enough
+        if (jumping && player.position.y > 1.2) {
+            debug('🦘 Jumped over ancient pillar!');
+            return false;
         }
-        return false; // No collision if too far from pillar
+        
+        // Use standard bounding box collision
+        const obstacleBox = new THREE.Box3().setFromObject(object);
+        const playerBox = new THREE.Box3().setFromObject(player);
+        
+        return playerBox.intersectsBox(obstacleBox);
     }
+    return false;
 }
 
 // For quicksand, only check collision with the main pit area
-const isQuicksand = obstacles.includes(object) && object.children.some(child => 
-    child.geometry && child.geometry.type === 'CircleGeometry' && child.position.y < 0
-);
+const isQuicksand = obstacles.includes(object) && object.userData.obstacleType === 'quicksand';
 
 if (isQuicksand) {
     // Find the main quicksand pit (the CircleGeometry at y = -0.1)
@@ -8510,7 +8625,7 @@ if (meteors.includes(object)) {
 }
 
 // Check if this is a fallen tree - only collide with the trunk
-const isFallenTree = obstacles.includes(object) && object.children.some(child => child.userData && child.userData.isMainTrunk);
+const isFallenTree = obstacles.includes(object) && object.userData.obstacleType === 'fallenTree';
 
 if (isFallenTree) {
     // Find the trunk specifically
@@ -9141,6 +9256,39 @@ function createObstacleDestruction(position) {
 function shouldAnimateObject(object, maxDistance = 15) {
     return object.position.distanceTo(player.position) < maxDistance;
 }
+
+// Temporary collision detection functions
+function checkCollision(object) {
+    if (!player || !object) return false;
+    
+    // For coins and power-ups, use simple distance-based collision
+    const isCoin = coins.includes(object) || rareCoins.includes(object);
+    const isPowerUp = powerUps.includes(object);
+    
+    if (isCoin || isPowerUp) {
+        return checkSimpleCollision(object, player, 1.5);
+    }
+    
+    // For obstacles, use bounding box
+    const playerBox = new THREE.Box3().setFromObject(player);
+    const objectBox = new THREE.Box3().setFromObject(object);
+    return playerBox.intersectsBox(objectBox);
+}
+
+function checkSimpleCollision(obj1, obj2, threshold = 1.5) {
+    if (!obj1 || !obj2) return false;
+    const distance = obj1.position.distanceTo(obj2.position);
+    return distance < threshold;
+}
+
+function getCachedCollisionBox(object) {
+    return new THREE.Box3().setFromObject(object);
+}
+
+function cleanupCollisionCache() {
+    // Empty for now
+}
+
         
         // ==================== GAME LOOP & UPDATES ====================
 // Main game loop, animation, and real-time updates
