@@ -92,82 +92,46 @@ function spawnObstacle() {
             return;
         }
 
-        // Check current world for unique obstacles
-        if (currentWorld === 'forest' && window.ForestWorld) {
-            // Forest-specific obstacles
-            const forestObstacles = window.ForestWorld.createObstacles();
-            const randomIndex = Math.floor(Math.random() * forestObstacles.length);
-            const forestType = forestObstacles[randomIndex];
+        // Check if obstacles are loaded
+if (!currentWorldObstaclesLoaded) {
+    console.warn('Obstacles not loaded yet');
+    return;
+}
 
-            switch (forestType) {
-                case 'treeRoot':
-                    obstacle = window.createTreeRoot();
-                    break;
-                case 'thornBush':
-                    obstacle = window.createThornBush();
-                    break;
-                case 'fallenBranch':
-                    obstacle = window.createFallenBranch();
-                    break;
-                case 'mushroomRing':
-                    obstacle = window.createMushroomRing();
-                    break;
-                case 'puddlePatch':
-                    obstacle = window.createPuddlePatch();
-                    break;
-                default:
-                    obstacle = createRock(); // Fallback
-                    break;
-            }
-        } else if (currentWorld === 'desert' && window.DesertWorld) {
-            // Desert-specific obstacles
-            const desertObstacles = ['cactus', 'sandDune', 'quicksand', 'ancientRuin'];
-            const desertType = desertObstacles[Math.floor(Math.random() * desertObstacles.length)];
-            
-            switch (desertType) {
-                case 'cactus':
-                    obstacle = window.createCactus();
-                    break;
-                case 'sandDune':
-                    obstacle = window.createSandDune();
-                    break;
-                case 'quicksand':
-                    obstacle = window.createQuicksand();
-                    break;
-                case 'ancientRuin':
-                    obstacle = window.createAncientRuin();
-                    break;
-                default:
-                    obstacle = createRock(); // Fallback
-                    break;
-            }
-        } else {
-            // Classic world obstacles
-            const obstacleType = Math.floor(Math.random() * 5);
-            switch (obstacleType) {
-                case 0: // Rock
-                    obstacle = createRock();
-                    break;
-                case 1: // Tree stump
-                    obstacle = createTreeStump();
-                    break;
-                case 2: // Log
-                    obstacle = createLog();
-                    break;
-                case 3: // Bush
-                    obstacle = createBush();
-                    break;
-                case 4: // Spikes
-                    obstacle = createSpikes();
-                    break;
-            }
-        }
+// Get all available mesh names
+const availableMeshes = Array.from(obstacleModels.keys());
+if (availableMeshes.length === 0) {
+    console.error('No obstacles loaded!');
+    return;
+}
+
+// Pick a random mesh
+const randomMesh = availableMeshes[Math.floor(Math.random() * availableMeshes.length)];
+
+// Get obstacle from GLB pack
+obstacle = getObstacleFromGLB(randomMesh);
+
+if (!obstacle) {
+    console.error(`Failed to spawn obstacle: ${randomMesh}`);
+    continue;
+}
+
+// Add metadata for collision detection based on mesh name
+if (randomMesh.includes('fallenTree')) {
+    obstacle.userData.obstacleType = 'fallenTree';
+} else if (randomMesh.includes('ancientRuin')) {
+    obstacle.userData.obstacleType = 'ancientRuin';
+} else if (randomMesh.includes('quicksand')) {
+    obstacle.userData.obstacleType = 'quicksand';
+} else {
+    obstacle.userData.obstacleType = 'generic';
+}
         
         obstacle.position.x = lanes[laneIndex];
         obstacle.position.z = -50; // Spawn far away
         scene.add(obstacle);
         obstacles.push(obstacle);
-        debug('🏗️ Spawned obstacle at lane', laneIndex, 'position:', obstacle.position, 'type: normal obstacle');
+        debug('🏗️ Spawned', randomMesh, 'from GLB at lane', laneIndex, 'position:', obstacle.position);
     }
 }
 
