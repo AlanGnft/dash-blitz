@@ -1399,7 +1399,7 @@ firebase.initializeApp(firebaseConfig);
 
 
     <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/tone/14.8.49/Tone.js"></script>
+ 
 
 <!-- Character System - New Modular Approach -->
 <script src="characters/shared.js"></script>
@@ -2227,9 +2227,6 @@ document.getElementById('backgroundMusicCheckbox').addEventListener('change', fu
     if (!backgroundMusicEnabled && musicPlaying) {
         stopBackgroundMusic();
     } else if (backgroundMusicEnabled && gameStarted && !gameOver && !gamePaused) {
-        if (!backgroundMusic) {
-            createBackgroundMusic();
-        }
         startBackgroundMusic();
     }
     saveGameData('settings_change');
@@ -2601,8 +2598,7 @@ function applySelectedTrack() {
     // Update current track
     currentTrack = selectedTrack;
     
-    // Recreate music with new track
-    createBackgroundMusic();
+    // Track will be loaded automatically when startBackgroundMusic is called
     
     // Start new music if game is playing and music is enabled
     if (gameStarted && !gameOver && !gamePaused && backgroundMusicEnabled) {
@@ -7285,19 +7281,13 @@ debug('🎵 Audio initialized:', audioInitialized);
 debug('🎵 Background music enabled:', backgroundMusicEnabled);
 debug('🎵 Music playing:', musicPlaying);
 
-if (!backgroundMusic) {
-    debug('🎵 Creating background music...');
-    createBackgroundMusic();
-}
+// Just start the music - no need to create it
 startBackgroundMusic();
 
 // Fallback: try again after a short delay if music didn't start
 setTimeout(() => {
     if (!musicPlaying && backgroundMusicEnabled && audioInitialized) {
         debug('🎵 Fallback: Retrying music start...');
-        if (!backgroundMusic) {
-            createBackgroundMusic();
-        }
         startBackgroundMusic();
     }
 }, 1000);
@@ -7405,9 +7395,6 @@ dragonFireCooldown = 0;
 // Restart background music
             if (musicPlaying) {
                 stopBackgroundMusic();
-            }
-            if (!backgroundMusic) {
-                createBackgroundMusic();
             }
             startBackgroundMusic();
         }
@@ -7522,8 +7509,7 @@ function togglePause() {
         // Restart music cleanly if enabled
         if (backgroundMusicEnabled) {
             try {
-                // Recreate music layers for clean restart
-                createBackgroundMusic();
+                // Just restart the music
                 startBackgroundMusic();
             } catch (error) {
                 debug('Audio resume error (non-critical):', error);
@@ -7652,7 +7638,7 @@ function showCharacterSelectScreenFromPause() {
         
         function jump() {
     if (!jumping) {
-        playJumpSound(); // Add this line
+        window.AudioSystem.playJumpSound()
         jumping = true;
         jumpDirection = 1;
         jumpRotation = 0; // Reset flip rotation
@@ -8744,7 +8730,7 @@ return playerBox.intersectsBox(objectBox);
         
         // Game over
 function endGame() {
-    playCrashSound(); // Add this line at the start
+    window.AudioSystem.playCrashSound()
     gameState = "gameOver";
     gameOver = true;
     
@@ -8759,19 +8745,8 @@ function endGame() {
     // INSTANT audio cutoff - stop everything immediately
     try {
         if (musicPlaying) {
-            // Stop all music layers instantly
-            musicLayers.forEach(layer => {
-                if (layer.pattern) {
-                    layer.pattern.stop(0); // Stop immediately (no fade)
-                }
-                if (layer.synth) {
-                    layer.synth.volume.rampTo(-60, 0.01); // Instant volume cut
-                }
-            });
-            
-            // Stop transport immediately
-            Tone.Transport.stop();
-            Tone.Transport.cancel(); // Cancel any scheduled events
+            // Stop background music
+            stopBackgroundMusic();
             
             musicPlaying = false;
         }
@@ -9739,7 +9714,7 @@ if (magnetActive) {
 const coinDistance = coin.position.distanceTo(player.position);
 if (coinDistance < 1.5 && checkCollision(coin)) {
     // Coin collected!
-    playCoinSound();
+    window.AudioSystem.playCoinSound();
     createSparkle(coin.position.clone());
     scene.remove(coin);
     coins.splice(i, 1);
@@ -9803,7 +9778,7 @@ if (magnetActive) {
 // Check if collected
 if (checkCollision(rareCoin)) {
     // Rare coin collected! Big reward!
-    playRareCoinSound(); // Add this line
+    window.AudioSystem.playRareCoinSound();
     createSparkle(rareCoin.position.clone());
     scene.remove(rareCoin);
     rareCoins.splice(i, 1);
