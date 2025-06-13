@@ -936,7 +936,7 @@ firebase.initializeApp(firebaseConfig);
     <div style="position: absolute; top: 0; left: 0; width: 100%; height: 100%;" id="titleCanvas"></div>
     
     <!-- Enhanced title with pulsing animation -->
-    <h1 class="title-logo" style="color: white; font-size: 72px; margin-bottom: 20px; text-shadow: 0 0 10px #00a2ff, 0 0 20px #00a2ff; position: relative; z-index: 10; animation: title-pulse 3s ease-in-out infinite;">Running BlitZ</h1>
+    <h1 class="title-logo" style="color: white; font-size: 72px; margin-bottom: 20px; text-shadow: 0 0 10px #00a2ff, 0 0 20px #00a2ff; position: relative; z-index: 10; animation: title-pulse 3s ease-in-out infinite;">Dash Blitz</h1>
     
 
     <!-- Enhanced start button with hover effects -->
@@ -1426,8 +1426,10 @@ firebase.initializeApp(firebaseConfig);
 <!-- CHARACTER INJECTION POINT - Additional characters will be loaded here -->
 <script src="worlds/forest.js"></script>
 <script src="worlds/desert.js"></script>
+<script src="worlds/underwater.js"></script>
 <script src="systems/obstacles.js"></script>
-<!--<script src="obstacle-pack-converter.js"></script>   OBSTACLE GLB CONVERTER -->
+<!----   <script src="obstacle-pack-converter.js"></script>   !--OBSTACLE GLB CONVERTER -->
+<!----   <script src="scenery-pack-converter.js"></script>    !--SCENERY GLB CONVERTER -->
 <script src="systems/audio.js"></script>
 <script src="systems/powerups.js"></script>
 
@@ -1520,14 +1522,9 @@ let sideTerrainSegments = []; // Store side terrain segments for movement
         let pendingScore = 0;
         const MAX_LEADERBOARD_ENTRIES = 10;
         
-        // Weather and environment variables
+        // Environment variables
         let skyLight;
-        let weatherParticles = [];
-        let currentWeather = "clear"; // clear, rain, snow
-        let targetWeather = "clear"; // For smooth transitions
-        let weatherChangeCounter = 0;
-        let weatherChangeDuration = 1800; // Frames until weather change (1 minute at 30fps)
-        let weatherTransitionProgress = 0; // For smooth transitions
+        let ambientLight;  // ADD THIS LINE
         let time = 0; // Time of day (0-1), 0 = day, 0.5 = sunset, 1 = night
         let timeCycleSpeed = 0.0001; // How fast time cycles
         let butterflyGroups = [];
@@ -1555,7 +1552,8 @@ const obstacleModels = new Map();
 const worldObstaclePacks = {
     classic: 'assets/obstacles/obstacles_classic_mobile.glb',
     forest: 'assets/obstacles/obstacles_forest_mobile.glb',
-    desert: 'assets/obstacles/obstacles_desert_mobile.glb'
+    desert: 'assets/obstacles/obstacles_desert_mobile.glb',
+    underwater: 'assets/obstacles/obstacles_underwater_mobile.glb'  // ADD THIS
 };
 let currentWorldObstaclesLoaded = false;
 
@@ -1650,7 +1648,8 @@ console.log('Cached obstacles:', Array.from(obstacleModels.keys()));
 const validObstacles = {
     classic: ['rock', 'treeStump', 'log', 'bush', 'spikes'],
     forest: ['treeRoot', 'thornBush', 'fallenBranch', 'mushroomRing', 'puddlePatch'],
-    desert: ['cactus', 'sandDune', 'quicksand', 'ancientRuin']
+    desert: ['cactus', 'sandDune', 'quicksand', 'ancientRuin'],
+    underwater: ['coralReef', 'giantClam', 'seaweedTangle', 'sunkenAnchor', 'rockFormation']  // ADD THIS
 };
 
 const expectedObstacles = validObstacles[worldName] || [];
@@ -1700,6 +1699,115 @@ function getObstacleFromGLB(obstacleType) {
     }
     console.warn(`Obstacle type "${obstacleType}" not found in pack`);
     return null;
+}
+
+// ==================== GLB SCENERY SYSTEM ====================
+// GLB-based scenery loading for better performance
+
+// Scenery model cache
+const sceneryModels = new Map();
+const worldSceneryPacks = {
+    classic: 'assets/scenery/scenery_classic_mobile.glb',
+    forest: 'assets/scenery/scenery_forest_mobile.glb',
+    desert: 'assets/scenery/scenery_desert_mobile.glb',
+    underwater: 'assets/scenery/scenery_underwater_mobile.glb'  // ADD THIS
+};
+
+// Track if scenery is loaded for current world
+let currentWorldSceneryLoaded = false;
+
+// Load scenery for a specific world
+async function loadWorldScenery(worldName) {
+    const packPath = worldSceneryPacks[worldName] || worldSceneryPacks.classic;
+    
+    console.log(`🌳 Loading ${worldName} scenery...`);
+    
+    return new Promise((resolve, reject) => {
+            const loader = new THREE.GLTFLoader();
+            loader.load(
+            packPath,
+            (gltf) => {
+                console.log(`✅ Loaded ${worldName} scenery pack`);
+                
+                // Clear any previous scenery
+                sceneryModels.clear();
+                
+                // Debug the structure
+                console.log('=== SCENERY GLB STRUCTURE ===');
+                console.log(`World: ${worldName}`);
+                console.log('Scene children:', gltf.scene.children);
+                
+                // Look for scenery container
+                const sceneryContainer = gltf.scene.children.find(child => 
+                    child.name.includes('_scenery') || child.name === 'Scene' || child.isGroup
+                );
+                
+                if (sceneryContainer && sceneryContainer.children.length > 0) {
+                    console.log(`Found scenery container: ${sceneryContainer.name} with ${sceneryContainer.children.length} children`);
+                    
+                    // Cache each scenery item
+                    sceneryContainer.children.forEach(sceneryItem => {
+                        if (sceneryItem.name && !sceneryItem.name.includes('_mesh')) {
+                            sceneryModels.set(sceneryItem.name, sceneryItem);
+                            console.log(`🌲 Cached scenery: ${sceneryItem.name}`);
+                        }
+                    });
+                } else {
+                    // Fallback: look at scene level
+                    gltf.scene.children.forEach(child => {
+                        if (child.isGroup && child.name) {
+                            sceneryModels.set(child.name, child);
+                            console.log(`🌲 Cached scenery: ${child.name}`);
+                        }
+                    });
+                }
+                
+                console.log(`Total scenery cached for ${worldName}:`, sceneryModels.size);
+                console.log('Cached scenery:', Array.from(sceneryModels.keys()));
+                console.log('=== END SCENERY STRUCTURE ===');
+                
+                currentWorldSceneryLoaded = true;
+                resolve();
+            },
+            (progress) => {
+                // Progress callback
+            },
+            (error) => {
+                console.error('Error loading scenery GLB:', error);
+                reject(error);
+            }
+        );
+    });
+}
+
+// Get scenery from GLB with proper cloning
+function getSceneryFromGLB(sceneryType) {
+    const model = sceneryModels.get(sceneryType);
+    if (!model) {
+        console.warn(`Scenery type "${sceneryType}" not found in GLB`);
+        return null;
+    }
+    
+    // Clone the model
+    const sceneryClone = model.clone();
+    
+    // Clone materials to avoid shared material issues
+    sceneryClone.traverse((child) => {
+        if (child.isMesh && child.material) {
+            if (Array.isArray(child.material)) {
+                child.material = child.material.map(mat => mat.clone());
+            } else {
+                child.material = child.material.clone();
+            }
+        }
+    });
+    
+    // Preserve any animation data from the original
+    if (model.userData) {
+        sceneryClone.userData = { ...model.userData };
+    }
+    
+    return sceneryClone;
 }
 
 
@@ -1779,6 +1887,21 @@ let availableWorlds = [
         lighting: {
             ambient: { color: 0xFFE4B5, intensity: 0.7 },
             directional: { color: 0xFFF8DC, intensity: 1.0 }
+        }
+    },
+    {  // ADD THIS UNDERWATER WORLD
+        id: 'underwater',
+        name: 'Ocean Depths',
+        description: 'Explore the mysterious underwater realm with coral reefs and sea creatures',
+        cost: 15000,
+        colors: {
+            sky: 0x004466,
+            fog: 0x003355,
+            ground: 0x334455
+        },
+        lighting: {
+            ambient: { color: 0x224466, intensity: 0.5 },
+            directional: { color: 0x88BBDD, intensity: 0.4 }
         }
     }
 ];
@@ -2179,7 +2302,6 @@ function updateSpeedIndicator() {
 // Mobile performance settings - define after checkMobile() is called
         let mobileSparkleCount = isMobile ? 8 : 20;        // Fewer sparkles on mobile
         let mobileExplosionCount = isMobile ? 15 : 30;     // Fewer explosion particles
-        let mobileWeatherCount = isMobile ? 150 : 500;     // Much fewer weather particles
         let mobileButterflyLimit = isMobile ? 3 : 10;      // Fewer butterflies
         let mobileBirdsLimit = isMobile ? 2 : 5;           // Fewer birds
 
@@ -2300,6 +2422,13 @@ loadWorldObstacles(currentWorld || 'classic').then(() => {
     console.error('Failed to load initial obstacles:', error);
     // Game can continue without obstacles in case of error
 });
+
+// Load initial scenery
+loadWorldScenery(currentWorld).then(() => {
+    console.log('✅ Initial scenery loaded');
+}).catch(error => {
+    console.error('Failed to load initial scenery:', error);
+});
             
             // Create scene
             scene = new THREE.Scene();
@@ -2316,11 +2445,13 @@ loadWorldObstacles(currentWorld || 'classic').then(() => {
             document.body.appendChild(renderer.domElement);
             
             // Add lights
-            const ambientLight = new THREE.AmbientLight(0xffffff, 0.6);
+            ambientLight = new THREE.AmbientLight(0xffffff, 0.6);  // Remove 'const' to use global variable
             scene.add(ambientLight);
             
+            // Add directional light (sunlight)
             skyLight = new THREE.DirectionalLight(0xffffff, 0.8);
-            skyLight.position.set(10, 20, 0);
+            skyLight.position.set(10, 20, 10);
+            skyLight.castShadow = true;
             scene.add(skyLight);
             
             // Load textures
@@ -2334,9 +2465,7 @@ loadWorldObstacles(currentWorld || 'classic').then(() => {
             
             // Create player based on selected character
             createPlayer();
-            
-            // Add weather systems
-            initializeWeatherSystems();
+        
             
             // Initialize dynamic difficulty
             resetDynamicDifficulty();
@@ -3133,33 +3262,7 @@ function showGlobalLeaderboard() {
             }
         }
         
-        // Weather systems with smooth transitions
-        function initializeWeatherSystems() {
-            // Initialize with clear weather
-            currentWeather = "clear";
-            targetWeather = "clear";
-            weatherTransitionProgress = 1; // Fully transitioned to start
-            
-            setWeather("clear");
-        }
-        
-        function setWeather(weatherType) {
-            // Start transition to new weather
-            targetWeather = weatherType;
-            weatherTransitionProgress = 0;
-            
-            // If no current weather particles exist, instantly create the new weather
-            if (weatherParticles.length === 0 && weatherType !== "clear") {
-                if (weatherType === "rain") {
-                    createRainSystem();
-                } else if (weatherType === "snow") {
-                    createSnowSystem();
-                }
-            }
-            
-            // Reset weather change counter
-            weatherChangeCounter = 0;
-        }
+
         
 // ==================== TITLE SCREEN SYSTEM ====================
 // Title screen, animations, and initial game presentation
@@ -4057,7 +4160,98 @@ function createWorldPreviewModel(world) {
     shimmer.rotation.x = -Math.PI / 2;
     shimmer.position.y = 0.01;
     previewGroup.add(shimmer);
+} else if (world.id === 'underwater') {
+    // Create underwater preview
+    
+    // Ocean floor
+    const groundGeometry = new THREE.BoxGeometry(4, 0.2, 4);
+    const groundMaterial = new THREE.MeshStandardMaterial({
+        color: world.colors.ground,
+        roughness: 0.9
+    });
+    const ground = new THREE.Mesh(groundGeometry, groundMaterial);
+    ground.position.y = -0.1;
+    previewGroup.add(ground);
+    
+    // Add coral pieces
+    for (let i = 0; i < 5; i++) {
+        const coralGeometry = new THREE.SphereGeometry(0.15, 8, 6);
+        const coralColors = [0xFF6B9D, 0xFFA500, 0x00CED1, 0xFFD700];
+        const coralMaterial = new THREE.MeshStandardMaterial({
+            color: coralColors[Math.floor(Math.random() * coralColors.length)],
+            roughness: 0.7
+        });
+        const coral = new THREE.Mesh(coralGeometry, coralMaterial);
+        coral.position.set(
+            (Math.random() - 0.5) * 3,
+            0.1,
+            (Math.random() - 0.5) * 3
+        );
+        coral.scale.set(1, 0.6, 1);
+        previewGroup.add(coral);
+    }
+    
+    // Add seaweed
+    for (let i = 0; i < 6; i++) {
+        const seaweedGeometry = new THREE.CylinderGeometry(0.02, 0.04, 0.6, 6);
+        const seaweedMaterial = new THREE.MeshStandardMaterial({
+            color: 0x2F4F2F,
+            roughness: 0.8
+        });
+        const seaweed = new THREE.Mesh(seaweedGeometry, seaweedMaterial);
+        seaweed.position.set(
+            (Math.random() - 0.5) * 3,
+            0.3,
+            (Math.random() - 0.5) * 3
+        );
+        seaweed.rotation.x = (Math.random() - 0.5) * 0.3;
+        seaweed.rotation.z = (Math.random() - 0.5) * 0.3;
+        previewGroup.add(seaweed);
+    }
+    
+    // Add a fish
+    const fishGeometry = new THREE.SphereGeometry(0.1, 8, 6);
+    const fishMaterial = new THREE.MeshStandardMaterial({
+        color: 0x1E90FF,
+        metalness: 0.3,
+        roughness: 0.5
+    });
+    const fish = new THREE.Mesh(fishGeometry, fishMaterial);
+    fish.scale.set(1.5, 0.7, 0.5);
+    fish.position.set(0.5, 0.8, 0);
+    fish.rotation.y = Math.PI / 4;
+    previewGroup.add(fish);
+    
+    // Fish tail
+    const tailGeometry = new THREE.ConeGeometry(0.06, 0.15, 4);
+    const tail = new THREE.Mesh(tailGeometry, fishMaterial);
+    tail.position.set(0.35, 0.8, -0.1);
+    tail.rotation.z = -Math.PI / 2;
+    tail.scale.set(0.5, 1.2, 1);
+    previewGroup.add(tail);
+    
+    // Add bubbles
+    for (let i = 0; i < 8; i++) {
+        const bubbleGeometry = new THREE.SphereGeometry(0.03, 6, 6);
+        const bubbleMaterial = new THREE.MeshStandardMaterial({
+            color: 0xE0FFFF,
+            transparent: true,
+            opacity: 0.4,
+            metalness: 0.8,
+            roughness: 0.1
+        });
+        const bubble = new THREE.Mesh(bubbleGeometry, bubbleMaterial);
+        bubble.position.set(
+            (Math.random() - 0.5) * 2,
+            0.2 + Math.random() * 1.5,
+            (Math.random() - 0.5) * 2
+        );
+        previewGroup.add(bubble);
+    }
 }
+
+
+
     
     // Scale up the preview to fill the rectangle better
 previewGroup.scale.set(1.5, 1.5, 1.5);
@@ -4203,6 +4397,18 @@ function applyWorldSettings(world) {
         skyLight.intensity = world.lighting.directional.intensity;
     }
     
+    
+    // In applyWorldSettings function, after the underwater effects code:
+        if (world.id === 'underwater') {
+            
+            // Remove any existing water streams when switching to underwater
+            waterStreams.forEach(stream => {
+                scene.remove(stream);
+            });
+            waterStreams = [];
+        
+        }
+
     // Store current world data for other systems to use
     window.currentWorldData = world;
     
@@ -4221,6 +4427,17 @@ function applyWorldSettings(world) {
         });
         obstacles.length = 0; // Clear the array completely
 
+        // Remove birds and butterflies when switching any world
+    butterflyGroups.forEach(butterfly => {
+        scene.remove(butterfly);
+    });
+    butterflyGroups = [];
+
+    birds.forEach(bird => {
+        scene.remove(bird);
+    });
+    birds = [];
+
         // Add a small delay before spawning new obstacles to ensure scene is updated
         setTimeout(() => {
             console.log('Obstacles array after clearing:', obstacles.length);
@@ -4237,6 +4454,21 @@ function applyWorldSettings(world) {
     }).catch(error => {
         console.error(`Failed to load ${world.id} obstacles:`, error);
     });
+
+    // Clear existing scenery from scene
+sceneryObjects.forEach(scenery => scene.remove(scenery));
+sceneryObjects = [];
+
+// Clear the scenery models cache and reload for new world
+sceneryModels.clear();
+currentWorldSceneryLoaded = false;
+
+// Load the new world's scenery
+loadWorldScenery(world.id).then(() => {
+    console.log(`✅ ${world.id} scenery loaded after world switch`);
+}).catch(error => {
+    console.error(`Failed to load ${world.id} scenery:`, error);
+});
     
     // IMPORTANT: Recreate the ground with the new world theme
     recreateGroundForWorld();
@@ -4756,265 +4988,60 @@ case "ghost":
             }
         }
 
-function createRainSystem() {
-            const rainCount = isMobile ? 150 : 500;
-            const rainGeometry = new THREE.BoxGeometry(0.03, 0.2, 0.03);
-            const rainMaterial = new THREE.MeshBasicMaterial({
-                color: 0x9ACEEB, // Light blue
-                transparent: true,
-                opacity: 0.6
-            });
-            
-            for (let i = 0; i < rainCount; i++) {
-                const raindrop = new THREE.Mesh(rainGeometry, rainMaterial);
-                
-                // Randomize positions in a large area around the player
-                raindrop.position.set(
-                    Math.random() * 80 - 40,
-                    Math.random() * 30 + 10,
-                    Math.random() * 80 - 100
-                );
-                
-                // Set raindrop speed and properties
-                raindrop.userData.speed = Math.random() * 0.3 + 0.2;
-                raindrop.userData.horizontalSpeed = Math.random() * 0.05 - 0.025;
-                raindrop.userData.weatherType = "rain";
-                
-                scene.add(raindrop);
-                weatherParticles.push(raindrop);
-            }
-            
-            // Target sky color for rain (not immediate)
-            targetSkyColor = new THREE.Color(0x556677); // Darker sky
-        }
-        
-        function createSnowSystem() {
-            const snowCount = isMobile ? 120 : 400;
-            const snowGeometry = new THREE.SphereGeometry(0.05, 6, 6);
-            const snowMaterial = new THREE.MeshBasicMaterial({
-                color: 0xffffff,
-                transparent: true,
-                opacity: 0.8
-            });
-            
-            for (let i = 0; i < snowCount; i++) {
-                const snowflake = new THREE.Mesh(snowGeometry, snowMaterial);
-                
-                // Randomize positions in a large area around the player
-                snowflake.position.set(
-                    Math.random() * 80 - 40,
-                    Math.random() * 30 + 10,
-                    Math.random() * 80 - 100
-                );
-                
-                // Set snowflake speed and properties
-                snowflake.userData.speed = Math.random() * 0.1 + 0.05;
-                snowflake.userData.horizontalSpeed = Math.random() * 0.03 - 0.015;
-                snowflake.userData.wobbleSpeed = Math.random() * 0.02 + 0.01;
-                snowflake.userData.wobbleAmount = Math.random() * 0.1;
-                snowflake.userData.wobblePosition = Math.random() * Math.PI * 2;
-                snowflake.userData.weatherType = "snow";
-                
-                scene.add(snowflake);
-                weatherParticles.push(snowflake);
-            }
-            
-            // Target sky color for snow (gradual transition)
-            targetSkyColor = new THREE.Color(0xc8d8f0); // Light blue-gray sky
-        }
-        
-        function updateWeather() {
-            // Progress the transition between weather types
-            if (weatherTransitionProgress < 1) {
-                weatherTransitionProgress += 0.005; // Slow transition
-                
-                // Gradually adjust the sky color
-                scene.background.lerp(targetSkyColor, 0.005);
-                
-                // Gradually adjust light intensity based on target weather
-                let targetIntensity = 0.8; // Default for clear
-                if (targetWeather === "rain") {
-                    targetIntensity = 0.5;
-                } else if (targetWeather === "snow") {
-                    targetIntensity = 0.7;
-                }
-                
-                // Apply time of day modifications to target intensity
-                if (time < 0.3 || time > 0.7) {
-                    // Lower light during dawn/dusk/night
-                    targetIntensity *= (time > 0.85 || time < 0.2) ? 0.4 : 0.75;
-                }
-                
-                skyLight.intensity += (targetIntensity - skyLight.intensity) * 0.01;
-                
-                // Remove particles of the weather type we're transitioning away from
-                if (targetWeather !== currentWeather && weatherTransitionProgress > 0.5) {
-                    for (let i = weatherParticles.length - 1; i >= 0; i--) {
-                        const particle = weatherParticles[i];
-                        if (particle.userData.weatherType === currentWeather) {
-                            // Fade out the particle
-                            if (particle.material.opacity > 0.05) {
-                                particle.material.opacity -= 0.05;
-                            } else {
-                                scene.remove(particle);
-                                weatherParticles.splice(i, 1);
-                            }
-                        }
-                    }
-                    
-                    // If we've removed all particles of the old type, and we need to create new ones
-                    if (weatherParticles.length === 0 && targetWeather !== "clear") {
-                        if (targetWeather === "rain") {
-                            createRainSystem();
-                        } else if (targetWeather === "snow") {
-                            createSnowSystem();
-                        }
-                    }
-                }
-                
-                // If transition is complete, update current weather
-                if (weatherTransitionProgress >= 1) {
-                    currentWeather = targetWeather;
-                }
-            }
-            
-            // Update weather particles
-            for (let i = weatherParticles.length - 1; i >= 0; i--) {
-                const particle = weatherParticles[i];
-                
-                if (particle.userData.weatherType === "rain") {
-                    // Move raindrop down and slightly sideways
-                    particle.position.y -= particle.userData.speed;
-                    particle.position.x += particle.userData.horizontalSpeed;
-                    particle.position.z += currentSpeed; // Move with scene
-                    
-                    // Reset if too low or behind camera
-                    if (particle.position.y < -2 || particle.position.z > 10) {
-                        particle.position.set(
-                            Math.random() * 80 - 40,
-                            Math.random() * 20 + 20,
-                            Math.random() * 40 - 120
-                        );
-                    }
-                } else if (particle.userData.weatherType === "snow") {
-                    // Move snowflake down with wobble and slightly sideways
-                    particle.position.y -= particle.userData.speed;
-                    
-                    // Add wobble effect
-                    particle.userData.wobblePosition += particle.userData.wobbleSpeed;
-                    particle.position.x += Math.sin(particle.userData.wobblePosition) * particle.userData.wobbleAmount + particle.userData.horizontalSpeed;
-                    
-                    particle.position.z += currentSpeed; // Move with scene
-                    particle.rotation.y += 0.01; // Rotate snowflake
-                    
-                    // Reset if too low or behind camera
-                    if (particle.position.y < -2 || particle.position.z > 10) {
-                        particle.position.set(
-                            Math.random() * 80 - 40,
-                            Math.random() * 20 + 20,
-                            Math.random() * 40 - 120
-                        );
-                        particle.userData.wobblePosition = Math.random() * Math.PI * 2;
-                    }
-                }
-            }
-            
-            // Check if it's time to change weather
-            weatherChangeCounter++;
-            if (weatherChangeCounter > weatherChangeDuration) {
-                const roll = Math.random();
-                if (currentWeather === "clear") {
-                    // 40% chance of rain, 20% chance of snow when clear
-                    if (roll < 0.4) setWeather("rain");
-                    else if (roll < 0.6) setWeather("snow");
-                    else setWeather("clear");
-                } else {
-                    // 60% chance of clear when raining or snowing
-                    if (roll < 0.6) setWeather("clear");
-                    else if (currentWeather === "rain" && roll < 0.8) setWeather("snow");
-                    else if (currentWeather === "snow" && roll < 0.8) setWeather("rain");
-                    else setWeather(currentWeather);
-                }
-            }
-            
-            // Update time of day
-            updateTimeOfDay();
-        }
-        
+     
         function updateTimeOfDay() {
-            time += timeCycleSpeed;
-            if (time > 1) time = 0;
-            
-            // Calculate target sky color based on time
-            let timeSkyColor;
-            if (time < 0.25) { // Morning
-                timeSkyColor = new THREE.Color(0x87CEEB).lerp(new THREE.Color(0xFFA07A), time * 4);
-            } else if (time < 0.3) { // Sunrise
-                timeSkyColor = new THREE.Color(0xFFA07A).lerp(new THREE.Color(0x87CEEB), (time - 0.25) * 20);
-            } else if (time < 0.7) { // Day
-                timeSkyColor = new THREE.Color(0x87CEEB);
-            } else if (time < 0.8) { // Sunset
-                timeSkyColor = new THREE.Color(0x87CEEB).lerp(new THREE.Color(0xFF7F50), (time - 0.7) * 10);
-            } else if (time < 0.85) { // Dusk
-                timeSkyColor = new THREE.Color(0xFF7F50).lerp(new THREE.Color(0x191970), (time - 0.8) * 20);
-            } else { // Night
-                timeSkyColor = new THREE.Color(0x191970);
-            }
-            
-            // Blend weather sky color with time of day sky color
-            if (currentWeather === "clear") {
-                targetSkyColor = timeSkyColor;
-            } else {
-                // For weather conditions, gradually blend with time-of-day
-                const weatherInfluence = 0.7; // Weather has 70% influence
-                const timeInfluence = 1 - weatherInfluence;
-                
-                // Create a blended target
-                const blendedTarget = targetSkyColor.clone();
-                blendedTarget.lerp(timeSkyColor, timeInfluence);
-                targetSkyColor = blendedTarget;
-            }
-            
-            // Gradually shift sky color
-            scene.background.lerp(targetSkyColor, 0.005);
-            
-            // Adjust light intensity based on time (smooth transition)
-            let targetIntensity;
-            if (time < 0.3 || time > 0.7) {
-                // Lower light during dawn/dusk/night
-                targetIntensity = (time > 0.85 || time < 0.2) ? 0.3 : 0.6;
-            } else if (currentWeather === "clear") {
-                // Full daylight
-                targetIntensity = 0.8;
-            } else if (currentWeather === "rain") {
-                // Dimmer for rain
-                targetIntensity = 0.5;
-            } else if (currentWeather === "snow") {
-                // Moderate for snow
-                targetIntensity = 0.7;
-            } else {
-                targetIntensity = 0.8;
-            }
-            
-            // Smooth transition for light intensity
-            skyLight.intensity += (targetIntensity - skyLight.intensity) * 0.01;
-            
-            // Adjust light color based on time
-            let targetLightColor;
-            if (time < 0.3) { // Morning
-                targetLightColor = new THREE.Color(0xFFD580);
-            } else if (time < 0.7) { // Day
-                targetLightColor = new THREE.Color(0xFFFFFF);
-            } else if (time < 0.85) { // Evening
-                targetLightColor = new THREE.Color(0xFFA07A);
-            } else { // Night
-                targetLightColor = new THREE.Color(0x4169E1);
-            }
-            
-            // Smooth transition for light color
-            skyLight.color.lerp(targetLightColor, 0.01);
-        }
-        
+    // Skip time of day changes for underwater world
+    if (currentWorld === 'underwater') {
+        return;
+    }
+    
+    time += timeCycleSpeed;
+    if (time > 1) time = 0;
+    
+    // Calculate sky color based on time only (no weather)
+    let targetSkyColor;
+    if (time < 0.25) { // Morning
+        targetSkyColor = new THREE.Color(0x87CEEB).lerp(new THREE.Color(0xFFA07A), time * 4);
+    } else if (time < 0.3) { // Sunrise
+        targetSkyColor = new THREE.Color(0xFFA07A).lerp(new THREE.Color(0x87CEEB), (time - 0.25) * 20);
+    } else if (time < 0.7) { // Day
+        targetSkyColor = new THREE.Color(0x87CEEB);
+    } else if (time < 0.8) { // Sunset
+        targetSkyColor = new THREE.Color(0x87CEEB).lerp(new THREE.Color(0xFF7F50), (time - 0.7) * 10);
+    } else if (time < 0.85) { // Dusk
+        targetSkyColor = new THREE.Color(0xFF7F50).lerp(new THREE.Color(0x191970), (time - 0.8) * 20);
+    } else { // Night
+        targetSkyColor = new THREE.Color(0x191970);
+    }
+    
+    // Apply sky color
+    scene.background.lerp(targetSkyColor, 0.005);
+    
+    // Adjust light intensity based on time
+    let targetIntensity;
+    if (time < 0.3 || time > 0.7) {
+        targetIntensity = (time > 0.85 || time < 0.2) ? 0.3 : 0.6;
+    } else {
+        targetIntensity = 0.8;
+    }
+    
+    skyLight.intensity += (targetIntensity - skyLight.intensity) * 0.01;
+    
+    // Adjust light color based on time
+    let targetLightColor;
+    if (time < 0.3) {
+        targetLightColor = new THREE.Color(0xFFD580);
+    } else if (time < 0.7) {
+        targetLightColor = new THREE.Color(0xFFFFFF);
+    } else if (time < 0.85) {
+        targetLightColor = new THREE.Color(0xFFA07A);
+    } else {
+        targetLightColor = new THREE.Color(0x4169E1);
+    }
+    
+    skyLight.color.lerp(targetLightColor, 0.01);
+}
+
         function updateButterfliesAndBirds() {
             // Update butterflies
             for (let i = butterflyGroups.length - 1; i >= 0; i--) {
@@ -5070,34 +5097,40 @@ function createRainSystem() {
             }
             
             // Spawn new butterflies/beetles occasionally - world-specific
-if (Math.random() < 0.005 && butterflyGroups.length < mobileButterflyLimit && currentWeather === "clear") {
-    const x = Math.random() * 40 - 20;
-    const y = Math.random() * 3 + 1;
-    const z = Math.random() * 20 - 40;
-    
-    if (currentWorld === 'desert') {
-        // Desert beetles instead of butterflies
-        butterflyGroups.push(createDesertBeetle(x, y, z));
-    } else {
-        // Regular butterflies for classic and forest
-        butterflyGroups.push(createButterfly(x, y, z));
+if (Math.random() < 0.005 && butterflyGroups.length < mobileButterflyLimit) {
+    // Don't spawn in underwater world!
+    if (currentWorld !== 'underwater') {
+        const x = Math.random() * 40 - 20;
+        const y = Math.random() * 3 + 1;
+        const z = Math.random() * 20 - 40;
+        
+        if (currentWorld === 'desert') {
+            // Desert beetles instead of butterflies
+            butterflyGroups.push(createDesertBeetle(x, y, z));
+        } else {
+            // Regular butterflies for classic and forest
+            butterflyGroups.push(createButterfly(x, y, z));
+        }
     }
 }
             
             // Spawn new birds occasionally - world-specific types
 if (Math.random() < 0.002 && birds.length < mobileBirdsLimit) {
-    const x = Math.random() * 60 - 30;
-    const y = Math.random() * 10 + 10;
-    const z = -100;
-    
-    // Different birds for different worlds
-    if (currentWorld === 'desert') {
-        // Vultures and desert birds fly higher
-        const desertY = Math.random() * 15 + 15;
-        birds.push(createBird(x, desertY, z));
-    } else {
-        // Regular birds for classic and forest
-        birds.push(createBird(x, y, z));
+    // Don't spawn in underwater or forest worlds!
+    if (currentWorld !== 'underwater' && currentWorld !== 'forest') {
+        const x = Math.random() * 60 - 30;
+        const y = Math.random() * 10 + 10;
+        const z = -100;
+        
+        // Different birds for different worlds
+        if (currentWorld === 'desert') {
+            // Vultures and desert birds fly higher
+            const desertY = Math.random() * 15 + 15;
+            birds.push(createBird(x, desertY, z));
+        } else {
+            // Regular birds for classic only
+            birds.push(createBird(x, y, z));
+        }
     }
 }
 }
@@ -5615,6 +5648,64 @@ currentWorld = 'classic';
             waterTexture.wrapT = THREE.RepeatWrapping;
             waterTexture.repeat.set(5, 1);
         }
+
+        function createOceanFloorTexture() {
+    const canvas = document.createElement('canvas');
+    canvas.width = 512;
+    canvas.height = 512;
+    const ctx = canvas.getContext('2d');
+    
+    // Dark ocean floor base
+    ctx.fillStyle = '#1a3a4a';
+    ctx.fillRect(0, 0, 512, 512);
+    
+    // Add sand/sediment texture
+    for (let i = 0; i < 2000; i++) {
+        const x = Math.random() * 512;
+        const y = Math.random() * 512;
+        const brightness = Math.random() * 20 + 30;
+        const size = Math.random() * 2 + 1;
+        ctx.fillStyle = `rgb(${brightness}, ${brightness + 10}, ${brightness + 20})`;
+        ctx.fillRect(x, y, size, size);
+    }
+    
+    // Add darker patches
+    for (let i = 0; i < 20; i++) {
+        ctx.save();
+        ctx.globalAlpha = 0.3;
+        const x = Math.random() * 512;
+        const y = Math.random() * 512;
+        const radius = Math.random() * 40 + 20;
+        const gradient = ctx.createRadialGradient(x, y, 0, x, y, radius);
+        gradient.addColorStop(0, '#000000');
+        gradient.addColorStop(1, 'transparent');
+        ctx.fillStyle = gradient;
+        ctx.fillRect(x - radius, y - radius, radius * 2, radius * 2);
+        ctx.restore();
+    }
+    
+    // Add some lighter sandy patches
+    for (let i = 0; i < 15; i++) {
+        ctx.save();
+        ctx.globalAlpha = 0.2;
+        const x = Math.random() * 512;
+        const y = Math.random() * 512;
+        const radius = Math.random() * 30 + 15;
+        const gradient = ctx.createRadialGradient(x, y, 0, x, y, radius);
+        gradient.addColorStop(0, '#3a5a6a');
+        gradient.addColorStop(1, 'transparent');
+        ctx.fillStyle = gradient;
+        ctx.fillRect(x - radius, y - radius, radius * 2, radius * 2);
+        ctx.restore();
+    }
+    
+    const texture = new THREE.CanvasTexture(canvas);
+    texture.wrapS = THREE.RepeatWrapping;
+    texture.wrapT = THREE.RepeatWrapping;
+    texture.repeat.set(2, 10);
+    
+    return texture;
+}
         
         // Create ground with grass texture
 function createGround() {
@@ -5633,7 +5724,13 @@ function createGround() {
             color: 0xF4A460, // Sandy brown
             roughness: 0.8
         });
-    } else {
+    } else if (currentWorld === 'underwater') {
+    groundMaterial = new THREE.MeshStandardMaterial({
+        color: 0x2a5a7a,  // Brighter ocean floor (was 0x1a3a4a)
+        roughness: 1,
+        metalness: 0
+    });
+} else {
         // Classic world - use grass texture
         groundMaterial = new THREE.MeshStandardMaterial({
             map: grassTexture,
@@ -5655,23 +5752,29 @@ function createGround() {
         // Add dirt sides to each ground segment
         const dirtGeometry = new THREE.BoxGeometry(12, 1, 50.1);
         // Create dirt material based on world
-        let dirtMaterial;
-        if (currentWorld === 'forest') {
-            dirtMaterial = new THREE.MeshStandardMaterial({
-                color: 0x654321, // Dark brown forest soil
-                roughness: 1
-            });
-        } else if (currentWorld === 'desert') {
-            dirtMaterial = new THREE.MeshStandardMaterial({
-                color: 0xCD853F, // Sandy rock color
-                roughness: 0.9
-            });
-        } else {
-            dirtMaterial = new THREE.MeshStandardMaterial({
-                color: 0x8B4513, // Classic brown dirt
-                roughness: 1
-            });
-        }
+let dirtMaterial;
+if (currentWorld === 'forest') {
+    dirtMaterial = new THREE.MeshStandardMaterial({
+        color: 0x654321, // Dark brown forest soil
+        roughness: 1
+    });
+} else if (currentWorld === 'desert') {
+    dirtMaterial = new THREE.MeshStandardMaterial({
+        color: 0xCD853F, // Sandy rock color
+        roughness: 0.9
+    });
+} else if (currentWorld === 'underwater') {  // ADD THIS
+    dirtMaterial = new THREE.MeshStandardMaterial({
+        color: 0x0d1f2d, // Very dark ocean depths
+        roughness: 1,
+        metalness: 0
+    });
+} else {
+    dirtMaterial = new THREE.MeshStandardMaterial({
+        color: 0x8B4513, // Classic brown dirt
+        roughness: 1
+    });
+}
 
         const dirtSide = new THREE.Mesh(dirtGeometry, dirtMaterial);
         dirtSide.position.y = -0.75;
@@ -5679,27 +5782,33 @@ function createGround() {
         scene.add(dirtSide);
 
         // Create side terrain material based on world
-        let sideTerrainMaterial;
-        if (currentWorld === 'forest') {
-            sideTerrainMaterial = new THREE.MeshStandardMaterial({
-                color: 0x1F4F2F, // Very dark forest green
-                roughness: 1.0
-            });
-        } else if (currentWorld === 'desert') {
-            sideTerrainMaterial = new THREE.MeshStandardMaterial({
-                color: 0xDEB887, // Desert sand color
-                roughness: 0.9
-            });
-        } else {
-            // Classic world - use grass texture
-            const wildGrassTexture = grassTexture.clone();
-            wildGrassTexture.repeat.set(5, 30);
-            sideTerrainMaterial = new THREE.MeshStandardMaterial({
-                map: wildGrassTexture,
-                roughness: 0.9,
-                color: 0x88AA88
-            });
-        }
+let sideTerrainMaterial;
+if (currentWorld === 'forest') {
+    sideTerrainMaterial = new THREE.MeshStandardMaterial({
+        color: 0x1F4F2F, // Very dark forest green
+        roughness: 1.0
+    });
+} else if (currentWorld === 'desert') {
+    sideTerrainMaterial = new THREE.MeshStandardMaterial({
+        color: 0xDEB887, // Desert sand color
+        roughness: 0.9
+    });
+} else if (currentWorld === 'underwater') {
+    sideTerrainMaterial = new THREE.MeshStandardMaterial({
+        color: 0x225570,  // Brighter (was 0x0f2a3f)
+        roughness: 1,
+        metalness: 0
+    });
+} else {
+    // Classic world - use grass texture
+    const wildGrassTexture = grassTexture.clone();
+    wildGrassTexture.repeat.set(5, 30);
+    sideTerrainMaterial = new THREE.MeshStandardMaterial({
+        map: wildGrassTexture,
+        roughness: 0.9,
+        color: 0x88AA88
+    });
+}
 
         // Left side terrain
         const leftTerrainGeometry = new THREE.BoxGeometry(50, 0.3, 100);
@@ -5933,6 +6042,71 @@ if (currentWorld === 'desert') {
         
         scene.add(dune);
     }
+ } else if (currentWorld === 'underwater') {
+    // Create distant coral reef formations
+    for (let i = 0; i < 10; i++) {  // Reduced from 12
+        const coralGroup = new THREE.Group();
+        
+        // Create brain coral shape (more interesting than rocks)
+        const coralGeometry = new THREE.SphereGeometry(
+            Math.random() * 20 + 15,
+            8,  // Reduced segments for performance
+            6
+        );
+        // Deform the sphere to look more like brain coral
+        const coralMaterial = new THREE.MeshStandardMaterial({
+            color: Math.random() > 0.5 ? 0xFF6B9D : 0xFF8FAB,  // Pink coral colors
+            roughness: 0.8,
+            flatShading: true  // Gives it a more coral-like appearance
+        });
+        const coral = new THREE.Mesh(coralGeometry, coralMaterial);
+        coral.scale.set(1, 0.6, 1);  // Flatten it
+        
+        // Add staghorn coral branches
+        for (let j = 0; j < 4; j++) {  // Reduced from more branches
+            const branchGeometry = new THREE.ConeGeometry(3, 15, 6);  // Simple cone
+            const branchMaterial = new THREE.MeshStandardMaterial({
+                color: 0xFFA07A,  // Light coral color
+                roughness: 0.9
+            });
+            const branch = new THREE.Mesh(branchGeometry, branchMaterial);
+            const angle = (j / 4) * Math.PI * 2;
+            branch.position.set(
+                Math.cos(angle) * 10,
+                7,
+                Math.sin(angle) * 10
+            );
+            branch.rotation.z = angle * 0.3;
+            coralGroup.add(branch);
+        }
+        
+        coralGroup.add(coral);
+        
+        // Position FAR in the background
+        const distance = Math.random() * 300 + 150;
+        const posX = Math.random() * 300 - 150;
+        coralGroup.position.set(posX, -5, -distance);
+        
+        scene.add(coralGroup);
+    }
+    
+    // Simpler kelp forests - just cylinders
+    for (let i = 0; i < 5; i++) {  // Reduced from 8
+        const kelpGeometry = new THREE.CylinderGeometry(3, 5, 40, 6);  // Reduced segments
+        const kelpMaterial = new THREE.MeshStandardMaterial({
+            color: 0x2F4F2F,
+            roughness: 0.9
+        });
+        const kelp = new THREE.Mesh(kelpGeometry, kelpMaterial);
+        
+        const distance = Math.random() * 200 + 200;
+        const posX = Math.random() * 400 - 200;
+        kelp.position.set(posX, 0, -distance);
+        
+        scene.add(kelp);
+    }
+    
+    return;
 } else if (currentWorld === 'forest') {
     // Create forest mountains
     for (let i = 0; i < 20; i++) {
@@ -6199,20 +6373,24 @@ if (currentWorld === 'desert') {
                 scene.add(hill);
             }
             
-            // Add some butterflies
-            for (let i = 0; i < 5; i++) {
-                const x = Math.random() * 40 - 20;
-                const y = Math.random() * 3 + 1;
-                const z = Math.random() * 20 - 40;
-                butterflyGroups.push(createButterfly(x, y, z));
+            // Add some butterflies - ONLY for appropriate worlds
+            if (currentWorld === 'classic' || currentWorld === 'forest') {
+                for (let i = 0; i < 5; i++) {
+                    const x = Math.random() * 40 - 20;
+                    const y = Math.random() * 3 + 1;
+                    const z = Math.random() * 20 - 40;
+                    butterflyGroups.push(createButterfly(x, y, z));
+                }
             }
             
-            // Add some birds
-            for (let i = 0; i < 3; i++) {
-                const x = Math.random() * 60 - 30;
-                const y = Math.random() * 10 + 10;
-                const z = Math.random() * 40 - 80;
-                birds.push(createBird(x, y, z));
+            // Add some birds - ONLY for appropriate worlds  
+            if (currentWorld === 'classic') {
+                for (let i = 0; i < 3; i++) {
+                    const x = Math.random() * 60 - 30;
+                    const y = Math.random() * 10 + 10;
+                    const z = Math.random() * 40 - 80;
+                    birds.push(createBird(x, y, z));
+                }
             }
         }
         
@@ -7897,75 +8075,60 @@ function showCharacterSelectScreenFromPause() {
 // Functions: spawnScenery(), createTallPine(), createMushroomPatch(), etc.
 
         // Create roadside scenery objects
-        function spawnScenery() {
-            // Spawn scenery to the sides of the lanes
-const side = Math.random() > 0.5 ? 1 : -1; // Left or right side
-const distance = Math.random() * 3 + 5; // Distance from center
-
-let sceneryObject;
-
-if (currentWorld === 'forest') {
-    // Forest-specific scenery
-    const forestScenery = Math.floor(Math.random() * 5);
-    switch (forestScenery) {
-        case 0: // Tall pine trees
-            sceneryObject = createTallPine();
-            break;
-        case 1: // Mushroom patches
-            sceneryObject = createMushroomPatch();
-            break;
-        case 2: // Fern clusters
-            sceneryObject = createFernCluster();
-            break;
-        case 3: // Firefly swarms
-            sceneryObject = createFireflySwarm();
-            break;
-        case 4: // Ancient oak
-            sceneryObject = createAncientOak();
-            break;
+function spawnScenery() {
+    // Check if scenery is loaded
+    if (!currentWorldSceneryLoaded) {
+        console.warn('Scenery not loaded yet');
+        return;
     }
-} else if (currentWorld === 'desert') {
-    // Desert-specific scenery
-    const desertScenery = Math.floor(Math.random() * 4);
-    switch (desertScenery) {
-        case 0: // Palm oasis
-            sceneryObject = createPalmOasis();
-            break;
-        case 1: // Shimmering mirage
-            sceneryObject = createMirage();
-            break;
-        case 2: // Rolling tumbleweed
-            sceneryObject = createTumbleweed();
-            break;
-        case 3: // Distant pyramid
-            sceneryObject = createPyramidDistance();
-            break;
+    
+    // Get available scenery for current world
+    const availableScenery = Array.from(sceneryModels.keys());
+    if (availableScenery.length === 0) {
+        console.error('No scenery loaded for current world!');
+        return;
     }
-} else {
-    // Classic world scenery
-    const sceneryType = Math.floor(Math.random() * 4);
-    switch (sceneryType) {
-        case 0: // Tree
-            sceneryObject = createTree();
-            break;
-        case 1: // Rock formation
-            sceneryObject = createRockFormation();
-            break;
-        case 2: // Flowers
-            sceneryObject = createFlowers();
-            break;
-        case 3: // Bush cluster
-            sceneryObject = createBushCluster();
-            break;
+    
+    // Spawn scenery to the sides of the lanes
+    const side = Math.random() > 0.5 ? 1 : -1; // Left or right side
+    const distance = Math.random() * 3 + 5; // Distance from center
+    
+    // Pick random scenery type
+    const randomScenery = availableScenery[Math.floor(Math.random() * availableScenery.length)];
+    
+    // Get scenery from GLB
+    const sceneryObject = getSceneryFromGLB(randomScenery);
+    
+    if (!sceneryObject) {
+        console.error(`Failed to spawn scenery: ${randomScenery}`);
+        return;
     }
+    
+    // Position the scenery
+    sceneryObject.position.x = side * distance;
+    sceneryObject.position.z = -50; // Spawn far away
+    
+    // Add metadata for animations
+    sceneryObject.userData.sceneryType = randomScenery;
+    
+    // Special setup for animated scenery
+    if (randomScenery === 'fireflySwarm' || randomScenery === 'ancientOak') {
+        // Store animation data for fireflies and orbs
+        sceneryObject.traverse((child) => {
+            if (child.userData.floatSpeed || child.userData.orbitSpeed) {
+                // Preserve animation data
+                child.userData.basePosition = child.position.clone();
+            }
+        });
+    }
+    
+    scene.add(sceneryObject);
+    sceneryObjects.push(sceneryObject);
+    
+    debug(`🌳 Spawned ${randomScenery} scenery at x:${sceneryObject.position.x}`);
 }
-            
-            sceneryObject.position.x = side * distance;
-            sceneryObject.position.z = -50; // Spawn far away
-            scene.add(sceneryObject);
-            sceneryObjects.push(sceneryObject);
-        }
-        
+
+
         function createTree() {
             const treeGroup = new THREE.Group();
             
@@ -9401,7 +9564,6 @@ function isInCameraView(object) {
 
     // Staggered updates for performance - different systems update on different frames
     const updateSchedule = {
-        weather: frameCount % 3 === 0,      // Update weather every 3rd frame
         butterflies: frameCount % 4 === 0,   // Update butterflies every 4th frame  
         scenery: frameCount % 2 === 0,       // Update scenery every 2nd frame
         particles: frameCount % 2 === 1      // Update particles on alternating frames
@@ -9779,7 +9941,6 @@ updatePowerUpStatusBar();
 updateAbilityStatusBar();
                 
                 // Staggered updates for better performance
-                if (updateSchedule.weather) updateWeather();
                 if (updateSchedule.butterflies) updateButterfliesAndBirds();
                 
                 // Update water streams
@@ -10166,6 +10327,96 @@ for (let i = sceneryObjects.length - 1; i >= 0; i--) {
             }
         });
     }
+
+    // Animate underwater-specific scenery
+else if (currentWorld === 'underwater' && scenery.userData.sceneryType) {
+    scenery.children.forEach(child => {
+        // Animate kelp swaying
+        if (child.userData && child.userData.swaySpeed) {
+            const sway = Math.sin(frameCount * child.userData.swaySpeed + child.userData.swayOffset) * child.userData.swayAmount;
+            child.rotation.z = (child.userData.originalRotation || 0) + sway;
+            
+            // Kelp also bends slightly forward/back
+            child.rotation.x = Math.sin(frameCount * child.userData.swaySpeed * 0.7 + child.userData.swayOffset) * child.userData.swayAmount * 0.5;
+        }
+        
+        // Animate fish swimming
+        if (child.userData && child.userData.swimSpeed) {
+            // Horizontal swimming motion
+            const swimX = Math.sin(frameCount * child.userData.swimSpeed + child.userData.swimOffset) * 0.3;
+            child.position.x = child.userData.basePosition.x + swimX;
+            
+            // Gentle vertical floating
+            const floatY = Math.sin(frameCount * child.userData.swimSpeed * 0.5) * child.userData.verticalFloat;
+            child.position.y = child.userData.basePosition.y + floatY;
+            
+            // Slight body rotation for swimming motion
+            child.rotation.z = Math.sin(frameCount * child.userData.swimSpeed * 2) * 0.1;
+            child.rotation.y = Math.sin(frameCount * child.userData.swimSpeed) * 0.2;
+        }
+        
+        // Animate bubbles rising
+        if (child.userData && child.userData.riseSpeed) {
+            child.position.y += child.userData.riseSpeed;
+            
+            // Wobble as they rise
+            const wobbleX = Math.sin(frameCount * child.userData.wobbleSpeed) * child.userData.wobbleAmount;
+            const wobbleZ = Math.cos(frameCount * child.userData.wobbleSpeed) * child.userData.wobbleAmount;
+            child.position.x += wobbleX * 0.01;
+            child.position.z += wobbleZ * 0.01;
+            
+            // Reset bubble when it gets too high
+            if (child.position.y > 5) {
+                child.position.y = child.userData.startY || 0;
+                // Reset to original X/Z position
+                child.position.x = (Math.random() - 0.5) * 0.3;
+                child.position.z = (Math.random() - 0.5) * 0.3;
+            }
+            
+            // Bubbles get slightly bigger as they rise
+            const scaleIncrease = 1 + (child.position.y / 10);
+            child.scale.setScalar(child.userData.size * scaleIncrease);
+        }
+        
+        // Animate jellyfish
+        if (child.userData && child.userData.floatSpeed) {
+            // Gentle floating up and down
+            const floatY = Math.sin(frameCount * child.userData.floatSpeed) * child.userData.floatRange;
+            child.position.y = child.userData.baseY + floatY;
+            
+            // Pulsing bell animation
+            const pulse = Math.sin(frameCount * child.userData.pulseSpeed) * 0.1 + 1;
+            if (child.children[0]) { // Bell mesh
+                child.children[0].scale.set(pulse, pulse * 0.8, pulse);
+            }
+            
+            // Animate tentacles
+            child.children.forEach((tentacle, index) => {
+                if (tentacle.userData && tentacle.userData.waveSpeed) {
+                    const wave = Math.sin(frameCount * tentacle.userData.waveSpeed + tentacle.userData.waveOffset) * tentacle.userData.waveAmount;
+                    tentacle.rotation.x = wave;
+                    tentacle.rotation.z = wave * 0.5;
+                }
+            });
+        }
+        
+        // Animate seaweed on sunken ship
+        if (child.userData && child.userData.waveSpeed && scenery.userData.sceneryType === 'sunkenShip') {
+            const wave = Math.sin(frameCount * child.userData.waveSpeed) * child.userData.waveAmount;
+            child.rotation.z = wave;
+            child.rotation.x = Math.PI / 6 + wave * 0.5;
+        }
+    });
+    
+    // School of fish group movement
+    if (scenery.userData && scenery.userData.schoolSpeed) {
+        scenery.userData.schoolDirection += Math.sin(frameCount * 0.001) * 0.01;
+        scenery.rotation.y = scenery.userData.schoolDirection;
+        
+        // Gentle up/down movement for the whole school
+        scenery.position.y = scenery.userData.baseY + Math.sin(frameCount * 0.01) * 0.3;
+    }
+}
     
     // Remove scenery that has passed the player
     if (scenery.position.z > 20) {
@@ -10244,8 +10495,6 @@ if (meteor.position.y < -1 || meteor.position.z > player.position.z + 15) {
                 updateExplosion();
                 // Continue updating sparkles even in game over state
                 updateSparkles();
-                // Continue updating weather in game over state
-                updateWeather();
                 updateButterfliesAndBirds();
             }
             
@@ -10254,6 +10503,8 @@ if (meteor.position.y < -1 || meteor.position.z > player.position.z + 15) {
         
         // Initialize on load
         document.addEventListener('DOMContentLoaded', init);
+
+    
 
         // ==================== AUTOMATIC SAVE SYSTEM ====================
 // Save game data when page closes or periodically
