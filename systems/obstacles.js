@@ -142,6 +142,11 @@ if (randomMesh === 'fallenTree') {
 
 // Spawn a stream across the track with better control
 function spawnWaterStream() {
+    // Don't spawn streams underwater - return early
+    if (currentWorld === 'underwater') {
+        return null;
+    }
+    
     // Only spawn if we haven't spawned one recently and it's been long enough
     if (streamSpawnCounter < currentStreamSpawnRate) {
         return null;
