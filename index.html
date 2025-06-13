@@ -2578,30 +2578,30 @@ document.getElementById('backgroundMusicCheckbox').addEventListener('change', fu
 
         // Setup settings UI
         function setupSettingsUI() {
-// Initialize jukebox
+    // Initialize jukebox
     initializeJukebox();
 
-            // Update mod mode UI
-if (modModeEnabled) {
-    document.getElementById('mod-mode-option').classList.add('enabled');
-    document.getElementById('modModeButton').textContent = 'Disable';
-    
-    // Show difficulty override option since mod mode is active
-    const difficultyOption = document.getElementById('difficulty-override-option');
-    if (difficultyOption) {
-        difficultyOption.style.display = 'flex';
-    }
-} else {
-    document.getElementById('mod-mode-option').classList.remove('enabled');
-    document.getElementById('modModeButton').textContent = 'Enable';
-    
-    // Hide difficulty override option since mod mode is inactive
-    const difficultyOption = document.getElementById('difficulty-override-option');
-    if (difficultyOption) {
-        difficultyOption.style.display = 'none';
+    // Update mod mode UI based on CURRENT state
+    if (modModeEnabled) {
+        document.getElementById('mod-mode-option').classList.add('enabled');
+        document.getElementById('modModeButton').textContent = 'Disable';
+        
+        // Show difficulty override option since mod mode is active
+        const difficultyOption = document.getElementById('difficulty-override-option');
+        if (difficultyOption) {
+            difficultyOption.style.display = 'flex';
+        }
+    } else {
+        document.getElementById('mod-mode-option').classList.remove('enabled');
+        document.getElementById('modModeButton').textContent = 'Enable';
+        
+        // Hide difficulty override option since mod mode is inactive
+        const difficultyOption = document.getElementById('difficulty-override-option');
+        if (difficultyOption) {
+            difficultyOption.style.display = 'none';
+        }
     }
 }
-        }
 
         // Initialize jukebox system
 function initializeJukebox() {
@@ -5478,8 +5478,47 @@ availableWorlds.forEach(world => {
     document.getElementById('difficulty-override-option').style.display = 'none';
     difficultyOverride = -1; // Reset to normal
     
-    // Reload the original unlocked state
-    loadGameData(true);
+    // PROPERLY reload the original saved state
+    const saveKey = `${GAME_ID}_profile_${currentProfileName}`;
+    const savedData = localStorage.getItem(saveKey);
+    
+    if (savedData) {
+        try {
+            const savedProfile = JSON.parse(savedData);
+            // Restore ONLY the unlock states from saved data (don't touch coins/character)
+            unlockedCharacters = {...savedProfile.unlockedCharacters};
+            unlockedWorlds = savedProfile.unlockedWorlds || {classic: true};
+            
+            // Update the current profile to match
+            currentProfile.unlockedCharacters = {...unlockedCharacters};
+            currentProfile.unlockedWorlds = {...unlockedWorlds};
+            currentProfile.modModeEnabled = false;
+            
+            console.log('🔄 Restored unlock states from saved data');
+            console.log('Characters:', unlockedCharacters);
+            console.log('Worlds:', unlockedWorlds);
+        } catch (error) {
+            console.error('Failed to reload saved state:', error);
+            // Fallback to defaults
+            unlockedCharacters = {
+                apple: true,
+                carrot: false,
+                pumpkin: false,
+                happyface: false,
+                monster: false,
+                atom: false,
+                slime: false,
+                ufo: false,
+                robot: false,
+                dragon: false,
+                ghost: false
+            };
+            unlockedWorlds = {classic: true};
+        }
+    }
+    
+    // Save the updated state
+    saveGameData('settings_change');
     
     alert('Mod Mode disabled.');
 }
@@ -7575,6 +7614,8 @@ function syncProfileToGameState() {
     selectedTrack = currentTrack;
 
     debug('Game totalCoins after sync:', totalCoins);
+
+        modModeEnabled = currentProfile.modModeEnabled || false;  // ADD THIS LINE
 
     
     // Sync leaderboard
