@@ -7055,49 +7055,88 @@ function syncProfileWithCloud() {
 
 // New function to find save data from old domain
 function searchForOrphanedSaveData() {
+    console.log('🔍 Searching for orphaned save data...');
+    
     // Get all profiles to find potential matches
     firebase.database().ref('profiles').once('value')
         .then((snapshot) => {
             const allProfiles = snapshot.val();
-            if (!allProfiles) return;
+            console.log('📊 Found profiles:', allProfiles ? Object.keys(allProfiles).length : 0);
             
-            // Look for profiles that match our local data (same coins, character, etc.)
+            if (!allProfiles) {
+                console.log('❌ No profiles found in database');
+                return;
+            }
+            
+            // Look for profiles that match our local data
             Object.keys(allProfiles).forEach(oldPlayerId => {
                 if (oldPlayerId === playerId) return; // Skip current player
+                
+                console.log('🔍 Checking player:', oldPlayerId.substring(0, 8) + '...');
                 
                 const oldPlayerProfiles = allProfiles[oldPlayerId];
                 if (oldPlayerProfiles && oldPlayerProfiles.Default) {
                     const oldProfile = oldPlayerProfiles.Default;
                     
-                    // Check if this looks like our old save (same character, similar coins, etc.)
+                    console.log('📋 Found profile with coins:', oldProfile.totalCoins || 0);
+                    console.log('📋 Profile character:', oldProfile.currentCharacter || 'unknown');
+                    
+                    // Check if this looks like our old save
                     if (shouldMigrateProfile(oldProfile)) {
-                        debug('🔄 Found potential orphaned save data, migrating...');
-                        console.log('🔄 Migrating save data from old domain...');
+                        console.log('✅ Profile matches migration criteria, migrating...');
+                        console.log('💰 Migrating coins:', oldProfile.totalCoins);
+                        console.log('👤 Migrating character:', oldProfile.currentCharacter);
                         
                         // Migrate the old profile to new player ID
                         currentProfile = validateAndMigrateProfile(oldProfile);
+                        
+                        console.log('📂 After migration - currentProfile coins:', currentProfile.totalCoins);
+                        
                         syncProfileToGameState();
+                        
+                        console.log('🎮 After sync - game totalCoins:', totalCoins);
+                        
                         saveProfile(currentProfileName, 'domain_migration');
                         
                         showSaveIndicator('🔄 Data Recovered!');
+                        
+                        // Force UI update
+                        updateTotalCoins();
+                        
+                        console.log('✅ Migration complete!');
                         return;
+                    } else {
+                        console.log('❌ Profile does not meet migration criteria');
+                        console.log('   - Coins:', oldProfile.totalCoins || 0);
+                        console.log('   - High Score:', oldProfile.highScore || 0);
+                        console.log('   - Character:', oldProfile.currentCharacter || 'apple');
                     }
                 }
             });
         })
         .catch((error) => {
-            debug('⚠️ Orphaned data search failed:', error);
+            console.error('❌ Orphaned data search failed:', error);
         });
 }
 
-// Helper to identify if a profile should be migrated
 function shouldMigrateProfile(profile) {
-    // Only migrate if the profile has significant progress
-    return profile && (
-        profile.totalCoins > 100 ||  // Has earned coins
-        profile.highScore > 0 ||     // Has played games
-        Object.values(profile.unlockedCharacters || {}).some(unlocked => unlocked && profile.currentCharacter !== 'apple') // Has unlocked characters
-    );
+    if (!profile) return false;
+    
+    const hasCoins = (profile.totalCoins || 0) > 0;
+    const hasScore = (profile.highScore || 0) > 0;
+    const hasUnlockedChars = profile.unlockedCharacters && 
+        Object.values(profile.unlockedCharacters).some(unlocked => unlocked);
+    
+    console.log('🔍 Migration check:', {
+        coins: profile.totalCoins || 0,
+        score: profile.highScore || 0,
+        hasCoins,
+        hasScore,
+        hasUnlockedChars,
+        shouldMigrate: hasCoins || hasScore || hasUnlockedChars
+    });
+    
+    return hasCoins || hasScore || hasUnlockedChars;
 }
 
 // Initialize save system
