@@ -6609,6 +6609,15 @@ function mergeAnonymousDataToGoogleAccount() {
         .catch((error) => {
             debug('⚠️ Merge failed, saving current data:', error);
             saveProfile();
+
+            console.log('🔄 Forcing cloud sync after Google merge...');
+setTimeout(() => {
+    console.log('☁️ Current profile after merge:', currentProfile.totalCoins);
+    console.log('🎮 Game state after merge:', totalCoins);
+    
+    // Force another save to ensure cloud gets updated
+    saveProfile(currentProfileName, 'google_merge_sync');
+}, 2000);
         });
 }
 
