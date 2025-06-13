@@ -26,6 +26,17 @@ const firebaseConfig = {
 
 // Initialize Firebase
 firebase.initializeApp(firebaseConfig);
+
+// Add debug logging
+console.log('🔥 Firebase initialized, starting save system...');
+
+// Force initialize save system
+if (typeof initializeSaveSystem === 'function') {
+    console.log('✅ initializeSaveSystem function found, calling...');
+    initializeSaveSystem();
+} else {
+    console.error('❌ initializeSaveSystem function not found!');
+}
 </script>
 
     <style>
@@ -7012,12 +7023,13 @@ function showSaveIndicator(message) {
 function syncProfileWithCloud() {
     if (!cloudSaveEnabled || !playerId || !currentProfileName) return;
     
-    // Check if cloud has newer data
+    // Check if cloud has newer data for current player
     firebase.database().ref('profiles/' + playerId + '/' + currentProfileName).once('value')
         .then((snapshot) => {
             const cloudProfile = snapshot.val();
             
             if (cloudProfile) {
+                // Found data for current player ID
                 const cloudTime = new Date(cloudProfile.lastPlayed || 0).getTime();
                 const localTime = new Date(currentProfile.lastPlayed || 0).getTime();
                 
@@ -7028,11 +7040,12 @@ function syncProfileWithCloud() {
                     showSaveIndicator('☁️ Cloud Synced');
                 } else {
                     debug('💾 Local profile is newer, syncing up...');
-                    saveProfile(); // This will upload to cloud
+                    saveProfile();
                 }
             } else {
-                debug('☁️ No cloud profile found, uploading local...');
-                saveProfile(); // Upload current profile to cloud
+                // No data for current player ID - check for orphaned data from domain change
+                debug('🔍 No data for current player, checking for orphaned saves...');
+                searchForOrphanedSaveData();
             }
         })
         .catch((error) => {
@@ -7040,7 +7053,52 @@ function syncProfileWithCloud() {
         });
 }
 
+// New function to find save data from old domain
+function searchForOrphanedSaveData() {
+    // Get all profiles to find potential matches
+    firebase.database().ref('profiles').once('value')
+        .then((snapshot) => {
+            const allProfiles = snapshot.val();
+            if (!allProfiles) return;
+            
+            // Look for profiles that match our local data (same coins, character, etc.)
+            Object.keys(allProfiles).forEach(oldPlayerId => {
+                if (oldPlayerId === playerId) return; // Skip current player
+                
+                const oldPlayerProfiles = allProfiles[oldPlayerId];
+                if (oldPlayerProfiles && oldPlayerProfiles.Default) {
+                    const oldProfile = oldPlayerProfiles.Default;
+                    
+                    // Check if this looks like our old save (same character, similar coins, etc.)
+                    if (shouldMigrateProfile(oldProfile)) {
+                        debug('🔄 Found potential orphaned save data, migrating...');
+                        console.log('🔄 Migrating save data from old domain...');
+                        
+                        // Migrate the old profile to new player ID
+                        currentProfile = validateAndMigrateProfile(oldProfile);
+                        syncProfileToGameState();
+                        saveProfile(currentProfileName, 'domain_migration');
+                        
+                        showSaveIndicator('🔄 Data Recovered!');
+                        return;
+                    }
+                }
+            });
+        })
+        .catch((error) => {
+            debug('⚠️ Orphaned data search failed:', error);
+        });
+}
 
+// Helper to identify if a profile should be migrated
+function shouldMigrateProfile(profile) {
+    // Only migrate if the profile has significant progress
+    return profile && (
+        profile.totalCoins > 100 ||  // Has earned coins
+        profile.highScore > 0 ||     // Has played games
+        Object.values(profile.unlockedCharacters || {}).some(unlocked => unlocked && profile.currentCharacter !== 'apple') // Has unlocked characters
+    );
+}
 
 // Initialize save system
 function initializeSaveSystem() {
@@ -8921,7 +8979,7 @@ if (isFallenTree) {
     return false;
 }
 
-    // Check if this is a rock formation - use lane-based collision
+// Check if this is a rock formation - use lane-based collision
 const isRockFormation = obstacles.includes(object) && object.userData.obstacleType === 'rockFormation';
 
 if (isRockFormation) {
@@ -8956,6 +9014,7 @@ if (isRockFormation) {
     debug('💥 Hit rock formation!');
     return true;
 }
+
 
 
 // For Robot character, use collision detection ONLY for main body parts (exclude particles)
