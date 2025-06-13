@@ -6611,7 +6611,6 @@ function signInWithGoogle() {
         });
 }
 
-// Merge current anonymous progress to Google account
 function mergeAnonymousDataToGoogleAccount() {
     if (!currentProfile || !playerId) return;
     
@@ -6623,16 +6622,30 @@ function mergeAnonymousDataToGoogleAccount() {
             const googleData = snapshot.val();
             
             if (googleData) {
-                // Google account has existing data - ask player what to do
+                // Google account has existing data - smart merge needed
                 const googleCoins = googleData.totalCoins || 0;
                 const localCoins = currentProfile.totalCoins || 0;
                 
-                if (confirm(`You have progress on both devices!\n\nThis device: ${localCoins} coins\nGoogle account: ${googleCoins} coins\n\nKeep the higher amount?`)) {
-                    if (localCoins > googleCoins) {
-                        // Keep local data
-                        saveProfile();
+                const googleUnlocks = countUnlocks(googleData);
+                const localUnlocks = countUnlocks(currentProfile);
+                
+                console.log('🔍 Merge comparison:');
+                console.log('Local:', { coins: localCoins, unlocks: localUnlocks });
+                console.log('Google:', { coins: googleCoins, unlocks: googleUnlocks });
+                
+                // Smart merge: combine the best of both
+                const mergedProfile = smartMergeProfiles(currentProfile, googleData);
+                
+                if (confirm(`Merging your progress:\n\nLocal: ${localCoins} coins, ${localUnlocks} unlocks\nCloud: ${googleCoins} coins, ${googleUnlocks} unlocks\n\nCombine the best of both?`)) {
+                    currentProfile = mergedProfile;
+                    syncProfileToGameState();
+                    saveProfile();
+                    showSaveIndicator('🔄 Progress Merged!');
+                } else {
+                    // User declined, ask which to keep
+                    if (confirm('Keep your local progress instead of cloud progress?')) {
+                        saveProfile(); // Upload local
                     } else {
-                        // Use Google data
                         currentProfile = validateAndMigrateProfile(googleData);
                         syncProfileToGameState();
                     }
@@ -6648,16 +6661,62 @@ function mergeAnonymousDataToGoogleAccount() {
         .catch((error) => {
             debug('⚠️ Merge failed, saving current data:', error);
             saveProfile();
-
-            console.log('🔄 Forcing cloud sync after Google merge...');
-setTimeout(() => {
-    console.log('☁️ Current profile after merge:', currentProfile.totalCoins);
-    console.log('🎮 Game state after merge:', totalCoins);
-    
-    // Force another save to ensure cloud gets updated
-    saveProfile(currentProfileName, 'google_merge_sync');
-}, 2000);
         });
+}
+
+// Count total unlocks for comparison
+function countUnlocks(profile) {
+    let count = 0;
+    
+    // Count characters (skip apple since it's default)
+    if (profile.unlockedCharacters) {
+        count += Object.values(profile.unlockedCharacters).filter(unlocked => unlocked).length - 1;
+    }
+    
+    // Count worlds (skip classic since it's default)  
+    if (profile.unlockedWorlds) {
+        count += Object.keys(profile.unlockedWorlds).filter(world => profile.unlockedWorlds[world] && world !== 'classic').length;
+    }
+    
+    return count;
+}
+
+// Smart merge: take highest coins AND all unlocks from both profiles
+function smartMergeProfiles(localProfile, cloudProfile) {
+    const merged = JSON.parse(JSON.stringify(localProfile)); // Start with local
+    
+    // Take the higher coin amount
+    merged.totalCoins = Math.max(localProfile.totalCoins || 0, cloudProfile.totalCoins || 0);
+    
+    // Merge unlocked characters (union of both)
+    if (cloudProfile.unlockedCharacters) {
+        Object.keys(cloudProfile.unlockedCharacters).forEach(char => {
+            if (cloudProfile.unlockedCharacters[char]) {
+                merged.unlockedCharacters[char] = true;
+            }
+        });
+    }
+    
+    // Merge unlocked worlds (union of both)
+    if (cloudProfile.unlockedWorlds) {
+        Object.keys(cloudProfile.unlockedWorlds).forEach(world => {
+            if (cloudProfile.unlockedWorlds[world]) {
+                merged.unlockedWorlds[world] = true;
+            }
+        });
+    }
+    
+    // Take higher scores and other progress
+    merged.highScore = Math.max(localProfile.highScore || 0, cloudProfile.highScore || 0);
+    merged.totalGamesPlayed = Math.max(localProfile.totalGamesPlayed || 0, cloudProfile.totalGamesPlayed || 0);
+    
+    console.log('🎯 Smart merge result:', {
+        coins: merged.totalCoins,
+        characters: Object.values(merged.unlockedCharacters).filter(u => u).length,
+        worlds: Object.keys(merged.unlockedWorlds).filter(w => merged.unlockedWorlds[w]).length
+    });
+    
+    return merged;
 }
 
 // Sign out of Google
