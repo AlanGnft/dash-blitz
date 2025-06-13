@@ -6985,6 +6985,18 @@ let cloudSaveEnabled = false;
 
 // Initialize Firebase Auth (anonymous)
 function initializeCloudSave() {
+    console.log('🔥 Starting cloud save initialization...');
+    
+    // Check if already signed in to avoid creating multiple anonymous accounts
+    if (firebase.auth().currentUser) {
+        console.log('🔥 Already authenticated, using existing user');
+        playerId = firebase.auth().currentUser.uid;
+        cloudSaveEnabled = true;
+        syncProfileWithCloud();
+        return;
+    }
+    
+    
     firebase.auth().signInAnonymously()
         .then((userCredential) => {
             playerId = userCredential.user.uid;
@@ -7068,6 +7080,17 @@ function syncProfileWithCloud() {
 function searchForOrphanedSaveData() {
     console.log('🔍 Searching for orphaned save data...');
     
+    // IMPORTANT: Only search for orphaned data if we have local data that suggests
+    // this device previously had progress (to prevent giving random profiles to new users)
+    const hasLocalProgress = checkForLocalProgressIndicators();
+    
+    if (!hasLocalProgress) {
+        console.log('📱 No local progress indicators found - this appears to be a truly new user');
+        return;
+    }
+    
+    console.log('📱 Local progress indicators found - searching for orphaned data...');
+    
     // Get all profiles to find potential matches
     firebase.database().ref('profiles').once('value')
         .then((snapshot) => {
@@ -7079,11 +7102,7 @@ function searchForOrphanedSaveData() {
                 return;
             }
             
-            // Look for the BEST profile to migrate (highest coins)
-            let bestProfile = null;
-            let bestPlayerId = null;
-            let bestCoins = 0;
-            
+            // Look for profiles that match THIS SPECIFIC device's characteristics
             Object.keys(allProfiles).forEach(oldPlayerId => {
                 if (oldPlayerId === playerId) return; // Skip current player
                 
@@ -7092,50 +7111,75 @@ function searchForOrphanedSaveData() {
                 const oldPlayerProfiles = allProfiles[oldPlayerId];
                 if (oldPlayerProfiles && oldPlayerProfiles.Default) {
                     const oldProfile = oldPlayerProfiles.Default;
-                    const profileCoins = oldProfile.totalCoins || 0;
                     
-                    console.log('📋 Found profile with coins:', profileCoins);
+                    console.log('📋 Found profile with coins:', oldProfile.totalCoins || 0);
                     
-                    // Keep track of the best profile
-                    if (shouldMigrateProfile(oldProfile) && profileCoins > bestCoins) {
-                        bestProfile = oldProfile;
-                        bestPlayerId = oldPlayerId;
-                        bestCoins = profileCoins;
+                    // Check if this profile matches THIS device's previous data
+                    if (isThisDevicesOldProfile(oldProfile)) {
+                        console.log('✅ Profile matches THIS device, migrating...');
+                        console.log('💰 Migrating coins:', oldProfile.totalCoins);
+                        
+                        // Migrate the matching profile
+                        currentProfile = validateAndMigrateProfile(oldProfile);
+                        syncProfileToGameState();
+                        saveProfile(currentProfileName, 'domain_migration');
+                        showSaveIndicator('🔄 Data Recovered!');
+                        updateTotalCoins();
+                        
+                        console.log('✅ Migration complete!');
+                        return;
                     }
                 }
             });
-            
-            // Migrate only the best profile found
-            if (bestProfile) {
-                console.log('✅ Migrating best profile with', bestCoins, 'coins');
-                console.log('💰 Migrating coins:', bestProfile.totalCoins);
-                console.log('👤 Migrating character:', bestProfile.currentCharacter);
-                
-                // Migrate the best profile to new player ID
-                currentProfile = validateAndMigrateProfile(bestProfile);
-                
-                console.log('📂 After migration - currentProfile coins:', currentProfile.totalCoins);
-                
-                syncProfileToGameState();
-                
-                console.log('🎮 After sync - game totalCoins:', totalCoins);
-                
-                saveProfile(currentProfileName, 'domain_migration');
-                
-                showSaveIndicator('🔄 Data Recovered!');
-                
-                // Force UI update
-                updateTotalCoins();
-                
-                console.log('✅ Migration complete!');
-            } else {
-                console.log('❌ No suitable profiles found for migration');
-            }
         })
         .catch((error) => {
             console.error('❌ Orphaned data search failed:', error);
         });
 }
+
+// Check if this device has any indicators of previous progress
+function checkForLocalProgressIndicators() {
+    // Check for any local storage that suggests this device had progress before
+    const legacyData = localStorage.getItem('endlessRunnerData');
+    const migrationComplete = localStorage.getItem('runningBlitzEndlessRunner_migrationComplete');
+    const anyGameData = localStorage.getItem('runningBlitzEndlessRunner_profile_Default');
+    
+    // Also check browser/device characteristics that might indicate previous use
+    const hasGameHistory = localStorage.length > 5; // Arbitrary threshold
+    
+    return !!(legacyData || anyGameData || (migrationComplete && hasGameHistory));
+}
+
+// More strict matching - only migrate if it's very likely THIS device's data
+function isThisDevicesOldProfile(profile) {
+    if (!profile) return false;
+    
+    // Get current local data if any
+    const localData = localStorage.getItem('runningBlitzEndlessRunner_profile_Default');
+    
+    if (localData) {
+        try {
+            const parsed = JSON.parse(localData);
+            // If local data has progress, only migrate if cloud has MORE progress
+            // This prevents new users from getting old data
+            if (parsed.totalCoins > 0) {
+                return (profile.totalCoins || 0) > parsed.totalCoins;
+            }
+        } catch (e) {
+            // Ignore parsing errors
+        }
+    }
+    
+    // For true orphan detection, require significant progress
+    // AND some device-specific indicators
+    const hasSignificantProgress = (profile.totalCoins || 0) > 100;
+    const hasGameHistory = profile.totalGamesPlayed > 5;
+    
+    // Only migrate if there's substantial progress AND this looks like a returning user
+    return hasSignificantProgress && hasGameHistory && checkForLocalProgressIndicators();
+}
+
+
 function shouldMigrateProfile(profile) {
     if (!profile) return false;
     
