@@ -8921,6 +8921,41 @@ if (isFallenTree) {
     return false;
 }
 
+    // Check if this is a rock formation - use lane-based collision
+const isRockFormation = obstacles.includes(object) && object.userData.obstacleType === 'rockFormation';
+
+if (isRockFormation) {
+    // Get player and rock positions
+    const playerPos = new THREE.Vector3();
+    const rockPos = new THREE.Vector3();
+    player.getWorldPosition(playerPos);
+    object.getWorldPosition(rockPos);
+    
+    // First check Z distance - if too far away, no collision
+    const zDistance = Math.abs(playerPos.z - rockPos.z);
+    if (zDistance > 1.5) {
+        return false; // Too far in front/behind
+    }
+    
+    // Check if player and rock are in the same lane
+    const playerLane = Math.round(player.position.x / 2); // Assuming lanes are 2 units apart
+    const rockLane = Math.round(object.position.x / 2);
+    
+    // Only collide if in the same lane
+    if (playerLane !== rockLane) {
+        return false; // Different lanes, no collision
+    }
+    
+    // Check if player can jump over
+    if (jumping && player.position.y > 1.2) {
+        debug('🦘 Jumped over rock formation!');
+        return false;
+    }
+    
+    // If in same lane and close enough, collision detected
+    debug('💥 Hit rock formation!');
+    return true;
+}
 
 
 // For Robot character, use collision detection ONLY for main body parts (exclude particles)
