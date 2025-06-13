@@ -6636,7 +6636,12 @@ function mergeAnonymousDataToGoogleAccount() {
                 // Smart merge: combine the best of both
                 const mergedProfile = smartMergeProfiles(currentProfile, googleData);
                 
-                if (confirm(`Merging your progress:\n\nLocal: ${localCoins} coins, ${localUnlocks} unlocks\nCloud: ${googleCoins} coins, ${googleUnlocks} unlocks\n\nCombine the best of both?`)) {
+                const localMoreProgress = localUnlocks > googleUnlocks || (localUnlocks === googleUnlocks && localCoins <= googleCoins);
+                const primarySource = localMoreProgress ? 'Local' : 'Cloud';
+                const primaryCoins = localMoreProgress ? localCoins : googleCoins;
+                const primaryUnlocks = Math.max(localUnlocks, googleUnlocks);
+
+                if (confirm(`Syncing your progress:\n\nLocal: ${localCoins} coins, ${localUnlocks} unlocks\nCloud: ${googleCoins} coins, ${googleUnlocks} unlocks\n\nUsing ${primarySource} as primary (${primaryCoins} coins, ${primaryUnlocks} unlocks)\nProceed?`)) {
                     currentProfile = mergedProfile;
                     syncProfileToGameState();
                     saveProfile();
@@ -6681,39 +6686,72 @@ function countUnlocks(profile) {
     return count;
 }
 
-// Smart merge: take highest coins AND all unlocks from both profiles
+// Smart merge: prioritize whichever profile has MORE UNLOCKS (more progress)
 function smartMergeProfiles(localProfile, cloudProfile) {
-    const merged = JSON.parse(JSON.stringify(localProfile)); // Start with local
+    const localUnlocks = countUnlocks(localProfile);
+    const cloudUnlocks = countUnlocks(cloudProfile);
+    const localCoins = localProfile.totalCoins || 0;
+    const cloudCoins = cloudProfile.totalCoins || 0;
     
-    // Take the higher coin amount
-    merged.totalCoins = Math.max(localProfile.totalCoins || 0, cloudProfile.totalCoins || 0);
+    console.log('🔍 Progress comparison:');
+    console.log('Local:', { coins: localCoins, unlocks: localUnlocks });
+    console.log('Cloud:', { coins: cloudCoins, unlocks: cloudUnlocks });
     
-    // Merge unlocked characters (union of both)
-    if (cloudProfile.unlockedCharacters) {
-        Object.keys(cloudProfile.unlockedCharacters).forEach(char => {
-            if (cloudProfile.unlockedCharacters[char]) {
+    let primaryProfile, secondaryProfile;
+    
+    if (localUnlocks > cloudUnlocks) {
+        // Local has more unlocks - it's the primary
+        primaryProfile = localProfile;
+        secondaryProfile = cloudProfile;
+        console.log('🎯 Local profile has more progress - using as primary');
+    } else if (cloudUnlocks > localUnlocks) {
+        // Cloud has more unlocks - it's the primary
+        primaryProfile = cloudProfile;
+        secondaryProfile = localProfile;
+        console.log('🎯 Cloud profile has more progress - using as primary');
+    } else {
+        // Same number of unlocks - use the one with FEWER coins (more recent spending)
+        if (localCoins <= cloudCoins) {
+            primaryProfile = localProfile;
+            secondaryProfile = cloudProfile;
+            console.log('🎯 Same unlocks, local has fewer coins (more recent spending) - using local');
+        } else {
+            primaryProfile = cloudProfile;
+            secondaryProfile = localProfile;
+            console.log('🎯 Same unlocks, cloud has fewer coins (more recent spending) - using cloud');
+        }
+    }
+    
+    // Start with the primary profile (the one with more progress)
+    const merged = JSON.parse(JSON.stringify(primaryProfile));
+    
+    // Only add unlocks from secondary if they don't exist in primary
+    // (This handles edge cases where someone unlocked different things on different devices)
+    if (secondaryProfile.unlockedCharacters) {
+        Object.keys(secondaryProfile.unlockedCharacters).forEach(char => {
+            if (secondaryProfile.unlockedCharacters[char] && !merged.unlockedCharacters[char]) {
                 merged.unlockedCharacters[char] = true;
+                console.log('🔄 Added character unlock from secondary profile:', char);
             }
         });
     }
     
-    // Merge unlocked worlds (union of both)
-    if (cloudProfile.unlockedWorlds) {
-        Object.keys(cloudProfile.unlockedWorlds).forEach(world => {
-            if (cloudProfile.unlockedWorlds[world]) {
+    if (secondaryProfile.unlockedWorlds) {
+        Object.keys(secondaryProfile.unlockedWorlds).forEach(world => {
+            if (secondaryProfile.unlockedWorlds[world] && !merged.unlockedWorlds[world]) {
                 merged.unlockedWorlds[world] = true;
+                console.log('🔄 Added world unlock from secondary profile:', world);
             }
         });
     }
     
-    // Take higher scores and other progress
-    merged.highScore = Math.max(localProfile.highScore || 0, cloudProfile.highScore || 0);
-    merged.totalGamesPlayed = Math.max(localProfile.totalGamesPlayed || 0, cloudProfile.totalGamesPlayed || 0);
+    // Keep other progress from primary only (no mixing scores/stats to avoid exploits)
     
-    console.log('🎯 Smart merge result:', {
+    console.log('🎯 Anti-exploit merge result:', {
         coins: merged.totalCoins,
         characters: Object.values(merged.unlockedCharacters).filter(u => u).length,
-        worlds: Object.keys(merged.unlockedWorlds).filter(w => merged.unlockedWorlds[w]).length
+        worlds: Object.keys(merged.unlockedWorlds).filter(w => merged.unlockedWorlds[w]).length,
+        source: primaryProfile === localProfile ? 'local' : 'cloud'
     });
     
     return merged;
