@@ -6636,25 +6636,16 @@ function mergeAnonymousDataToGoogleAccount() {
                 // Smart merge: combine the best of both
                 const mergedProfile = smartMergeProfiles(currentProfile, googleData);
                 
+                // Seamless auto-merge using unlock-prioritized logic
                 const localMoreProgress = localUnlocks > googleUnlocks || (localUnlocks === googleUnlocks && localCoins <= googleCoins);
                 const primarySource = localMoreProgress ? 'Local' : 'Cloud';
-                const primaryCoins = localMoreProgress ? localCoins : googleCoins;
-                const primaryUnlocks = Math.max(localUnlocks, googleUnlocks);
 
-                if (confirm(`Syncing your progress:\n\nLocal: ${localCoins} coins, ${localUnlocks} unlocks\nCloud: ${googleCoins} coins, ${googleUnlocks} unlocks\n\nUsing ${primarySource} as primary (${primaryCoins} coins, ${primaryUnlocks} unlocks)\nProceed?`)) {
-                    currentProfile = mergedProfile;
-                    syncProfileToGameState();
-                    saveProfile();
-                    showSaveIndicator('🔄 Progress Merged!');
-                } else {
-                    // User declined, ask which to keep
-                    if (confirm('Keep your local progress instead of cloud progress?')) {
-                        saveProfile(); // Upload local
-                    } else {
-                        currentProfile = validateAndMigrateProfile(googleData);
-                        syncProfileToGameState();
-                    }
-                }
+                console.log(`🔄 Auto-syncing: Using ${primarySource} as primary (${localMoreProgress ? localCoins : googleCoins} coins, ${Math.max(localUnlocks, googleUnlocks)} unlocks)`);
+
+                currentProfile = mergedProfile;
+                syncProfileToGameState();
+                saveProfile();
+                showSaveIndicator('☁️ Progress Synced!');
             } else {
                 // No Google data - upload current progress
                 debug('📤 Uploading current progress to Google account...');
