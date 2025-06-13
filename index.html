@@ -30,13 +30,24 @@ firebase.initializeApp(firebaseConfig);
 // Add debug logging
 console.log('🔥 Firebase initialized, starting save system...');
 
-// Force initialize save system
-if (typeof initializeSaveSystem === 'function') {
-    console.log('✅ initializeSaveSystem function found, calling...');
-    initializeSaveSystem();
-} else {
-    console.error('❌ initializeSaveSystem function not found!');
-}
+// Force initialize save system after page loads
+setTimeout(() => {
+    if (typeof initializeSaveSystem === 'function') {
+        console.log('✅ initializeSaveSystem function found, calling...');
+        initializeSaveSystem();
+    } else {
+        console.error('❌ initializeSaveSystem function not found! Retrying...');
+        // Try again after more delay
+        setTimeout(() => {
+            if (typeof initializeSaveSystem === 'function') {
+                console.log('✅ initializeSaveSystem function found on retry, calling...');
+                initializeSaveSystem();
+            } else {
+                console.error('❌ initializeSaveSystem function still not found after retry!');
+            }
+        }, 2000);
+    }
+}, 1000);
 </script>
 
     <style>
