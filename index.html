@@ -7079,7 +7079,11 @@ function searchForOrphanedSaveData() {
                 return;
             }
             
-            // Look for profiles that match our local data
+            // Look for the BEST profile to migrate (highest coins)
+            let bestProfile = null;
+            let bestPlayerId = null;
+            let bestCoins = 0;
+            
             Object.keys(allProfiles).forEach(oldPlayerId => {
                 if (oldPlayerId === playerId) return; // Skip current player
                 
@@ -7088,48 +7092,50 @@ function searchForOrphanedSaveData() {
                 const oldPlayerProfiles = allProfiles[oldPlayerId];
                 if (oldPlayerProfiles && oldPlayerProfiles.Default) {
                     const oldProfile = oldPlayerProfiles.Default;
+                    const profileCoins = oldProfile.totalCoins || 0;
                     
-                    console.log('📋 Found profile with coins:', oldProfile.totalCoins || 0);
-                    console.log('📋 Profile character:', oldProfile.currentCharacter || 'unknown');
+                    console.log('📋 Found profile with coins:', profileCoins);
                     
-                    // Check if this looks like our old save
-                    if (shouldMigrateProfile(oldProfile)) {
-                        console.log('✅ Profile matches migration criteria, migrating...');
-                        console.log('💰 Migrating coins:', oldProfile.totalCoins);
-                        console.log('👤 Migrating character:', oldProfile.currentCharacter);
-                        
-                        // Migrate the old profile to new player ID
-                        currentProfile = validateAndMigrateProfile(oldProfile);
-                        
-                        console.log('📂 After migration - currentProfile coins:', currentProfile.totalCoins);
-                        
-                        syncProfileToGameState();
-                        
-                        console.log('🎮 After sync - game totalCoins:', totalCoins);
-                        
-                        saveProfile(currentProfileName, 'domain_migration');
-                        
-                        showSaveIndicator('🔄 Data Recovered!');
-                        
-                        // Force UI update
-                        updateTotalCoins();
-                        
-                        console.log('✅ Migration complete!');
-                        return;
-                    } else {
-                        console.log('❌ Profile does not meet migration criteria');
-                        console.log('   - Coins:', oldProfile.totalCoins || 0);
-                        console.log('   - High Score:', oldProfile.highScore || 0);
-                        console.log('   - Character:', oldProfile.currentCharacter || 'apple');
+                    // Keep track of the best profile
+                    if (shouldMigrateProfile(oldProfile) && profileCoins > bestCoins) {
+                        bestProfile = oldProfile;
+                        bestPlayerId = oldPlayerId;
+                        bestCoins = profileCoins;
                     }
                 }
             });
+            
+            // Migrate only the best profile found
+            if (bestProfile) {
+                console.log('✅ Migrating best profile with', bestCoins, 'coins');
+                console.log('💰 Migrating coins:', bestProfile.totalCoins);
+                console.log('👤 Migrating character:', bestProfile.currentCharacter);
+                
+                // Migrate the best profile to new player ID
+                currentProfile = validateAndMigrateProfile(bestProfile);
+                
+                console.log('📂 After migration - currentProfile coins:', currentProfile.totalCoins);
+                
+                syncProfileToGameState();
+                
+                console.log('🎮 After sync - game totalCoins:', totalCoins);
+                
+                saveProfile(currentProfileName, 'domain_migration');
+                
+                showSaveIndicator('🔄 Data Recovered!');
+                
+                // Force UI update
+                updateTotalCoins();
+                
+                console.log('✅ Migration complete!');
+            } else {
+                console.log('❌ No suitable profiles found for migration');
+            }
         })
         .catch((error) => {
             console.error('❌ Orphaned data search failed:', error);
         });
 }
-
 function shouldMigrateProfile(profile) {
     if (!profile) return false;
     
