@@ -854,6 +854,57 @@ setTimeout(() => {
     border-radius: 50%;
 }
 
+/* Ensure power-up bar stays horizontal */
+#powerUpStatusBar {
+    position: fixed !important;
+    bottom: 20px !important;
+    left: 50% !important;
+    transform: translateX(-50%) !important;
+    display: flex !important;
+    flex-direction: row !important; /* Force horizontal layout */
+    gap: 20px !important;
+    z-index: 100 !important;
+    background: rgba(0, 0, 0, 0.5);
+    padding: 10px 20px;
+    border-radius: 25px;
+    backdrop-filter: blur(10px);
+}
+
+/* Mobile adjustments for power-up bar */
+@media (max-width: 768px) {
+    #powerUpStatusBar {
+        bottom: 15px !important;
+        gap: 15px !important;
+        padding: 8px 15px !important;
+    }
+    
+    .powerup-icon {
+        width: 45px !important;
+        height: 45px !important;
+    }
+    
+    .powerup-symbol {
+        font-size: 20px !important;
+    }
+}
+
+/* Mobile Character Select Title */
+@media (max-width: 768px) {
+    #characterSelectScreen h2 {
+        font-size: 28px !important;
+        margin-bottom: 15px !important;
+        padding: 0 20px !important;
+        text-align: center !important;
+    }
+}
+
+@media (max-width: 480px) {
+    #characterSelectScreen h2 {
+        font-size: 24px !important;
+        margin-bottom: 10px !important;
+    }
+}
+
 /* ==================== TITLE SCREEN PARTICLES ==================== */
 /* Beautiful floating particle animation for the title screen */
 
@@ -946,6 +997,14 @@ setTimeout(() => {
     box-shadow: 0 10px 30px rgba(0, 162, 255, 0.5);
 }
 
+/* Hide character column on mobile to prevent horizontal scrolling */
+@media (max-width: 768px) {
+    #settings-leaderboard th:last-child,
+    #settings-leaderboard td:last-child {
+        display: none;
+    }
+}
+
     </style>
 </head>
 <body>
@@ -1014,25 +1073,6 @@ setTimeout(() => {
             (for cloud saves across devices!)
 </p>
 </div>
-
-    <!-- Add this near your existing title screen buttons -->
-    <button onclick="showTitleSettings()" class="game-button" 
-    style="
-        position: absolute;
-        top: 20px;
-        right: 20px;
-        padding: 10px;
-        border-radius: 50%;
-        width: 50px;
-        height: 50px;
-        font-size: 20px;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        z-index: 2000;
-    ">
-    ⚙️
-</button>
 
     <style>
         /* Keep your existing pulse animation */
@@ -1185,18 +1225,416 @@ setTimeout(() => {
     </style>
 </div>
 
+<!-- Main Menu Screen -->
+<div id="mainMenuScreen" style="position: absolute; top: 0; left: 0; width: 100%; height: 100%; display: none; flex-direction: column; justify-content: center; align-items: center; z-index: 300; background: linear-gradient(to bottom, #000428, #004e92); overflow: hidden;">
+    <!-- Background particles (reuse same container) -->
+    <div class="particle-container" style="position: absolute; top: 0; left: 0; width: 100%; height: 100%; overflow: hidden; pointer-events: none; z-index: 1;"></div>
+    
+    <!-- Main Menu Title -->
+    <h1 style="color: white; font-size: 56px; margin-bottom: 40px; text-shadow: 0 0 10px #00a2ff, 0 0 20px #00a2ff; position: relative; z-index: 10; text-align: center;">Main Menu</h1>
+    
+    <!-- Menu Options -->
+    <div style="display: flex; flex-direction: column; gap: 20px; position: relative; z-index: 10; width: 300px;">
+        <button id="runButton" class="game-button" style="font-size: 24px; padding: 15px 30px; background-color: #4CAF50; color: white; border: none; border-radius: 8px; cursor: pointer; transition: all 0.3s ease;">
+            🏃 RUN
+        </button>
+        
+        <button id="charactersButton" class="game-button" style="font-size: 24px; padding: 15px 30px; background-color: #2196F3; color: white; border: none; border-radius: 8px; cursor: pointer; transition: all 0.3s ease;">
+            👤 CHARACTERS
+        </button>
+        
+        <button id="shopButton" class="game-button" style="font-size: 24px; padding: 15px 30px; background-color: #FF9800; color: white; border: none; border-radius: 8px; cursor: pointer; transition: all 0.3s ease;">
+            🛒 SHOP
+        </button>
+        
+        <button id="mainMenuSettingsButton" class="game-button" style="font-size: 24px; padding: 15px 30px; background-color: #9C27B0; color: white; border: none; border-radius: 8px; cursor: pointer; transition: all 0.3s ease;">
+            ⚙️ SETTINGS
+        </button>
+        
+        <button id="profileButton" class="game-button" style="font-size: 24px; padding: 15px 30px; background-color: #607D8B; color: white; border: none; border-radius: 8px; cursor: pointer; transition: all 0.3s ease;">
+            📊 PROFILE
+        </button>
+    </div>
+</div>
+
 <!--------- BUTTONS & UI SECTION--------->
 <!--==============================-->
 <!--==============================-->
 
 
 
+
+
+<!-- Main Menu Settings Screen -->
+<div id="mainMenuSettingsScreen" style="position: absolute; top: 0; left: 0; width: 100%; height: 100%; display: none; flex-direction: column; z-index: 400; background: linear-gradient(to bottom, #000428, #004e92); overflow: hidden;">
+    
+    <!-- Settings Container - Centered with max width -->
+    <div style="max-width: 800px; width: 100%; margin: 0 auto; display: flex; flex-direction: column; height: 100%;">
+    
+        <!-- Settings Header -->
+        <div style="padding: 15px 20px; text-align: center; position: relative; flex-shrink: 0;">
+        <!-- Back Button -->
+        <button id="backToMainMenuFromSettings" style="position: absolute; top: 15px; left: 15px; background: #666; color: white; border: none; padding: 8px 12px; border-radius: 6px; cursor: pointer; font-size: 14px;">← Back</button>
+        
+        <!-- Settings Title -->
+        <h2 style="color: white; margin: 0; text-shadow: 0 2px 4px rgba(0,0,0,0.5); font-size: 24px;">⚙️ Settings</h2>
+    </div>
+    
+    <!-- Settings Tabs -->
+    <div style="display: flex; justify-content: center; margin: 0 20px 15px 20px; flex-shrink: 0;">
+        <button class="settings-tab active" data-tab="general" style="background: #2196F3; color: white; border: none; padding: 10px 15px; border-radius: 8px 0 0 8px; cursor: pointer; font-size: 13px; border-right: 1px solid #fff; flex: 1; max-width: 120px;">🔊 General</button>
+        <button class="settings-tab" data-tab="leaderboard" style="background: #666; color: white; border: none; padding: 10px 15px; cursor: pointer; font-size: 13px; border-right: 1px solid #fff; flex: 1; max-width: 120px;">🏆 Global</button>
+        <button class="settings-tab" data-tab="mods" style="background: #666; color: white; border: none; padding: 10px 15px; border-radius: 0 8px 8px 0; cursor: pointer; font-size: 13px; border-left: 1px solid #fff; flex: 1; max-width: 120px;">🔧 Mods</button>
+    </div>
+    
+        <!-- Settings Content Area -->
+        <div style="flex: 1; overflow-y: auto; padding: 0 20px 20px 20px;">
+        
+        <!-- General Tab Content -->
+        <div id="settings-general" class="settings-tab-content active">
+            
+            <!-- Audio Settings Section -->
+            <div style="margin-bottom: 20px; padding: 15px; background: rgba(255, 255, 255, 0.05); border-radius: 12px; border: 1px solid rgba(255, 255, 255, 0.1);">
+                <h3 style="color: white; margin: 0 0 15px 0; font-size: 18px;">🔊 Audio Settings</h3>
+                
+                <label style="display: flex; align-items: center; margin: 10px 0; cursor: pointer;">
+                    <input type="checkbox" id="mainMenuMusicCheckbox" style="margin-right: 12px; transform: scale(1.2);">
+                    <span style="font-size: 16px; color: white;">🎵 Background Music</span>
+                </label>
+                
+                <label style="display: flex; align-items: center; margin: 10px 0; cursor: pointer;">
+                    <input type="checkbox" id="mainMenuSoundCheckbox" style="margin-right: 12px; transform: scale(1.2);">
+                    <span style="font-size: 16px; color: white;">🔊 Sound Effects</span>
+                </label>
+            </div>
+            
+            <!-- Save System Section -->
+            <div style="margin-bottom: 20px; padding: 15px; background: rgba(255, 255, 255, 0.05); border-radius: 12px; border: 1px solid rgba(255, 255, 255, 0.1);">
+                <h3 style="color: white; margin: 0 0 15px 0; font-size: 18px;">💾 Save System</h3>
+                
+                <div id="authStatusDisplay" style="margin-bottom: 15px; text-align: center; font-size: 14px;">
+                    <!-- Will be populated by JavaScript -->
+                </div>
+                
+                <div style="display: flex; flex-wrap: wrap; gap: 8px; justify-content: center;">
+                    <button id="generateSaveCodeBtn" style="background: #34C759; color: white; border: none; padding: 8px 12px; border-radius: 6px; cursor: pointer; font-size: 12px; flex: 1; min-width: 90px;">📱 Get Code</button>
+                    <button id="restoreSaveCodeBtn" style="background: #FF9500; color: white; border: none; padding: 8px 12px; border-radius: 6px; cursor: pointer; font-size: 12px; flex: 1; min-width: 90px;">📥 Use Code</button>
+                    <button id="googleAuthBtn" style="background: #4285f4; color: white; border: none; padding: 8px 12px; border-radius: 6px; cursor: pointer; font-size: 12px; flex: 1; min-width: 90px;">🔗 Google</button>
+                </div>
+            </div>
+            
+        </div>
+
+        <!-- Global Leaderboard Tab Content -->
+        <div id="settings-leaderboard" class="settings-tab-content" style="display: none;">
+            
+            <!-- Global Leaderboard Section -->
+            <div style="margin-bottom: 20px; padding: 15px; background: rgba(255, 255, 255, 0.05); border-radius: 12px; border: 1px solid rgba(255, 255, 255, 0.1);">
+                <h3 style="color: white; margin: 0 0 15px 0; font-size: 18px; text-align: center;">🌍 Global Leaderboard</h3>
+                
+                <!-- Player's Global Rank Display -->
+                <div id="settingsPlayerRank" style="text-align: center; margin-bottom: 15px; padding: 12px; background: rgba(255, 215, 0, 0.1); border-radius: 8px; border: 1px solid rgba(255, 215, 0, 0.3);">
+                    <p style="color: #FFD700; margin: 0; font-size: 14px;" id="settingsGlobalRankText">🏆 Loading your rank...</p>
+                </div>
+                
+                <!-- Global Leaderboard Table -->
+                <div style="max-height: 300px; overflow-y: auto; border-radius: 8px; background: rgba(0, 0, 0, 0.2);">
+                    <table style="width: 100%; border-collapse: collapse;">
+                        <thead style="background: rgba(0, 20, 40, 0.95); backdrop-filter: blur(10px); position: sticky; top: 0; z-index: 10; border-bottom: 2px solid rgba(255, 255, 255, 0.3);">
+                            <tr>
+                                <th style="padding: 10px 8px; text-align: left; color: white; font-size: 14px; border-bottom: 1px solid rgba(255, 255, 255, 0.2);">Rank</th>
+                                <th style="padding: 10px 8px; text-align: left; color: white; font-size: 14px; border-bottom: 1px solid rgba(255, 255, 255, 0.2);">Player</th>
+                                <th style="padding: 10px 8px; text-align: right; color: white; font-size: 14px; border-bottom: 1px solid rgba(255, 255, 255, 0.2);">Score</th>
+                                <th style="padding: 10px 8px; text-align: center; color: white; font-size: 14px; border-bottom: 1px solid rgba(255, 255, 255, 0.2);">Character</th>
+                            </tr>
+                        </thead>
+                        <tbody id="settingsGlobalLeaderboardBody">
+                            <!-- Will be populated by JavaScript -->
+                        </tbody>
+                    </table>
+                </div>
+                
+                <!-- Refresh Button -->
+                <div style="text-align: center; margin-top: 15px;">
+                    <button onclick="refreshSettingsGlobalLeaderboard()" style="background: #4CAF50; color: white; border: none; padding: 10px 20px; border-radius: 8px; cursor: pointer; font-size: 14px; transition: background 0.2s ease;" onmouseover="this.style.background='#45a049'" onmouseout="this.style.background='#4CAF50'">
+                        🔄 Refresh Leaderboard
+                    </button>
+                </div>
+            </div>
+            
+        </div>
+        
+        <!-- Mod Options Tab Content -->
+        <div id="settings-mods" class="settings-tab-content" style="display: none;">
+            
+            <!-- Mod Options Section -->
+            <div style="margin-bottom: 20px; padding: 15px; background: rgba(255, 255, 255, 0.05); border-radius: 12px; border: 1px solid rgba(255, 255, 255, 0.1);">
+                <h3 style="color: white; margin: 0 0 15px 0; font-size: 18px;">🔧 Mod Options</h3>
+                
+                <div style="margin: 15px 0;">
+                    <h4 style="color: white; margin: 0 0 8px 0; font-size: 16px;">Mod Mode</h4>
+                    <p style="color: #ccc; margin: 0 0 10px 0; font-size: 14px;">Unlock all content temporarily</p>
+                    <div style="display: flex; gap: 8px; align-items: center;">
+                        <input type="password" id="mainMenuModPassword" placeholder="Enter password" style="padding: 8px; border-radius: 6px; border: 1px solid #ccc; font-size: 14px; flex: 1;">
+                        <button id="mainMenuModModeBtn" style="background: #9C27B0; color: white; border: none; padding: 8px 12px; border-radius: 6px; cursor: pointer; font-size: 14px;">Enable</button>
+                    </div>
+                </div>
+                
+                <div style="margin: 15px 0;">
+                    <h4 style="color: white; margin: 0 0 8px 0; font-size: 16px;">Reset Game Data</h4>
+                    <p style="color: #ccc; margin: 0 0 10px 0; font-size: 14px;">Clear all saved progress</p>
+                    <button id="mainMenuResetDataBtn" style="background: #F44336; color: white; border: none; padding: 8px 16px; border-radius: 6px; cursor: pointer; font-size: 14px; width: 100%;">🗑️ Reset All Data</button>
+                </div>
+            </div>
+            
+        </div>
+        
+        </div> <!-- End settings content area -->
+    </div> <!-- End centered container -->
+</div> <!-- End settings screen -->
+
+<!-- Shop Screen -->
+<div id="shopScreen" style="position: absolute; top: 0; left: 0; width: 100%; height: 100%; display: none; flex-direction: column; z-index: 400; background: linear-gradient(to bottom, #000428, #004e92); overflow: hidden;">
+    
+    <!-- Shop Container - Centered with max width -->
+    <div style="max-width: 1000px; width: 100%; margin: 0 auto; display: flex; flex-direction: column; height: 100%;">
+    
+        <!-- Shop Header -->
+        <div style="padding: 20px; text-align: center; position: relative; flex-shrink: 0;">
+        <!-- Back Button -->
+        <button id="backToMainMenuFromShop" style="position: absolute; top: 20px; left: 20px; background: #666; color: white; border: none; padding: 10px 15px; border-radius: 6px; cursor: pointer; font-size: 16px;">← Back</button>
+        
+        <!-- Shop Title -->
+        <h2 style="color: white; margin: 0; text-shadow: 0 2px 4px rgba(0,0,0,0.5); font-size: 28px;">🛒 Shop</h2>
+        
+        <!-- Current Coins Display -->
+        <div style="margin-top: 15px; padding: 10px 20px; background: rgba(255, 215, 0, 0.1); border-radius: 10px; border: 1px solid rgba(255, 215, 0, 0.3); display: inline-block;">
+            <span style="color: #FFD700; font-size: 20px; font-weight: bold;">💰 <span id="shopCoinsDisplay">0</span> Coins</span>
+        </div>
+    </div>
+    
+    <!-- Shop Tabs -->
+    <div style="display: flex; justify-content: center; margin: 0 20px 20px 20px;">
+        <button class="shop-tab active" data-tab="characters" style="background: #2196F3; color: white; border: none; padding: 12px 24px; border-radius: 8px 0 0 8px; cursor: pointer; font-size: 16px; border-right: 1px solid #fff;">👤 Characters</button>
+        <button class="shop-tab" data-tab="worlds" style="background: #666; color: white; border: none; padding: 12px 24px; cursor: pointer; font-size: 16px;">🌍 Worlds</button>
+        <button class="shop-tab" data-tab="drip" style="background: #666; color: white; border: none; padding: 12px 24px; border-radius: 0 8px 8px 0; cursor: pointer; font-size: 16px; border-left: 1px solid #fff;">🎁 DRiP</button>
+    </div>
+    
+        <!-- Shop Content Area -->
+        <div style="flex: 1; overflow-y: auto; padding: 0 20px 20px 20px;">
+        
+        <!-- Characters Tab Content -->
+        <div id="shop-characters" class="shop-tab-content active" style="display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 15px; max-height: 100%;">
+            <!-- Will be populated by JavaScript -->
+        </div>
+        
+        <!-- Worlds Tab Content -->
+        <div id="shop-worlds" class="shop-tab-content" style="display: none; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 15px; max-height: 100%;">
+            <!-- Will be populated by JavaScript -->
+        </div>
+        
+        <!-- DRiP Tab Content -->
+        <div id="shop-drip" class="shop-tab-content" style="display: none; padding: 20px; overflow-y: auto;">
+            
+            <!-- DRiP Rewards Section -->
+            <div style="background: rgba(255, 255, 255, 0.05); border-radius: 15px; padding: 20px; margin: 0 auto 20px auto; text-align: center; max-width: 600px;">
+                <h3 style="color: white; margin: 0 0 15px 0; font-size: 20px;">🎁 DRiP Rewards</h3>
+                <p style="color: #ccc; margin: 0 0 15px 0; line-height: 1.4; font-size: 14px;">Exclusive unlockables coming soon! Connect your wallet to verify CNFTs and unlock rare characters, worlds, and special items.</p>
+                <div style="background: rgba(255, 255, 255, 0.1); border-radius: 8px; padding: 12px;">
+                    <p style="color: #FFD700; margin: 0; font-weight: bold; font-size: 14px;">🚀 Coming Soon!</p>
+                </div>
+            </div>
+            
+            <!-- Support Creator Section -->
+            <div style="background: rgba(255, 255, 255, 0.05); border-radius: 15px; padding: 20px; text-align: center; max-width: 600px; margin: 0 auto;">
+                <h3 style="color: white; margin: 0 0 15px 0; font-size: 20px;">💧 Support the Creator</h3>
+                <p style="color: #ccc; margin: 0 0 15px 0; line-height: 1.4; font-size: 14px;">Thank me on DRiP.haus and discover more of my creations!</p>
+                
+                <!-- DRiP Preview Container - Optimized for your image -->
+                <div id="dripPreviewContainer" style="
+                    width: 100%; 
+                    max-width: 400px;
+                    margin: 0 auto;
+                    aspect-ratio: 1;
+                    border-radius: 15px; 
+                    overflow: hidden; 
+                    border: 1px solid rgba(255, 255, 255, 0.2);
+                    background: #1a1a1a;
+                    position: relative;
+                    cursor: pointer;
+                    transition: transform 0.2s ease;
+                " onclick="window.open('https://drip.haus/alangnft/home', '_blank')" 
+                onmouseover="this.style.transform='scale(1.02)'" 
+                onmouseout="this.style.transform='scale(1)'">
+                    
+                    <!-- Screenshot Preview -->
+                    <img id="dripScreenshot" src="assets/images/DRiPscreenshot.png" 
+                    alt="DRiP Channel Preview" 
+                    style="
+                        width: 100%; 
+                        height: 100%; 
+                        object-fit: cover;
+                        border-radius: 10px;
+                    " 
+                    onerror="this.style.display='none'; document.getElementById('dripPreviewFallback').style.display='flex';">
+                    
+                    <!-- Fallback content if image fails -->
+                    <div id="dripPreviewFallback" style="
+                        position: absolute;
+                        top: 0;
+                        left: 0;
+                        width: 100%;
+                        height: 100%;
+                        background: linear-gradient(135deg, #9C27B0, #7B1FA2);
+                        display: none;
+                        flex-direction: column;
+                        justify-content: center;
+                        align-items: center;
+                        color: white;
+                        text-align: center;
+                        padding: 20px;
+                        box-sizing: border-box;
+                    ">
+                        <div style="font-size: 48px; margin-bottom: 15px;">🏴‍☠️</div>
+                        <div style="font-size: 24px; font-weight: bold; margin-bottom: 10px;">DRiPlanet</div>
+                        <div style="font-size: 16px; margin-bottom: 5px;">@alangNFT</div>
+                        <div style="font-size: 14px; opacity: 0.8;">Click to visit profile</div>
+                    </div>
+                    
+                    <!-- Click overlay effect -->
+                    <div style="
+                        position: absolute;
+                        top: 0;
+                        left: 0;
+                        width: 100%;
+                        height: 100%;
+                        background: rgba(255, 255, 255, 0.1);
+                        opacity: 0;
+                        transition: opacity 0.2s ease;
+                        border-radius: 10px;
+                        pointer-events: none;
+                    " id="dripClickOverlay"></div>
+                    
+                </div>
+                
+                <!-- Direct link fallback -->
+                <div style="margin-top: 15px;">
+                    <a href="https://drip.haus/alangnft/home" target="_blank" style="
+                        display: inline-block;
+                        background: linear-gradient(135deg, #47C6D5, #207079);
+                        color: white;
+                        text-decoration: none;
+                        padding: 10px 20px;
+                        border-radius: 8px;
+                        font-size: 14px;
+                        font-weight: bold;
+                        transition: transform 0.2s ease;
+                    " onmouseover="this.style.transform='scale(1.05)'" onmouseout="this.style.transform='scale(1)'">
+                        🔗 Visit My DRiP Profile
+                    </a>
+                </div>
+            </div>
+            
+        </div>
+        
+        </div> <!-- End shop content area -->
+    </div> <!-- End centered container -->
+</div> <!-- End shop screen -->
+
+<!-- Profile Screen -->
+<div id="profileScreen" style="position: absolute; top: 0; left: 0; width: 100%; height: 100%; display: none; flex-direction: column; z-index: 400; background: linear-gradient(to bottom, #000428, #004e92); overflow: hidden;">
+    
+    <!-- Profile Header -->
+    <div style="padding: 15px 20px; text-align: center; position: relative; flex-shrink: 0;">
+        <!-- Back Button -->
+        <button id="backToMainMenuFromProfile" style="position: absolute; top: 15px; left: 15px; background: #666; color: white; border: none; padding: 8px 12px; border-radius: 6px; cursor: pointer; font-size: 14px;">← Back</button>
+        
+        <!-- Profile Title -->
+        <h2 style="color: white; margin: 0; text-shadow: 0 2px 4px rgba(0,0,0,0.5); font-size: 24px;">📊 Profile</h2>
+    </div>
+    
+    <!-- Profile Content -->
+    <div style="flex: 1; overflow-y: auto; padding: 0 20px 20px 20px; display: flex; flex-direction: column; align-items: center;">
+        
+<!-- Profile Info -->
+        <div style="text-align: center; margin-bottom: 20px;">
+            <!-- Avatar with upload functionality -->
+            <div style="position: relative; display: inline-block; margin-bottom: 12px;">
+                <div id="profileAvatar" style="width: 80px; height: 80px; background: linear-gradient(45deg, #4CAF50, #2196F3); border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 36px; cursor: pointer; transition: transform 0.2s ease; overflow: hidden; border: 3px solid rgba(255, 255, 255, 0.2);" onclick="triggerAvatarUpload()">
+                    <span id="avatarEmoji">🏃</span>
+                    <img id="avatarImage" style="width: 100%; height: 100%; object-fit: cover; display: none;" alt="Profile Avatar">
+                </div>
+                <!-- Upload overlay -->
+                <div style="position: absolute; bottom: -5px; right: -5px; width: 24px; height: 24px; background: #4CAF50; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 12px; cursor: pointer; border: 2px solid white;" onclick="triggerAvatarUpload()">
+                    📷
+                </div>
+                <!-- Hidden file input -->
+                <input type="file" id="avatarUpload" accept="image/*" style="display: none;" onchange="handleAvatarUpload(event)">
+            </div>
+            
+            <!-- Username with edit functionality -->
+            <div style="margin-bottom: 5px;">
+                <h3 id="profilePlayerName" style="color: white; margin: 0; font-size: 20px; cursor: pointer; padding: 5px 10px; border-radius: 8px; transition: background 0.2s ease; display: inline-block;" onclick="editUsername()">Anonymous Runner</h3>
+                <button style="background: none; border: none; color: #00a2ff; font-size: 14px; cursor: pointer; margin-left: 8px;" onclick="editUsername()">✏️</button>
+            </div>
+            <p style="color: #ccc; margin: 0; font-size: 14px;">Dash Blitz Player</p>
+            
+            <!-- Username edit modal (hidden by default) -->
+            <div id="usernameEditModal" style="display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0, 0, 0, 0.8); z-index: 6000; justify-content: center; align-items: center;">
+                <div style="background: rgba(0, 20, 40, 0.95); padding: 25px; border-radius: 15px; max-width: 400px; width: 90%; text-align: center; border: 1px solid rgba(255, 255, 255, 0.2);">
+                    <h3 style="color: white; margin: 0 0 15px 0;">Edit Username</h3>
+                    <input type="text" id="usernameInput" placeholder="Enter username" maxlength="20" style="width: 100%; padding: 10px; border-radius: 8px; border: 1px solid #ccc; font-size: 16px; margin-bottom: 15px; box-sizing: border-box;">
+                    <div style="color: #ccc; font-size: 12px; margin-bottom: 15px;">Username will appear on leaderboards</div>
+                    <div style="display: flex; gap: 10px; justify-content: center;">
+                        <button onclick="saveUsername()" style="background: #4CAF50; color: white; border: none; padding: 10px 20px; border-radius: 8px; cursor: pointer;">Save</button>
+                        <button onclick="closeUsernameModal()" style="background: #666; color: white; border: none; padding: 10px 20px; border-radius: 8px; cursor: pointer;">Cancel</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Stats Grid -->
+        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-bottom: 20px; width: 100%; max-width: 300px;">
+            <div style="background: rgba(255, 255, 255, 0.05); padding: 12px; border-radius: 8px; text-align: center;">
+                <div style="font-size: 20px; color: #FFD700; font-weight: bold;" id="profileHighScore">0</div>
+                <div style="color: #ccc; font-size: 12px;">High Score</div>
+            </div>
+            <div style="background: rgba(255, 255, 255, 0.05); padding: 12px; border-radius: 8px; text-align: center;">
+                <div style="font-size: 20px; color: #4CAF50; font-weight: bold;" id="profileTotalCoins">0</div>
+                <div style="color: #ccc; font-size: 12px;">Total Coins</div>
+            </div>
+            <div style="background: rgba(255, 255, 255, 0.05); padding: 12px; border-radius: 8px; text-align: center;">
+                <div style="font-size: 20px; color: #2196F3; font-weight: bold;" id="profileCharactersUnlocked">1</div>
+                <div style="color: #ccc; font-size: 12px;">Characters</div>
+            </div>
+            <div style="background: rgba(255, 255, 255, 0.05); padding: 12px; border-radius: 8px; text-align: center;">
+                <div style="font-size: 20px; color: #FF9800; font-weight: bold;" id="profileWorldsUnlocked">1</div>
+                <div style="color: #ccc; font-size: 12px;">Worlds</div>
+            </div>
+        </div>
+        
+        <!-- Coming Soon Features -->
+        <div style="width: 100%; max-width: 350px; padding: 15px; background: rgba(255, 255, 255, 0.05); border-radius: 12px; border: 1px solid rgba(255, 255, 255, 0.1);">
+            <h3 style="color: white; margin: 0 0 12px 0; font-size: 16px; text-align: center;">🚀 Coming Soon</h3>
+            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 8px; color: #ccc; font-size: 14px;">
+                <div>🏆 Achievements</div>
+                <div>📈 Statistics</div>
+                <div>🎨 Customization</div>
+                <div>👥 Friends</div>
+                <div>🎯 Challenges</div>
+                <div>🌟 Rankings</div>
+            </div>
+        </div>
+        
+    </div>
+</div>
+
 <div id="characterSelectScreen" style="position: absolute; top: 0; left: 0; width: 100%; height: 100%; display: none; flex-direction: column; justify-content: center; align-items: center; z-index: 300; background: linear-gradient(to bottom, #000428, #004e92);">
     <div style="position: absolute; top: 0; left: 0; width: 100%; height: 100%;" id="characterSelectCanvas"></div>
-    <h2 style="color: white; font-size: 48px; margin-bottom: 20px; text-shadow: 0 0 10px #00a2ff, 0 0 20px #00a2ff; position: relative; z-index: 10;">Select Your Character</h2>
+    <h2 style="color: white; font-size: 48px; margin-bottom: 20px; text-shadow: 0 0 10px #00a2ff, 0 0 20px #00a2ff; position: relative; z-index: 10; text-align: center;">Select Your Character</h2>
     <div style="display: flex; align-items: center; margin-bottom: 30px; position: relative; z-index: 10;">
         <button id="prevCharacterBtn" class="game-button" style="font-size: 24px; padding: 10px 20px; margin-right: 20px;">←</button>
-<div id="characterDisplay" style="width: 200px; height: 200px;"></div>
+<div id="characterDisplay" style="width: 180px; height: 180px;"></div>
         <button id="nextCharacterBtn" class="game-button" style="font-size: 24px; padding: 10px 20px; margin-left: 20px;">→</button>
     </div>
     <div id="characterInfo" style="color: white; text-align: center; margin-bottom: 20px; position: relative; z-index: 10;">
@@ -1204,7 +1642,10 @@ setTimeout(() => {
         <p id="characterDescription" style="font-size: 18px;">Classic runner</p>
         <p id="characterUnlockStatus" style="font-size: 16px; color: #4CAF50;">Unlocked</p>
     </div>
-    <button id="startGameButton" class="game-button" style="font-size: 32px; padding: 15px 50px; background-color: #4CAF50; color: white; border: none; border-radius: 5px; cursor: pointer; position: relative; z-index: 10; animation: pulse 1.5s infinite;">RUN!</button>
+<div style="display: flex; gap: 15px; position: relative; z-index: 10; justify-content: center; width: 100%; max-width: 400px; margin: 0 auto;">
+        <button id="backToMainMenuFromCharacters" class="game-button" style="font-size: 18px; padding: 10px 20px; background-color: #666; color: white; border: none; border-radius: 5px; cursor: pointer; flex: 1; max-width: 120px;">← BACK</button>
+        <button id="selectCharacterButton" class="game-button" style="font-size: 20px; padding: 12px 25px; background-color: #4CAF50; color: white; border: none; border-radius: 5px; cursor: pointer; animation: pulse 1.5s infinite; flex: 2; max-width: 200px;">SELECT</button>
+    </div>
 </div>
 <!-- World Select Screen -->
 <div id="worldSelectScreen" style="position: absolute; top: 0; left: 0; width: 100%; height: 100%; display: none; flex-direction: column; justify-content: center; align-items: center; z-index: 300; background: linear-gradient(to bottom, #000428, #004e92); padding: 20px; box-sizing: border-box;">
@@ -1222,7 +1663,10 @@ setTimeout(() => {
         <p id="worldDescription" style="font-size: 18px; word-wrap: break-word; padding: 0 10px;">Rolling green hills and peaceful meadows</p>
         <p id="worldUnlockStatus" style="font-size: 16px; color: #4CAF50;">Unlocked</p>
     </div>
-    <button id="startGameFromWorldButton" class="game-button" style="font-size: 32px; padding: 15px 50px; background-color: #4CAF50; color: white; border: none; border-radius: 5px; cursor: pointer; position: relative; z-index: 10; animation: pulse 1.5s infinite; max-width: calc(100vw - 40px); word-wrap: break-word;">START ADVENTURE!</button>
+    <div style="display: flex; gap: 20px; position: relative; z-index: 10; flex-wrap: wrap; justify-content: center;">
+        <button id="backToMainMenuFromWorld" class="game-button" style="font-size: 24px; padding: 12px 25px; background-color: #666; color: white; border: none; border-radius: 5px; cursor: pointer;">← BACK</button>
+        <button id="startGameFromWorldButton" class="game-button" style="font-size: 32px; padding: 15px 50px; background-color: #4CAF50; color: white; border: none; border-radius: 5px; cursor: pointer; animation: pulse 1.5s infinite; max-width: calc(100vw - 120px); word-wrap: break-word;">START ADVENTURE!</button>
+    </div>
 </div>
 
 <!-- Game Over Screen -->
@@ -1236,12 +1680,12 @@ setTimeout(() => {
     <span id="coinsCollected" style="font-size: 20px; margin-bottom: 15px; display: inline-block;"></span><br>
     <div id="newHighScoreMessage" style="display: none; color: gold; margin: 10px 0;">
         <div style="margin-bottom: 10px; font-size: 22px;">New High Score!</div>
-        <input type="text" id="playerNameInput" placeholder="Enter your name" maxlength="15">
+        <div id="highScorePlayerDisplay" style="margin-bottom: 10px; font-size: 16px; color: white;">Playing as: Loading...</div>
         <button id="saveScoreButton">Save Score</button>
     </div>
     <div class="game-buttons" style="display: flex; flex-direction: column; gap: 10px; width: 100%; max-width: 250px; margin: 0 auto;">
         <button id="restartButton" class="game-button">Restart</button>
-        <button id="gameOverCharactersBtn" class="game-button">Characters</button>
+        <button id="gameOverMainMenuBtn" class="game-button">Main Menu</button>
         <button id="gameOverSettingsBtn" class="game-button">Settings</button>
     </div>
 </div>
@@ -1262,7 +1706,7 @@ setTimeout(() => {
     <div class="game-buttons" style="display: flex; flex-direction: column; gap: 10px; width: 100%; max-width: 250px; margin: 0 auto;">
         <button id="resumeButton" class="game-button">Resume Game</button>
         <button id="pauseRestartButton" class="game-button">Restart</button>
-        <button id="pauseCharactersBtn" class="game-button">Characters</button>
+        <button id="pauseMainMenuBtn" class="game-button">Main Menu</button>
         <button id="pauseSettingsBtn" class="game-button">Settings</button>
     </div>
 </div>
@@ -2528,11 +2972,11 @@ loadWorldScenery(currentWorld).then(() => {
             // Use onclick instead of addEventListener for more reliability
             document.getElementById('startButton').onclick = startGame;
             document.getElementById('restartButton').onclick = restartGame;
-            document.getElementById('gameOverCharactersBtn').onclick = showCharacterSelectScreen;
+            document.getElementById('gameOverMainMenuBtn').onclick = showMainMenuFromGameOver;
             document.getElementById('gameOverSettingsBtn').onclick = toggleSettingsFromGameOver;
             document.getElementById('resumeButton').onclick = togglePause;
             document.getElementById('pauseRestartButton').onclick = restartFromPause;
-            document.getElementById('pauseCharactersBtn').onclick = showCharacterSelectScreenFromPause;
+            document.getElementById('pauseMainMenuBtn').onclick = showMainMenuFromPause;
             document.getElementById('pauseSettingsBtn').onclick = toggleSettingsFromPause;
             document.getElementById('pauseBtn').onclick = togglePause;
             document.getElementById('closeSettingsButton').onclick = closeSettingsScreen;
@@ -2998,9 +3442,31 @@ function updateLeaderboardDisplay() {
     
     currentLeaderboard.forEach((entry, index) => {
         const row = document.createElement('tr');
+        
+        // Get avatar for this entry (use current player's avatar if it's their score)
+        let avatarHtml = '🏃'; // Default emoji
+        if (entry.name === (currentProfile.username || 'Anonymous')) {
+            // This is the current player's score - use their avatar
+            if (currentProfile.avatarType === 'image' && currentProfile.avatarData) {
+                avatarHtml = `<img src="${currentProfile.avatarData}" style="width: 24px; height: 24px; border-radius: 50%; object-fit: cover; vertical-align: middle;">`;
+            } else {
+                avatarHtml = currentProfile.avatarData || '🏃';
+            }
+        } else if (entry.avatar) {
+            // Entry has stored avatar data
+            if (entry.avatarType === 'image' && entry.avatar) {
+                avatarHtml = `<img src="${entry.avatar}" style="width: 24px; height: 24px; border-radius: 50%; object-fit: cover; vertical-align: middle;">`;
+            } else {
+                avatarHtml = entry.avatar || '🏃';
+            }
+        }
+        
         row.innerHTML = `
             <td>${index + 1}</td>
-            <td>${entry.name}</td>
+            <td style="display: flex; align-items: center; gap: 8px;">
+                <span style="font-size: 20px;">${avatarHtml}</span>
+                <span>${entry.name}</span>
+            </td>
             <td>${entry.score}</td>
             <td>${entry.character || 'Unknown'}</td>
         `;
@@ -3016,18 +3482,28 @@ function formatDate(dateString) {
 
         
         function saveHighScore() {
-    const playerName = document.getElementById('playerNameInput').value.trim() || 'Anonymous';
+    // Use profile username instead of manual input
+    const playerName = currentProfile.username || 'Anonymous';
     const currentScore = score;
+    
+    // Remove the name input requirement
+    const nameInput = document.getElementById('playerNameInput');
+    const saveButton = document.getElementById('saveScoreButton');
+    
+    if (nameInput) nameInput.style.display = 'none';
+    if (saveButton) saveButton.textContent = 'Saving...';
     
     // Get existing leaderboard
     let leaderboard = JSON.parse(localStorage.getItem('runningBlitzLeaderboard') || '[]');
     
-    // Add new score
+// Add new score with avatar data
     leaderboard.push({
         name: playerName,
         score: currentScore,
         character: currentCharacter,
-        date: new Date().toLocaleDateString()
+        date: new Date().toLocaleDateString(),
+        avatar: currentProfile.avatarData || '🏃',
+        avatarType: currentProfile.avatarType || 'emoji'
     });
     
     // Sort by score (highest first)
@@ -3042,27 +3518,138 @@ function formatDate(dateString) {
     // Hide name entry section
     document.getElementById('newHighScoreMessage').style.display = 'none';
     
-    // Clear the input for next time
-    document.getElementById('playerNameInput').value = '';
-    
+    debug('💾 Saving high score for:', playerName);
     debug('Score saved to leaderboard!', leaderboard);
 
-    // ADD THIS LINE - Submit to global leaderboard
+    // Submit to global leaderboard
     submitToGlobalLeaderboard(playerName, currentScore, currentCharacter);
     
     // Save profile with high score reason - THIS WILL SHOW THE SAVE INDICATOR
     saveGameData('high_score');
     
-    // Optional: Show confirmation
-    alert(`Score saved! ${playerName}: ${currentScore} points`);
+    // Show beautiful confirmation notification
+    showHighScoreNotification(playerName, currentScore);
 }
 
-// Allow Enter key to save score
-document.getElementById('playerNameInput').addEventListener('keypress', function(e) {
-    if (e.key === 'Enter') {
-        document.getElementById('saveScoreButton').click();
+// Show high score saved notification
+function showHighScoreNotification(playerName, score) {
+    const notification = document.createElement('div');
+    notification.style.cssText = `
+        position: fixed;
+        top: 50%;
+        left: 50%;
+        transform: translate(-50%, -50%) scale(0);
+        background: linear-gradient(135deg, #FFD700, #FFA500);
+        color: #333;
+        padding: 25px 35px;
+        border-radius: 18px;
+        font-size: 18px;
+        font-weight: bold;
+        text-align: center;
+        z-index: 5000;
+        box-shadow: 0 12px 40px rgba(255, 215, 0, 0.4);
+        border: 3px solid rgba(255, 255, 255, 0.3);
+        backdrop-filter: blur(10px);
+        transition: all 0.4s cubic-bezier(0.34, 1.56, 0.64, 1);
+        pointer-events: none;
+        max-width: 350px;
+    `;
+    
+    notification.innerHTML = `
+        <div style="font-size: 48px; margin-bottom: 12px;">🏆</div>
+        <div style="font-size: 20px; margin-bottom: 8px; color: #333;">High Score Saved!</div>
+        <div style="font-size: 16px; color: #555; margin-bottom: 5px;">${playerName}</div>
+        <div style="font-size: 24px; font-weight: bold; color: #333;">${score.toLocaleString()} Points</div>
+    `;
+    
+    document.body.appendChild(notification);
+    
+    // Animate in
+    requestAnimationFrame(() => {
+        notification.style.transform = 'translate(-50%, -50%) scale(1)';
+        notification.style.opacity = '1';
+    });
+    
+    // Animate out and remove
+    setTimeout(() => {
+        notification.style.transform = 'translate(-50%, -50%) scale(0.8)';
+        notification.style.opacity = '0';
+        
+        setTimeout(() => {
+            document.body.removeChild(notification);
+        }, 400);
+    }, 2500);
+}
+
+// Show mod mode notification
+function showModModeNotification(enabled, wrongPassword = false) {
+    const notification = document.createElement('div');
+    
+    let backgroundColor, emoji, title, message;
+    
+    if (wrongPassword) {
+        backgroundColor = 'linear-gradient(135deg, #F44336, #D32F2F)';
+        emoji = '❌';
+        title = 'Incorrect Password';
+        message = 'Please try again';
+    } else if (enabled) {
+        backgroundColor = 'linear-gradient(135deg, #4CAF50, #388E3C)';
+        emoji = '🔓';
+        title = 'Mod Mode Enabled';
+        message = 'All content unlocked!';
+    } else {
+        backgroundColor = 'linear-gradient(135deg, #FF9800, #F57C00)';
+        emoji = '🔒';
+        title = 'Mod Mode Disabled';
+        message = 'Content locked again';
     }
-});
+    
+    notification.style.cssText = `
+        position: fixed;
+        top: 50%;
+        left: 50%;
+        transform: translate(-50%, -50%) scale(0);
+        background: ${backgroundColor};
+        color: white;
+        padding: 25px 30px;
+        border-radius: 16px;
+        font-size: 18px;
+        font-weight: bold;
+        text-align: center;
+        z-index: 5000;
+        box-shadow: 0 12px 40px rgba(0, 0, 0, 0.3);
+        border: 2px solid rgba(255, 255, 255, 0.2);
+        backdrop-filter: blur(10px);
+        transition: all 0.4s cubic-bezier(0.34, 1.56, 0.64, 1);
+        pointer-events: none;
+        max-width: 300px;
+    `;
+    
+    notification.innerHTML = `
+        <div style="font-size: 42px; margin-bottom: 12px;">${emoji}</div>
+        <div style="font-size: 20px; margin-bottom: 6px; text-shadow: 0 2px 4px rgba(0,0,0,0.3);">${title}</div>
+        <div style="font-size: 14px; opacity: 0.9; text-shadow: 0 1px 2px rgba(0,0,0,0.3);">${message}</div>
+    `;
+    
+    document.body.appendChild(notification);
+    
+    // Animate in
+    requestAnimationFrame(() => {
+        notification.style.transform = 'translate(-50%, -50%) scale(1)';
+        notification.style.opacity = '1';
+    });
+    
+    // Animate out and remove
+    setTimeout(() => {
+        notification.style.transform = 'translate(-50%, -50%) scale(0.8)';
+        notification.style.opacity = '0';
+        
+        setTimeout(() => {
+            document.body.removeChild(notification);
+        }, 400);
+    }, wrongPassword ? 2000 : 2500);
+}
+
 
 // ===== GLOBAL LEADERBOARD SYSTEM =====
 let globalLeaderboard = [];
@@ -3082,7 +3669,9 @@ function submitToGlobalLeaderboard(playerName, score, character) {
         character: character,
         timestamp: Date.now(),
         date: new Date().toLocaleDateString(),
-        country: 'Unknown' // We'll add geolocation later
+        country: 'Unknown', // We'll add geolocation later
+        avatar: currentProfile.avatarData || '🏃',
+        avatarType: currentProfile.avatarType || 'emoji'
     };
     
     // Submit to Firebase global leaderboard
@@ -3211,6 +3800,16 @@ function showGlobalLeaderboard() {
                 const bgColor = isCurrentPlayer ? 'rgba(0, 255, 0, 0.1)' : 'rgba(255, 255, 255, 0.05)';
                 const textColor = isCurrentPlayer ? '#00FF00' : 'white';
                 
+// Get avatar for this entry
+                let avatarHtml = '🏃'; // Default emoji
+                if (entry.avatar) {
+                    if (entry.avatarType === 'image' && entry.avatar) {
+                        avatarHtml = `<img src="${entry.avatar}" style="width: 24px; height: 24px; border-radius: 50%; object-fit: cover; margin-right: 8px; vertical-align: middle;">`;
+                    } else {
+                        avatarHtml = `<span style="font-size: 20px; margin-right: 8px;">${entry.avatar || '🏃'}</span>`;
+                    }
+                }
+
                 leaderboardHTML += `
                     <div style="
                         background: ${bgColor};
@@ -3222,9 +3821,10 @@ function showGlobalLeaderboard() {
                         justify-content: space-between;
                         align-items: center;
                     ">
-                        <span style="color: ${textColor}; font-weight: bold;">
-                            ${rankEmoji} #${rank} ${entry.playerName || 'Anonymous'}
-                        </span>
+                        <div style="display: flex; align-items: center; color: ${textColor}; font-weight: bold;">
+                            ${avatarHtml}
+                            <span>${rankEmoji} #${rank} ${entry.playerName || 'Anonymous'}</span>
+                        </div>
                         <div style="text-align: right;">
                             <div style="color: ${textColor}; font-size: 18px; font-weight: bold;">
                                 ${entry.score.toLocaleString()}
@@ -3283,6 +3883,189 @@ function showGlobalLeaderboard() {
                 }
             }
         }
+
+        // Update existing global leaderboard entries with new avatar data
+function updateGlobalLeaderboardAvatar() {
+    if (!cloudSaveEnabled || !playerId) {
+        debug('⚠️ Cannot update global avatar - cloud save not available');
+        return;
+    }
+    
+    const playerName = currentProfile.username || 'Anonymous';
+    const newAvatar = currentProfile.avatarData || '🏃';
+    const newAvatarType = currentProfile.avatarType || 'emoji';
+    
+    debug('🔄 Updating global leaderboard entries with new avatar...');
+    
+    // Get all global leaderboard entries
+    firebase.database().ref('globalLeaderboard')
+        .orderByChild('playerId')
+        .equalTo(playerId)
+        .once('value')
+        .then((snapshot) => {
+            const userEntries = snapshot.val();
+            
+            if (userEntries) {
+                const updates = {};
+                let updateCount = 0;
+                
+                // Update each entry for this player
+                Object.keys(userEntries).forEach(entryKey => {
+                    const entry = userEntries[entryKey];
+                    
+                    // Only update if avatar data is different or missing
+                    if (!entry.avatar || entry.avatar !== newAvatar || 
+                        !entry.avatarType || entry.avatarType !== newAvatarType) {
+                        
+                        updates[`globalLeaderboard/${entryKey}/avatar`] = newAvatar;
+                        updates[`globalLeaderboard/${entryKey}/avatarType`] = newAvatarType;
+                        
+                        // Also update username if it changed
+                        if (entry.playerName !== playerName) {
+                            updates[`globalLeaderboard/${entryKey}/playerName`] = playerName;
+                        }
+                        
+                        updateCount++;
+                    }
+                });
+                
+                if (updateCount > 0) {
+                    // Apply all updates at once
+                    firebase.database().ref().update(updates)
+                        .then(() => {
+                            debug(`✅ Updated ${updateCount} global leaderboard entries with new avatar`);
+                            
+                            // Refresh the global leaderboard display
+                            loadGlobalLeaderboard();
+                            
+                            // Show a quick notification
+                            showProfileNotification(`Updated ${updateCount} leaderboard entries!`, '🏆');
+                        })
+                        .catch((error) => {
+                            console.error('❌ Failed to update global leaderboard entries:', error);
+                        });
+                } else {
+                    debug('ℹ️ No global leaderboard entries need updating');
+                }
+            } else {
+                debug('ℹ️ No existing global leaderboard entries found for this player');
+            }
+        })
+        .catch((error) => {
+            console.error('❌ Failed to check existing global leaderboard entries:', error);
+        });
+}
+
+// Update global leaderboard in settings tab
+function updateSettingsGlobalLeaderboard() {
+    const tbody = document.getElementById('settingsGlobalLeaderboardBody');
+    const rankDisplay = document.getElementById('settingsGlobalRankText');
+    
+    if (!tbody) return;
+    
+    // Clear existing content
+    tbody.innerHTML = '';
+    
+    if (globalLeaderboard.length === 0) {
+        tbody.innerHTML = `
+            <tr>
+                <td colspan="4" style="text-align: center; padding: 30px; color: white;">
+                    🏆 Be the first on the global leaderboard!<br>
+                    <small style="color: #ccc;">Complete a game to see your score here!</small>
+                </td>
+            </tr>
+        `;
+        if (rankDisplay) {
+            rankDisplay.textContent = "🌍 No global scores yet - be the first!";
+        }
+        return;
+    }
+    
+    // Add top 15 scores
+    globalLeaderboard.slice(0, 15).forEach((entry, index) => {
+        const rank = index + 1;
+        const isCurrentPlayer = entry.playerId === playerId;
+        
+        let rankDisplay = `#${rank}`;
+        if (rank === 1) rankDisplay = '🥇';
+        else if (rank === 2) rankDisplay = '🥈';
+        else if (rank === 3) rankDisplay = '🥉';
+        
+        const rowStyle = isCurrentPlayer ? 'background: rgba(0, 255, 0, 0.1);' : '';
+        const textColor = isCurrentPlayer ? '#00FF00' : 'white';
+        
+        // Get avatar for this entry
+        let avatarHtml = '🏃'; // Default emoji
+        if (entry.avatar) {
+            if (entry.avatarType === 'image' && entry.avatar) {
+                avatarHtml = `<img src="${entry.avatar}" style="width: 20px; height: 20px; border-radius: 50%; object-fit: cover; vertical-align: middle; margin-right: 6px;">`;
+            } else {
+                avatarHtml = `<span style="font-size: 16px; margin-right: 6px;">${entry.avatar || '🏃'}</span>`;
+            }
+        }
+        
+        tbody.innerHTML += `
+            <tr style="${rowStyle}">
+                <td style="padding: 8px; color: ${textColor}; font-size: 14px;">${rankDisplay}</td>
+                <td style="padding: 8px; color: ${textColor}; font-size: 14px;">
+                    ${avatarHtml}<span>${entry.playerName || 'Anonymous'}</span>
+                </td>
+                <td style="padding: 8px; text-align: right; color: ${textColor}; font-size: 14px; font-weight: bold;">${entry.score.toLocaleString()}</td>
+                <td style="padding: 8px; text-align: center; color: ${textColor}; font-size: 12px;">${entry.character}</td>
+            </tr>
+        `;
+    });
+    
+    // Update player rank display
+    if (playerGlobalRank && rankDisplay) {
+        rankDisplay.textContent = `🏆 Your Global Rank: #${playerGlobalRank} out of ${globalLeaderboard.length} players`;
+    } else if (rankDisplay) {
+        rankDisplay.textContent = `🌍 ${globalLeaderboard.length} players competing worldwide`;
+    }
+}
+
+// Refresh global leaderboard in settings
+function refreshSettingsGlobalLeaderboard() {
+    const button = event.target;
+    const originalText = button.textContent;
+    
+    button.textContent = '🔄 Loading...';
+    button.disabled = true;
+    
+    loadGlobalLeaderboard();
+    
+    setTimeout(() => {
+        updateSettingsGlobalLeaderboard();
+        button.textContent = originalText;
+        button.disabled = false;
+    }, 1500);
+}
+
+// Initialize settings global leaderboard when tab is opened
+function initSettingsGlobalLeaderboard() {
+    if (cloudSaveEnabled) {
+        loadGlobalLeaderboard();
+        setTimeout(updateSettingsGlobalLeaderboard, 1000);
+    } else {
+        const tbody = document.getElementById('settingsGlobalLeaderboardBody');
+        const rankDisplay = document.getElementById('settingsGlobalRankText');
+        
+        if (tbody) {
+            tbody.innerHTML = `
+                <tr>
+                    <td colspan="4" style="text-align: center; padding: 30px; color: #ccc;">
+                        ☁️ Cloud save required for global leaderboard<br>
+                        <small>Sign in with Google to compete globally!</small>
+                    </td>
+                </tr>
+            `;
+        }
+        
+        if (rankDisplay) {
+            rankDisplay.textContent = "☁️ Sign in to see your global rank";
+        }
+    }
+}
         
 
         
@@ -3530,15 +4313,15 @@ setTimeout(() => {
                 clearTitleParticles();
             }
             
-            // Hide title screen, show character selection screen
+            // Hide title screen, show main menu
             document.getElementById('titleScreen').style.display = 'none';
-            document.getElementById('characterSelectScreen').style.display = 'flex';
+            document.getElementById('mainMenuScreen').style.display = 'flex';
             
-            // Initialize the character selection screen
-            initCharacterSelectScreen();
+            // Initialize main menu (create particles for background)
+            initMainMenu();
             
             // Update game state
-            gameState = "characterSelect";
+            gameState = "mainMenu";
         });
         debug('Start button event listener added successfully!');
     } else {
@@ -3548,6 +4331,706 @@ setTimeout(() => {
 
 
 
+}
+
+// Initialize Main Menu
+function initMainMenu() {
+    // Create floating particles for main menu background
+    createMainMenuParticles();
+    
+    // Setup main menu button event listeners
+    setupMainMenuButtons();
+}
+
+// Create particles for main menu (similar to title screen)
+function createMainMenuParticles() {
+    const particleContainer = document.querySelector('#mainMenuScreen .particle-container');
+    if (!particleContainer) return;
+    
+    // Clear existing particles
+    particleContainer.innerHTML = '';
+    
+    // Create CSS particles
+    for (let i = 0; i < 50; i++) {
+        const particle = document.createElement('div');
+        particle.className = 'particle';
+        particle.style.width = Math.random() * 8 + 4 + 'px';
+        particle.style.height = particle.style.width;
+        particle.style.left = Math.random() * 100 + '%';
+        particle.style.animationDelay = Math.random() * 8 + 's';
+        particle.style.animationDuration = (Math.random() * 6 + 8) + 's';
+        particleContainer.appendChild(particle);
+    }
+}
+
+// Setup main menu button event listeners
+function setupMainMenuButtons() {
+    // RUN button - goes to world select
+    document.getElementById('runButton').addEventListener('click', function() {
+        document.getElementById('mainMenuScreen').style.display = 'none';
+        document.getElementById('worldSelectScreen').style.display = 'flex';
+        initWorldSelectScreen();
+        gameState = "worldSelect";
+    });
+    
+    // CHARACTERS button - goes to character select (no longer leads to world select)
+    document.getElementById('charactersButton').addEventListener('click', function() {
+        document.getElementById('mainMenuScreen').style.display = 'none';
+        document.getElementById('characterSelectScreen').style.display = 'flex';
+        initCharacterSelectScreen();
+        gameState = "characterSelect";
+    });
+    
+// SHOP button - show shop screen
+    document.getElementById('shopButton').addEventListener('click', function() {
+        document.getElementById('mainMenuScreen').style.display = 'none';
+        document.getElementById('shopScreen').style.display = 'flex';
+        initShopScreen();
+        gameState = "shop";
+    });
+    
+    // SETTINGS button - will create dedicated settings screen
+    document.getElementById('mainMenuSettingsButton').addEventListener('click', function() {
+        showMainMenuSettings();
+    });
+    
+    // PROFILE button - show profile screen
+    document.getElementById('profileButton').addEventListener('click', function() {
+        document.getElementById('mainMenuScreen').style.display = 'none';
+        document.getElementById('profileScreen').style.display = 'flex';
+        initProfileScreen();
+        gameState = "profile";
+    });
+}
+
+// Show main menu settings screen
+function showMainMenuSettings() {
+    document.getElementById('mainMenuScreen').style.display = 'none';
+    document.getElementById('mainMenuSettingsScreen').style.display = 'flex';
+    gameState = "mainMenuSettings";
+    
+    // Initialize settings screen
+    initMainMenuSettings();
+}
+
+// Initialize main menu settings screen
+function initMainMenuSettings() {
+    // Update audio checkbox states
+    document.getElementById('mainMenuMusicCheckbox').checked = backgroundMusicEnabled;
+    document.getElementById('mainMenuSoundCheckbox').checked = soundEffectsEnabled;
+    
+    // Update auth status display
+    updateAuthStatusDisplay();
+    
+    // Setup event listeners
+    setupMainMenuSettingsListeners();
+}
+
+// Update authentication status display
+function updateAuthStatusDisplay() {
+    const authDisplay = document.getElementById('authStatusDisplay');
+    const googleBtn = document.getElementById('googleAuthBtn');
+    
+    // Check if user is signed in with Google (if Firebase is available)
+    if (typeof firebase !== 'undefined' && firebase.auth) {
+        const currentUser = firebase.auth().currentUser;
+        const isSignedIn = currentUser && !currentUser.isAnonymous;
+        
+        if (isSignedIn) {
+            authDisplay.innerHTML = `<p style="color: #34C759; font-size: 14px;">✅ Signed in as ${currentUser.displayName}<br><small style="color: #999;">Your progress syncs across all devices!</small></p>`;
+            googleBtn.textContent = '🔓 Sign Out';
+            googleBtn.style.background = '#666';
+        } else {
+            authDisplay.innerHTML = `<p style="color: #FF9500; font-size: 14px;">⚠️ Not signed in<br><small style="color: #999;">Sign in to sync progress across devices</small></p>`;
+            googleBtn.textContent = '🔗 Sign in with Google';
+            googleBtn.style.background = '#4285f4';
+        }
+    } else {
+        authDisplay.innerHTML = `<p style="color: #999; font-size: 14px;">📱 Use save codes to transfer progress</p>`;
+        googleBtn.style.display = 'none';
+    }
+}
+
+// Setup main menu settings event listeners
+function setupMainMenuSettingsListeners() {
+    // Back button
+    document.getElementById('backToMainMenuFromSettings').addEventListener('click', function() {
+        document.getElementById('mainMenuSettingsScreen').style.display = 'none';
+        document.getElementById('mainMenuScreen').style.display = 'flex';
+        gameState = "mainMenu";
+    });
+    
+    // Settings tab switching
+    document.querySelectorAll('.settings-tab').forEach(tab => {
+        tab.addEventListener('click', function() {
+            // Remove active class from all tabs
+            document.querySelectorAll('.settings-tab').forEach(t => {
+                t.classList.remove('active');
+                t.style.background = '#666';
+            });
+            
+            // Hide all tab content
+            document.querySelectorAll('.settings-tab-content').forEach(content => {
+                content.style.display = 'none';
+            });
+            
+            // Activate clicked tab
+            this.classList.add('active');
+            this.style.background = '#2196F3';
+            
+            // Show corresponding content
+            const tabName = this.getAttribute('data-tab');
+            document.getElementById(`settings-${tabName}`).style.display = 'block';
+            
+            // Initialize global leaderboard when tab is opened
+            if (tabName === 'leaderboard') {
+                initSettingsGlobalLeaderboard();
+            }
+        });
+    });
+    
+    // Audio settings
+    document.getElementById('mainMenuMusicCheckbox').addEventListener('change', function() {
+        backgroundMusicEnabled = this.checked;
+        saveGameData('settings_change');
+    });
+    
+    document.getElementById('mainMenuSoundCheckbox').addEventListener('change', function() {
+        soundEffectsEnabled = this.checked;
+        saveGameData('settings_change');
+    });
+    
+    // Save code buttons
+    document.getElementById('generateSaveCodeBtn').addEventListener('click', showSaveCode);
+    document.getElementById('restoreSaveCodeBtn').addEventListener('click', showRestoreCode);
+    
+    // Google auth button
+    document.getElementById('googleAuthBtn').addEventListener('click', function() {
+        if (typeof firebase !== 'undefined' && firebase.auth) {
+            const currentUser = firebase.auth().currentUser;
+            const isSignedIn = currentUser && !currentUser.isAnonymous;
+            
+            if (isSignedIn) {
+                signOutGoogle();
+            } else {
+                signInWithGoogle();
+            }
+            
+            // Update display after auth change
+            setTimeout(updateAuthStatusDisplay, 1000);
+        }
+    });
+    
+    // Mod mode
+    document.getElementById('mainMenuModModeBtn').addEventListener('click', function() {
+        const password = document.getElementById('mainMenuModPassword').value;
+        
+        if (password === '5050') {
+            modModeEnabled = !modModeEnabled;
+            saveGameData('mod_toggle');
+            
+            if (modModeEnabled) {
+                showModModeNotification(true);
+                this.textContent = 'Disable';
+                this.style.background = '#F44336';
+            } else {
+                showModModeNotification(false);
+                this.textContent = 'Enable';
+                this.style.background = '#9C27B0';
+            }
+            
+            document.getElementById('mainMenuModPassword').value = '';
+        } else {
+            showModModeNotification(false, true); // true = wrong password
+        }
+    });
+    
+    // Reset data
+    document.getElementById('mainMenuResetDataBtn').addEventListener('click', function() {
+        if (confirm('⚠️ Are you sure you want to reset ALL game data? This cannot be undone!')) {
+            if (confirm('🚨 This will delete all progress, unlocks, and settings. Continue?')) {
+                // Reset all game data
+                localStorage.clear();
+                alert('✅ All game data has been reset. The page will now reload.');
+                location.reload();
+            }
+        }
+    });
+}
+
+// Show character selected notification
+function showCharacterSelectedNotification(characterName) {
+    // Create notification element
+    const notification = document.createElement('div');
+    notification.style.cssText = `
+        position: fixed;
+        top: 50%;
+        left: 50%;
+        transform: translate(-50%, -50%) scale(0);
+        background: linear-gradient(135deg, #4CAF50, #45a049);
+        color: white;
+        padding: 20px 30px;
+        border-radius: 15px;
+        font-size: 18px;
+        font-weight: bold;
+        text-align: center;
+        z-index: 5000;
+        box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
+        border: 2px solid rgba(255, 255, 255, 0.2);
+        backdrop-filter: blur(10px);
+        transition: all 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
+        pointer-events: none;
+    `;
+    
+    notification.innerHTML = `
+        <div style="font-size: 32px; margin-bottom: 8px;">✅</div>
+        <div style="text-transform: capitalize; text-shadow: 0 2px 4px rgba(0,0,0,0.3);">
+            ${characterName} Selected!
+        </div>
+    `;
+    
+    document.body.appendChild(notification);
+    
+    // Animate in
+    requestAnimationFrame(() => {
+        notification.style.transform = 'translate(-50%, -50%) scale(1)';
+        notification.style.opacity = '1';
+    });
+    
+    // Animate out and remove
+    setTimeout(() => {
+        notification.style.transform = 'translate(-50%, -50%) scale(0.8)';
+        notification.style.opacity = '0';
+        
+        setTimeout(() => {
+            document.body.removeChild(notification);
+        }, 300);
+    }, 1500);
+}
+
+// Show world selected notification (for shop)
+function showWorldSelectedNotification(worldName) {
+    // Create notification element
+    const notification = document.createElement('div');
+    notification.style.cssText = `
+        position: fixed;
+        top: 50%;
+        left: 50%;
+        transform: translate(-50%, -50%) scale(0);
+        background: linear-gradient(135deg, #FF9800, #F57C00);
+        color: white;
+        padding: 20px 30px;
+        border-radius: 15px;
+        font-size: 18px;
+        font-weight: bold;
+        text-align: center;
+        z-index: 5000;
+        box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
+        border: 2px solid rgba(255, 255, 255, 0.2);
+        backdrop-filter: blur(10px);
+        transition: all 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
+        pointer-events: none;
+    `;
+    
+    notification.innerHTML = `
+        <div style="font-size: 32px; margin-bottom: 8px;">🌍</div>
+        <div style="text-shadow: 0 2px 4px rgba(0,0,0,0.3);">
+            ${worldName} Selected!
+        </div>
+    `;
+    
+    document.body.appendChild(notification);
+    
+    // Animate in
+    requestAnimationFrame(() => {
+        notification.style.transform = 'translate(-50%, -50%) scale(1)';
+        notification.style.opacity = '1';
+    });
+    
+    // Animate out and remove
+    setTimeout(() => {
+        notification.style.transform = 'translate(-50%, -50%) scale(0.8)';
+        notification.style.opacity = '0';
+        
+        setTimeout(() => {
+            document.body.removeChild(notification);
+        }, 300);
+    }, 1500);
+}
+
+// Show purchase success notification
+function showPurchaseSuccessNotification(itemName, itemType) {
+    const emoji = itemType === 'character' ? '👤' : '🌍';
+    
+    const notification = document.createElement('div');
+    notification.style.cssText = `
+        position: fixed;
+        top: 50%;
+        left: 50%;
+        transform: translate(-50%, -50%) scale(0);
+        background: linear-gradient(135deg, #9C27B0, #7B1FA2);
+        color: white;
+        padding: 20px 30px;
+        border-radius: 15px;
+        font-size: 18px;
+        font-weight: bold;
+        text-align: center;
+        z-index: 5000;
+        box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
+        border: 2px solid rgba(255, 255, 255, 0.2);
+        backdrop-filter: blur(10px);
+        transition: all 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
+        pointer-events: none;
+    `;
+    
+    notification.innerHTML = `
+        <div style="font-size: 32px; margin-bottom: 8px;">${emoji}</div>
+        <div style="text-transform: capitalize; text-shadow: 0 2px 4px rgba(0,0,0,0.3);">
+            ${itemName} Unlocked!
+        </div>
+    `;
+    
+    document.body.appendChild(notification);
+    
+    // Animate in
+    requestAnimationFrame(() => {
+        notification.style.transform = 'translate(-50%, -50%) scale(1)';
+        notification.style.opacity = '1';
+    });
+    
+    // Animate out and remove
+    setTimeout(() => {
+        notification.style.transform = 'translate(-50%, -50%) scale(0.8)';
+        notification.style.opacity = '0';
+        
+        setTimeout(() => {
+            document.body.removeChild(notification);
+        }, 300);
+    }, 2000); // Show slightly longer for purchases
+}
+
+
+// Initialize shop screen
+function initShopScreen() {
+    // Update coins display
+    document.getElementById('shopCoinsDisplay').textContent = totalCoins;
+    
+    // Populate characters list
+    populateShopCharacters();
+    
+    // Populate worlds list
+    populateShopWorlds();
+    
+    // Setup shop event listeners
+    setupShopListeners();
+}
+
+// Populate shop characters
+function populateShopCharacters() {
+    const charactersList = document.getElementById('shop-characters');
+    charactersList.innerHTML = '';
+    
+    characterNames.forEach(charName => {
+        const isUnlocked = unlockedCharacters[charName] || modModeEnabled;
+        const cost = characterCosts[charName] || 100; // Default cost if not defined
+        
+        const characterItem = document.createElement('div');
+        characterItem.style.cssText = `
+            background: rgba(255, 255, 255, 0.05);
+            border-radius: 10px;
+            padding: 15px;
+            text-align: center;
+            border: 1px solid ${isUnlocked ? '#4CAF50' : '#666'};
+        `;
+        
+        characterItem.innerHTML = `
+            <h4 style="color: white; margin: 0 0 10px 0; text-transform: capitalize;">${charName}</h4>
+            <div style="color: ${isUnlocked ? '#4CAF50' : '#FFD700'}; font-size: 14px; margin-bottom: 10px;">
+                ${isUnlocked ? '✅ Unlocked' : `💰 ${cost} coins`}
+            </div>
+            ${!isUnlocked ? `
+                <button onclick="purchaseCharacter('${charName}')" 
+                    style="background: #4CAF50; color: white; border: none; padding: 8px 16px; border-radius: 6px; cursor: pointer; font-size: 14px;">
+                    Purchase
+                </button>
+            ` : `
+                <button onclick="selectCharacterFromShop('${charName}')" 
+                    style="background: #2196F3; color: white; border: none; padding: 8px 16px; border-radius: 6px; cursor: pointer; font-size: 14px;">
+                    Select
+                </button>
+            `}
+        `;
+        
+        charactersList.appendChild(characterItem);
+    });
+}
+
+// Populate shop worlds
+function populateShopWorlds() {
+    const worldsList = document.getElementById('shop-worlds');
+    worldsList.innerHTML = '';
+    
+    availableWorlds.forEach(world => {
+        const isUnlocked = unlockedWorlds[world.id] || modModeEnabled;
+        
+        const worldItem = document.createElement('div');
+        worldItem.style.cssText = `
+            background: rgba(255, 255, 255, 0.05);
+            border-radius: 10px;
+            padding: 15px;
+            text-align: center;
+            border: 1px solid ${isUnlocked ? '#4CAF50' : '#666'};
+        `;
+        
+        worldItem.innerHTML = `
+            <h4 style="color: white; margin: 0 0 10px 0;">${world.name}</h4>
+            <p style="color: #ccc; font-size: 12px; margin: 0 0 10px 0;">${world.description}</p>
+            <div style="color: ${isUnlocked ? '#4CAF50' : '#FFD700'}; font-size: 14px; margin-bottom: 10px;">
+                ${isUnlocked ? '✅ Unlocked' : `💰 ${world.cost} coins`}
+            </div>
+            ${!isUnlocked ? `
+                <button onclick="purchaseWorld('${world.id}')" 
+                    style="background: #FF9800; color: white; border: none; padding: 8px 16px; border-radius: 6px; cursor: pointer; font-size: 14px;">
+                    Purchase
+                </button>
+            ` : `
+                <button onclick="selectWorldFromShop('${world.id}')" 
+                    style="background: #2196F3; color: white; border: none; padding: 8px 16px; border-radius: 6px; cursor: pointer; font-size: 14px;">
+                    Select
+                </button>
+            `}
+        `;
+        
+        worldsList.appendChild(worldItem);
+    });
+}
+
+// Setup shop event listeners
+function setupShopListeners() {
+    // Back button
+    document.getElementById('backToMainMenuFromShop').addEventListener('click', function() {
+        document.getElementById('shopScreen').style.display = 'none';
+        document.getElementById('mainMenuScreen').style.display = 'flex';
+        gameState = "mainMenu";
+    });
+    
+    // Shop tab switching
+    document.querySelectorAll('.shop-tab').forEach(tab => {
+        tab.addEventListener('click', function() {
+            // Remove active class from all tabs
+            document.querySelectorAll('.shop-tab').forEach(t => {
+                t.classList.remove('active');
+                t.style.background = '#666';
+            });
+            
+            // Hide all tab content
+            document.querySelectorAll('.shop-tab-content').forEach(content => {
+                content.style.display = 'none';
+            });
+            
+            // Activate clicked tab
+            this.classList.add('active');
+            this.style.background = '#2196F3';
+            
+            // Show corresponding content
+            const tabName = this.getAttribute('data-tab');
+            const content = document.getElementById(`shop-${tabName}`);
+            content.style.display = tabName === 'drip' ? 'block' : 'grid';
+            
+            // Add hover effect for DRiP preview
+            if (tabName === 'drip') {
+                setupDripPreviewEffects();
+            }
+        });
+    });
+}
+
+// Purchase character from shop
+function purchaseCharacter(charName) {
+    const cost = characterCosts[charName] || 100;
+    
+    if (unlockedCharacters[charName]) {
+        alert('✅ Character already unlocked!');
+        return;
+    }
+    
+    if (totalCoins >= cost) {
+        totalCoins -= cost;
+        unlockedCharacters[charName] = true;
+        updateTotalCoins();
+        saveGameData('character_purchase');
+        showPurchaseSuccessNotification(charName, 'character');
+        
+        // Refresh shop display
+        initShopScreen();
+    } else {
+showInsufficientFundsNotification(cost, 'character');
+    }
+}
+
+// Purchase world from shop
+function purchaseWorld(worldId) {
+    const world = availableWorlds.find(w => w.id === worldId);
+    if (!world) return;
+    
+    if (unlockedWorlds[worldId]) {
+        alert('✅ World already unlocked!');
+        return;
+    }
+    
+    if (totalCoins >= world.cost) {
+        totalCoins -= world.cost;
+        unlockedWorlds[worldId] = true;
+        updateTotalCoins();
+        saveGameData('world_purchase');
+        showPurchaseSuccessNotification(world.name, 'world');
+        
+        // Refresh shop display
+        initShopScreen();
+    } else {
+showInsufficientFundsNotification(world.cost, 'world');
+    }
+}
+
+// Select character from shop
+function selectCharacterFromShop(charName) {
+    currentCharacter = charName;
+    createPlayer();
+    showCharacterSelectedNotification(charName);
+}
+
+// Select world from shop
+function selectWorldFromShop(worldId) {
+    const world = availableWorlds.find(w => w.id === worldId);
+    if (world) {
+        currentWorld = worldId;
+        showWorldSelectedNotification(world.name);
+    }
+}
+
+// Initialize DRiP iframe
+function initDripIframe() {
+    const container = document.getElementById('dripIframeContainer');
+    const loadingMessage = document.getElementById('dripLoadingMessage');
+    
+    if (!container) return;
+    
+    // Detect if mobile device
+    const isMobileDevice = /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent) || window.innerWidth <= 768;
+    
+    // Create iframe
+    const iframe = document.createElement('iframe');
+    iframe.src = 'https://drip.haus/alangnft/home';
+    iframe.style.cssText = `
+        width: 100%;
+        height: 100%;
+        border: none;
+        border-radius: 10px;
+        background: white;
+    `;
+    
+    // Handle iframe load events
+    iframe.onload = function() {
+        // Hide loading message when iframe loads
+        if (loadingMessage) {
+            loadingMessage.style.display = 'none';
+        }
+    };
+    
+    iframe.onerror = function() {
+        // Show error message if iframe fails to load
+        if (loadingMessage) {
+            loadingMessage.innerHTML = `
+                <div style="color: #ff6b6b;">❌ Unable to load DRiP channel</div>
+                <div style="margin-top: 10px; font-size: 12px;">
+                    <a href="https://drip.haus/alangnft/home" target="_blank" style="color: #00a2ff;">
+                        Click here to visit my DRiP profile directly
+                    </a>
+                </div>
+            `;
+        }
+    };
+    
+    // Add iframe to container
+    container.appendChild(iframe);
+    
+    // Set different height for mobile
+    if (isMobileDevice) {
+        container.style.height = '350px';
+    }
+    
+    debug('DRiP iframe initialized');
+}
+
+// Setup DRiP preview hover effects
+function setupDripPreviewEffects() {
+    const container = document.getElementById('dripPreviewContainer');
+    const overlay = document.getElementById('dripClickOverlay');
+    
+    if (container && overlay) {
+        container.addEventListener('mouseenter', function() {
+            overlay.style.opacity = '1';
+        });
+        
+        container.addEventListener('mouseleave', function() {
+            overlay.style.opacity = '0';
+        });
+        
+        // Add click feedback
+        container.addEventListener('mousedown', function() {
+            this.style.transform = 'scale(0.98)';
+        });
+        
+        container.addEventListener('mouseup', function() {
+            this.style.transform = 'scale(1.02)';
+        });
+    }
+}
+
+// Initialize profile screen
+function initProfileScreen() {
+    // Update profile display
+    updateProfileDisplay();
+    
+    // Setup profile event listeners
+    setupProfileListeners();
+}
+
+// Update profile display
+function updateProfileDisplay() {
+    // Initialize profile data if missing
+    initializeProfileData();
+    
+    // Update player name with custom username
+    const nameElement = document.getElementById('profilePlayerName');
+    nameElement.textContent = currentProfile.username || 'Anonymous Runner';
+    
+    // Update avatar
+    setAvatarImage(currentProfile.avatarData || '🏃');
+    
+    // Update high score (handle if highScore is undefined)
+    const currentHighScore = typeof highScore !== 'undefined' ? highScore : 0;
+    document.getElementById('profileHighScore').textContent = currentHighScore;
+    
+    // Update total coins
+    document.getElementById('profileTotalCoins').textContent = totalCoins;
+    
+    // Count unlocked characters
+    const unlockedCharCount = characterNames.filter(char => unlockedCharacters[char]).length;
+    document.getElementById('profileCharactersUnlocked').textContent = unlockedCharCount;
+    
+    // Count unlocked worlds
+    const unlockedWorldCount = availableWorlds.filter(world => unlockedWorlds[world.id]).length;
+    document.getElementById('profileWorldsUnlocked').textContent = unlockedWorldCount;
+}
+
+// Setup profile event listeners
+function setupProfileListeners() {
+    document.getElementById('backToMainMenuFromProfile').addEventListener('click', function() {
+        document.getElementById('profileScreen').style.display = 'none';
+        document.getElementById('mainMenuScreen').style.display = 'flex';
+        gameState = "mainMenu";
+    });
 }
 
 // Create character models for the title screen
@@ -3669,7 +5152,10 @@ if (characterSelectModels && characterSelectModels.length > 0) {
 // Create all character models fresh
 characterSelectModels = [];
 
-characterNames.forEach(charType => {
+// Filter to only show unlocked characters (unless mod mode is enabled)
+const visibleCharacters = modModeEnabled ? characterNames : characterNames.filter(char => unlockedCharacters[char]);
+
+visibleCharacters.forEach(charType => {
     let charModel;
     
     try {
@@ -3792,15 +5278,29 @@ const newNextBtn = nextBtn.cloneNode(true);
 prevBtn.parentNode.replaceChild(newPrevBtn, prevBtn);
 nextBtn.parentNode.replaceChild(newNextBtn, nextBtn);
 
+// Update arrow button visibility based on unlocked characters
+updateCharacterArrowVisibility();
+
 // Add fresh event listeners
 document.getElementById('prevCharacterBtn').addEventListener('click', function() {
+    // Get current visible characters
+    const visibleCharacters = modModeEnabled ? characterNames : characterNames.filter(char => unlockedCharacters[char]);
+    
     // Hide current model
     if (characterSelectModels[selectedCharacterIndex]) {
         characterSelectModels[selectedCharacterIndex].model.visible = false;
     }
     
-    // Update index (with wrap-around)
-    selectedCharacterIndex = (selectedCharacterIndex - 1 + characterNames.length) % characterNames.length;
+    // Find current character in visible list
+    const currentChar = characterNames[selectedCharacterIndex];
+    const currentVisibleIndex = visibleCharacters.indexOf(currentChar);
+    
+    // Move to previous visible character
+    const newVisibleIndex = (currentVisibleIndex - 1 + visibleCharacters.length) % visibleCharacters.length;
+    const newChar = visibleCharacters[newVisibleIndex];
+    
+    // Update to new character index in full array
+    selectedCharacterIndex = characterNames.indexOf(newChar);
     
     // Show new model
     if (characterSelectModels[selectedCharacterIndex]) {
@@ -3812,13 +5312,24 @@ document.getElementById('prevCharacterBtn').addEventListener('click', function()
 });
 
 document.getElementById('nextCharacterBtn').addEventListener('click', function() {
+    // Get current visible characters
+    const visibleCharacters = modModeEnabled ? characterNames : characterNames.filter(char => unlockedCharacters[char]);
+    
     // Hide current model
     if (characterSelectModels[selectedCharacterIndex]) {
         characterSelectModels[selectedCharacterIndex].model.visible = false;
     }
     
-    // Update index (with wrap-around)
-    selectedCharacterIndex = (selectedCharacterIndex + 1) % characterNames.length;
+    // Find current character in visible list
+    const currentChar = characterNames[selectedCharacterIndex];
+    const currentVisibleIndex = visibleCharacters.indexOf(currentChar);
+    
+    // Move to next visible character
+    const newVisibleIndex = (currentVisibleIndex + 1) % visibleCharacters.length;
+    const newChar = visibleCharacters[newVisibleIndex];
+    
+    // Update to new character index in full array
+    selectedCharacterIndex = characterNames.indexOf(newChar);
     
     // Show new model
     if (characterSelectModels[selectedCharacterIndex]) {
@@ -3828,9 +5339,30 @@ document.getElementById('nextCharacterBtn').addEventListener('click', function()
     // Update info display
     updateCharacterInfo();
 });
+
+function updateCharacterArrowVisibility() {
+    const visibleCharacters = modModeEnabled ? characterNames : characterNames.filter(char => unlockedCharacters[char]);
+    const prevBtn = document.getElementById('prevCharacterBtn');
+    const nextBtn = document.getElementById('nextCharacterBtn');
+    
+    if (visibleCharacters.length <= 1) {
+        prevBtn.style.display = 'none';
+        nextBtn.style.display = 'none';
+    } else {
+        prevBtn.style.display = 'block';
+        nextBtn.style.display = 'block';
+    }
+}
             
-            // Start game button - now goes to world select
-document.getElementById('startGameButton').addEventListener('click', function() {
+            // Back to main menu button
+document.getElementById('backToMainMenuFromCharacters').addEventListener('click', function() {
+    document.getElementById('characterSelectScreen').style.display = 'none';
+    document.getElementById('mainMenuScreen').style.display = 'flex';
+    gameState = "mainMenu";
+});
+
+// Select character button - just selects character and returns to main menu
+document.getElementById('selectCharacterButton').addEventListener('click', function() {
     // Check if character is unlocked
     const selectedChar = characterNames[selectedCharacterIndex];
     
@@ -3839,15 +5371,13 @@ document.getElementById('startGameButton').addEventListener('click', function() 
         currentCharacter = selectedChar;
         createPlayer(); // Update player model
         
-        // Hide character selection screen and show world selection
+        // Show success notification
+        showCharacterSelectedNotification(characterNames[selectedCharacterIndex]);
+        
+        // Return to main menu
         document.getElementById('characterSelectScreen').style.display = 'none';
-        document.getElementById('worldSelectScreen').style.display = 'flex';
-        
-        // Initialize world selection screen
-        initWorldSelectScreen();
-        
-        // Update game state
-        gameState = "worldSelect";
+        document.getElementById('mainMenuScreen').style.display = 'flex';
+        gameState = "mainMenu";
     } else {
         // Character is locked - ask if they want to unlock
         const cost = characterCosts[selectedChar];
@@ -4301,43 +5831,53 @@ function setupWorldSelectButtons() {
     nextBtn.parentNode.replaceChild(newNextBtn, nextBtn);
     startBtn.parentNode.replaceChild(newStartBtn, startBtn);
 
-    // Add fresh event listeners
-    document.getElementById('prevWorldBtn').addEventListener('click', function() {
-        // Hide current model
-        if (worldSelectModels[selectedWorldIndex]) {
-            worldSelectModels[selectedWorldIndex].visible = false;
-        }
-        
-        // Update index (with wrap-around)
-        selectedWorldIndex = (selectedWorldIndex - 1 + availableWorlds.length) % availableWorlds.length;
-        
-        // Show new model
-        if (worldSelectModels[selectedWorldIndex]) {
-            worldSelectModels[selectedWorldIndex].visible = true;
-        }
-        
-        // Update info display
-        updateWorldDisplay();
+   // Update arrow button visibility based on unlocked worlds
+updateWorldArrowVisibility();
+
+// Add fresh event listeners
+document.getElementById('prevWorldBtn').addEventListener('click', function() {
+    // Hide current model
+    if (worldSelectModels[selectedWorldIndex]) {
+        worldSelectModels[selectedWorldIndex].visible = false;
+    }
+    
+    // Update index (with wrap-around)
+    selectedWorldIndex = (selectedWorldIndex - 1 + availableWorlds.length) % availableWorlds.length;
+    
+    // Show new model
+    if (worldSelectModels[selectedWorldIndex]) {
+        worldSelectModels[selectedWorldIndex].visible = true;
+    }
+    
+    // Update info display
+    updateWorldDisplay();
+});
+
+document.getElementById('nextWorldBtn').addEventListener('click', function() {
+    // Hide current model
+    if (worldSelectModels[selectedWorldIndex]) {
+        worldSelectModels[selectedWorldIndex].visible = false;
+    }
+    
+    // Update index (with wrap-around)
+    selectedWorldIndex = (selectedWorldIndex + 1) % availableWorlds.length;
+    
+    // Show new model
+    if (worldSelectModels[selectedWorldIndex]) {
+        worldSelectModels[selectedWorldIndex].visible = true;
+    }
+    
+    // Update info display
+    updateWorldDisplay();
+});
+    
+    // Back to main menu button
+    document.getElementById('backToMainMenuFromWorld').addEventListener('click', function() {
+        document.getElementById('worldSelectScreen').style.display = 'none';
+        document.getElementById('mainMenuScreen').style.display = 'flex';
+        gameState = "mainMenu";
     });
 
-    document.getElementById('nextWorldBtn').addEventListener('click', function() {
-        // Hide current model
-        if (worldSelectModels[selectedWorldIndex]) {
-            worldSelectModels[selectedWorldIndex].visible = false;
-        }
-        
-        // Update index (with wrap-around)
-        selectedWorldIndex = (selectedWorldIndex + 1) % availableWorlds.length;
-        
-        // Show new model
-        if (worldSelectModels[selectedWorldIndex]) {
-            worldSelectModels[selectedWorldIndex].visible = true;
-        }
-        
-        // Update info display
-        updateWorldDisplay();
-    });
-    
     // Start game from world select
     document.getElementById('startGameFromWorldButton').addEventListener('click', function() {
         const selectedWorld = availableWorlds[selectedWorldIndex];
@@ -4362,6 +5902,21 @@ function setupWorldSelectButtons() {
             }
         }
     });
+}
+
+// Function to show/hide world navigation arrows
+function updateWorldArrowVisibility() {
+    const unlockedCount = availableWorlds.filter(world => unlockedWorlds[world.id] || modModeEnabled).length;
+    const prevBtn = document.getElementById('prevWorldBtn');
+    const nextBtn = document.getElementById('nextWorldBtn');
+    
+    if (unlockedCount <= 1) {
+        prevBtn.style.display = 'none';
+        nextBtn.style.display = 'none';
+    } else {
+        prevBtn.style.display = 'block';
+        nextBtn.style.display = 'block';
+    }
 }
 
 // Update world display information
@@ -6745,6 +8300,30 @@ function smartMergeProfiles(localProfile, cloudProfile) {
         source: primaryProfile === localProfile ? 'local' : 'cloud'
     });
     
+    // Handle username - keep the most recent non-default one
+    if (cloudProfile.username && !cloudProfile.username.startsWith('Swift') && 
+        !cloudProfile.username.startsWith('Bold') && cloudProfile.username.length > 0) {
+        merged.username = cloudProfile.username;
+    } else if (localProfile.username && !localProfile.username.startsWith('Swift') && 
+               !localProfile.username.startsWith('Bold')) {
+        merged.username = localProfile.username;
+    } else {
+        merged.username = cloudProfile.username || localProfile.username || generateDefaultUsername();
+    }
+    
+    // Handle avatar - prefer custom uploaded images over emojis
+    if (cloudProfile.avatarType === 'image' && cloudProfile.avatarData) {
+        merged.avatarType = cloudProfile.avatarType;
+        merged.avatarData = cloudProfile.avatarData;
+    } else if (localProfile.avatarType === 'image' && localProfile.avatarData) {
+        merged.avatarType = localProfile.avatarType;
+        merged.avatarData = localProfile.avatarData;
+    } else {
+        // Keep whichever has the most recent avatar data
+        merged.avatarType = cloudProfile.avatarType || localProfile.avatarType || 'emoji';
+        merged.avatarData = cloudProfile.avatarData || localProfile.avatarData || '🏃';
+    }
+    
     return merged;
 }
 
@@ -6955,95 +8534,6 @@ function restoreFromInputs() {
     }
 }
 
-function showTitleSettings() {
-    const modal = document.createElement('div');
-    modal.style.cssText = `
-        position: fixed; top: 0; left: 0; width: 100%; height: 100%;
-        background: rgba(0,0,0,0.8); display: flex; justify-content: center; align-items: center;
-        z-index: 10000; font-family: Arial, sans-serif;
-    `;
-    
-    // Check if user is signed in with Google
-    const currentUser = firebase.auth().currentUser;
-    const isSignedIn = currentUser && !currentUser.isAnonymous;
-    
-    modal.innerHTML = `
-        <div style="
-        background: rgba(0, 20, 40, 0.95);
-        backdrop-filter: blur(10px);
-        border: 1px solid rgba(255, 255, 255, 0.2);
-        padding: 30px;
-        border-radius: 20px;
-        max-width: 400px;
-        text-align: center;
-        box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
-    ">
-            <h2 style="color: white; margin-bottom: 20px; text-shadow: 0 2px 4px rgba(0,0,0,0.5);">⚙️ Settings</h2>
-            
-            <!-- Audio Settings -->
-            <div style="margin: 20px 0; text-align: left;">
-                <label style="display: flex; align-items: center; margin: 10px 0; cursor: pointer;">
-                    <input type="checkbox" id="titleMusicCheckbox" ${backgroundMusicEnabled ? 'checked' : ''} 
-                        onchange="backgroundMusicEnabled = this.checked; saveGameData('settings_change');"
-                        style="margin-right: 10px; transform: scale(1.2);">
-                    <span style="font-size: 16px; color: white; text-shadow: 0 1px 2px rgba(0,0,0,0.5);">🎵 Background Music</span>
-                </label>
-                
-                <label style="display: flex; align-items: center; margin: 10px 0; cursor: pointer;">
-                    <input type="checkbox" id="titleSoundCheckbox" ${soundEffectsEnabled ? 'checked' : ''} 
-                        onchange="soundEffectsEnabled = this.checked; saveGameData('settings_change');"
-                        style="margin-right: 10px; transform: scale(1.2);">
-                    <span style="font-size: 16px; color: white; text-shadow: 0 1px 2px rgba(0,0,0,0.5);">🔊 Sound Effects</span>
-                </label>
-            </div>
-            
-            <hr style="margin: 20px 0; border: none; border-top: 1px solid #eee;">
-            
-            <!-- Save System -->
-            <div style="margin: 20px 0;">
-                <h3 style="color: white; margin-bottom: 15px; text-shadow: 0 1px 3px rgba(0,0,0,0.5);">💾 Save System</h3>
-                
-                ${isSignedIn ? `
-                    <p style="color: #34C759; margin-bottom: 15px;">
-                        ✅ Signed in as ${currentUser.displayName}<br>
-                        <small style="color: #666;">Your progress syncs across all devices!</small>
-                    </p>
-                    <button onclick="signOutGoogle(); this.parentElement.parentElement.parentElement.remove();" 
-                        style="background: #666; color: white; border: none; padding: 8px 16px; border-radius: 6px; cursor: pointer; margin: 5px;">
-                        Sign Out
-                    </button>
-                ` : `
-                    <button onclick="signInWithGoogle(); this.parentElement.parentElement.parentElement.remove();" 
-                        style="background: #4285f4; color: white; border: none; padding: 10px 20px; border-radius: 6px; cursor: pointer; margin: 5px;">
-                        🔗 Sign in with Google
-                    </button>
-                `}
-                
-                <br>
-                
-                <button onclick="showSaveCode()" 
-                    style="background: #34C759; color: white; border: none; padding: 8px 16px; border-radius: 6px; cursor: pointer; margin: 5px;">
-                    📱 Get Save Code
-                </button>
-                
-                <button onclick="showRestoreCode()" 
-                    style="background: #FF9500; color: white; border: none; padding: 8px 16px; border-radius: 6px; cursor: pointer; margin: 5px;">
-                    📥 Use Save Code
-                </button>
-            </div>
-            
-            <hr style="margin: 20px 0; border: none; border-top: 1px solid #eee;">
-            
-            <!-- Close Button -->
-            <button onclick="this.parentElement.parentElement.remove()" 
-                style="background: #007AFF; color: white; border: none; padding: 12px 24px; border-radius: 8px; cursor: pointer; font-size: 16px;">
-                Done
-            </button>
-        </div>
-    `;
-    
-    document.body.appendChild(modal);
-}
 
 // Current save system version - increment when making breaking changes
 const SAVE_VERSION = "1.0";
@@ -7089,6 +8579,11 @@ unlockedWorlds: {
     backgroundMusicEnabled: true,
     currentTrack: 'ambient',
     modModeEnabled: false,
+    
+    // Profile customization
+    username: null, // Will be auto-generated if null
+    avatarType: 'emoji', // 'emoji' or 'image'
+    avatarData: '🏃', // emoji character or base64 image data
     
     // Leaderboard (moved into profile)
     personalBests: [],
@@ -7346,6 +8841,9 @@ function initializeSaveSystem() {
     // Load or create default profile
     loadProfile("Default");
     
+    // Initialize profile with username/avatar - ADD THIS LINE
+    initializeProfile();
+    
     // Initialize cloud save after profile is loaded
     setTimeout(() => {
         initializeCloudSave();
@@ -7357,9 +8855,23 @@ function initializeSaveSystem() {
             loadGlobalLeaderboard(); // Load global scores on startup
         }
     }, 3000);
+
+    // Load global leaderboard after cloud save is ready
+    setTimeout(() => {
+        if (cloudSaveEnabled) {
+            loadGlobalLeaderboard(); // Load global scores on startup
+            
+            // Update any existing global entries with current avatar (after a delay)
+            setTimeout(() => {
+                updateGlobalLeaderboardAvatar();
+            }, 2000);
+        }
+    }, 3000);
     
     debug('✅ Save system initialized successfully!');
 }
+
+
 
 // Migrate old save data to new profile system
 function migrateLegacySaveData() {
@@ -7640,6 +9152,11 @@ if (profile.unlockedWorlds) {
         });
     }
     
+    // Migrate profile customization
+    migratedProfile.username = profile.username || null; // Will be generated later if null
+    migratedProfile.avatarType = profile.avatarType || 'emoji';
+    migratedProfile.avatarData = profile.avatarData || '🏃';
+    
     // Migrate custom data for future compatibility
     if (profile.customData) {
         migratedProfile.customData = profile.customData;
@@ -7669,6 +9186,16 @@ function syncGameStateToProfile() {
     currentProfile.backgroundMusicEnabled = backgroundMusicEnabled;
     currentProfile.modModeEnabled = modModeEnabled;
     currentProfile.currentTrack = currentTrack;
+    
+    // Sync profile customization (these are managed by the profile screen)
+    // Don't overwrite with undefined values
+    if (!currentProfile.username) {
+        currentProfile.username = generateDefaultUsername();
+    }
+    if (!currentProfile.avatarType) {
+        currentProfile.avatarType = 'emoji';
+        currentProfile.avatarData = '🏃';
+    }
 
     debug('Current totalCoins in profile after sync:', currentProfile.totalCoins);
 
@@ -7700,10 +9227,19 @@ function syncProfileToGameState() {
     modModeEnabled = currentProfile.modModeEnabled || false;
     currentTrack = currentProfile.currentTrack || 'ambient';
     selectedTrack = currentTrack;
+    modModeEnabled = currentProfile.modModeEnabled || false;
+    
+    // Initialize profile customization if missing
+    if (!currentProfile.username) {
+        currentProfile.username = generateDefaultUsername();
+        debug('🎮 Generated username:', currentProfile.username);
+    }
+    if (!currentProfile.avatarType) {
+        currentProfile.avatarType = 'emoji';
+        currentProfile.avatarData = '🏃';
+    }
 
     debug('Game totalCoins after sync:', totalCoins);
-
-        modModeEnabled = currentProfile.modModeEnabled || false;  // ADD THIS LINE
 
     
     // Sync leaderboard
@@ -7714,6 +9250,15 @@ function syncProfileToGameState() {
         }
     }
     
+// Sync profile data
+    if (currentProfile.username) {
+        // Update any displayed username elements
+        const profileNameElem = document.getElementById('profilePlayerName');
+        if (profileNameElem) {
+            profileNameElem.textContent = currentProfile.username;
+        }
+    }
+
     // Update UI elements
     updateTotalCoins();
     updateLeaderboardDisplay();
@@ -7766,10 +9311,23 @@ function updateGlobalLeaderboardDisplay() {
             
             const rowStyle = isCurrentPlayer ? 'background: rgba(0, 255, 0, 0.1); color: #00FF00;' : '';
             
+            // Get avatar for this entry
+            let avatarHtml = '🏃'; // Default emoji
+            if (entry.avatar) {
+                if (entry.avatarType === 'image' && entry.avatar) {
+                    avatarHtml = `<img src="${entry.avatar}" style="width: 20px; height: 20px; border-radius: 50%; object-fit: cover; vertical-align: middle;">`;
+                } else {
+                    avatarHtml = entry.avatar || '🏃';
+                }
+            }
+
             tbody.innerHTML += `
                 <tr style="${rowStyle}">
                     <td>${rankDisplay}</td>
-                    <td>${entry.playerName || 'Anonymous'}</td>
+                    <td style="display: flex; align-items: center; gap: 6px;">
+                        <span style="font-size: 16px;">${avatarHtml}</span>
+                        <span>${entry.playerName || 'Anonymous'}</span>
+                    </td>
                     <td>${entry.score.toLocaleString()}</td>
                     <td>${entry.character}</td>
                 </tr>
@@ -7897,6 +9455,321 @@ function loadGameData(ignoreModMode = false) {
         function updateTotalCoins() {
             document.getElementById('totalCoins').textContent = `Coins: ${totalCoins}`;
         }
+
+
+        // Generate a default username
+function generateDefaultUsername() {
+    const adjectives = ['Swift', 'Bold', 'Epic', 'Quick', 'Super', 'Mega', 'Ultra', 'Fast', 'Cool', 'Star'];
+    const nouns = ['Runner', 'Dasher', 'Racer', 'Player', 'Hero', 'Champion', 'Speedster', 'Sprinter', 'Blitzer', 'Master'];
+    const adj = adjectives[Math.floor(Math.random() * adjectives.length)];
+    const noun = nouns[Math.floor(Math.random() * nouns.length)];
+    const number = Math.floor(Math.random() * 1000);
+    return `${adj}${noun}${number}`;
+}
+
+// Initialize profile with username/avatar if missing
+function initializeProfile() {
+    if (!currentProfile) {
+        currentProfile = {};
+    }
+    
+    // Generate username if missing
+    if (!currentProfile.username) {
+        currentProfile.username = generateDefaultUsername();
+        debug('🎮 Generated username:', currentProfile.username);
+    }
+    
+    // Set default avatar if missing
+    if (!currentProfile.avatarType) {
+        currentProfile.avatarType = 'emoji';
+        currentProfile.avatarData = '🏃';
+    }
+    
+    // Save the updated profile
+    saveGameData('profile_init');
+}
+
+// Trigger avatar upload
+function triggerAvatarUpload() {
+    document.getElementById('avatarUpload').click();
+}
+
+// Handle avatar upload
+function handleAvatarUpload(event) {
+    const file = event.target.files[0];
+    if (!file) return;
+    
+    // Check file size (limit to 2MB)
+    if (file.size > 2 * 1024 * 1024) {
+        showProfileErrorNotification('Image too large!', 'Please choose an image under 2MB');
+        return;
+    }
+    
+    // Check file type
+    if (!file.type.startsWith('image/')) {
+        showProfileErrorNotification('Invalid file type!', 'Please select a valid image file');
+        return;
+    }
+    
+    const reader = new FileReader();
+    reader.onload = function(e) {
+        const base64Data = e.target.result;
+        
+        // Update avatar display
+        setAvatarImage(base64Data);
+        
+    // Save to profile
+        if (currentProfile) {
+            currentProfile.avatarType = 'image';
+            currentProfile.avatarData = base64Data;
+            saveGameData('avatar_update');
+            
+            // Update existing global leaderboard entries
+            updateGlobalLeaderboardAvatar();
+            
+            showProfileNotification('Avatar updated!', '🖼️');
+        }
+    };
+    
+    reader.readAsDataURL(file);
+}
+
+// Set avatar image
+function setAvatarImage(imageData) {
+    const avatarContainer = document.getElementById('profileAvatar');
+    const avatarEmoji = document.getElementById('avatarEmoji');
+    const avatarImage = document.getElementById('avatarImage');
+    
+    if (imageData.startsWith('data:image/')) {
+        // It's an uploaded image
+        avatarImage.src = imageData;
+        avatarImage.style.display = 'block';
+        avatarEmoji.style.display = 'none';
+        avatarContainer.style.background = 'none';
+    } else {
+        // It's an emoji
+        avatarEmoji.textContent = imageData;
+        avatarEmoji.style.display = 'flex';
+        avatarImage.style.display = 'none';
+        avatarContainer.style.background = 'linear-gradient(45deg, #4CAF50, #2196F3)';
+    }
+}
+
+// Edit username
+function editUsername() {
+    const modal = document.getElementById('usernameEditModal');
+    const input = document.getElementById('usernameInput');
+    const currentUsername = document.getElementById('profilePlayerName').textContent;
+    
+    input.value = currentUsername;
+    modal.style.display = 'flex';
+    
+    // Focus input after modal is visible
+    setTimeout(() => input.focus(), 100);
+}
+
+// Save username
+function saveUsername() {
+    const input = document.getElementById('usernameInput');
+    const newUsername = input.value.trim();
+    
+    if (!newUsername) {
+        showProfileErrorNotification('Username cannot be empty!', 'Please enter a username');
+        return;
+    }
+    
+    if (newUsername.length < 3) {
+        showProfileErrorNotification('Username too short!', 'Must be at least 3 characters');
+        return;
+    }
+    
+    if (newUsername.length > 20) {
+        showProfileErrorNotification('Username too long!', 'Must be 20 characters or less');
+        return;
+    }
+    
+    // Update profile
+    if (currentProfile) {
+        currentProfile.username = newUsername;
+        saveGameData('username_update');
+        
+        // Update display
+    document.getElementById('profilePlayerName').textContent = newUsername;
+    
+    // Update existing global leaderboard entries
+    updateGlobalLeaderboardAvatar();
+    
+    showProfileNotification('Username updated!', '👤');
+    }
+    
+    closeUsernameModal();
+}
+
+// Close username modal
+function closeUsernameModal() {
+    document.getElementById('usernameEditModal').style.display = 'none';
+}
+
+// Show profile notification (similar to other notifications)
+function showProfileNotification(message, emoji) {
+    const notification = document.createElement('div');
+    notification.style.cssText = `
+        position: fixed;
+        top: 50%;
+        left: 50%;
+        transform: translate(-50%, -50%) scale(0);
+        background: linear-gradient(135deg, #2196F3, #1976D2);
+        color: white;
+        padding: 15px 25px;
+        border-radius: 12px;
+        font-size: 16px;
+        font-weight: bold;
+        text-align: center;
+        z-index: 7000;
+        box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
+        border: 2px solid rgba(255, 255, 255, 0.2);
+        backdrop-filter: blur(10px);
+        transition: all 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
+        pointer-events: none;
+    `;
+    
+    notification.innerHTML = `
+        <div style="font-size: 24px; margin-bottom: 5px;">${emoji}</div>
+        <div>${message}</div>
+    `;
+    
+    document.body.appendChild(notification);
+    
+    // Animate in
+    requestAnimationFrame(() => {
+        notification.style.transform = 'translate(-50%, -50%) scale(1)';
+    });
+    
+    // Animate out and remove
+    setTimeout(() => {
+        notification.style.transform = 'translate(-50%, -50%) scale(0.8)';
+        notification.style.opacity = '0';
+        
+        setTimeout(() => {
+            document.body.removeChild(notification);
+        }, 300);
+    }, 1500);
+}
+
+// Initialize profile data with defaults
+function initializeProfileData() {
+    if (!currentProfile.username) {
+        currentProfile.username = generateDefaultUsername();
+    }
+    if (!currentProfile.avatarType) {
+        currentProfile.avatarType = 'emoji';
+        currentProfile.avatarData = '🏃';
+    }
+}
+
+
+// Show profile error notification
+function showProfileErrorNotification(title, message) {
+    const notification = document.createElement('div');
+    notification.style.cssText = `
+        position: fixed;
+        top: 50%;
+        left: 50%;
+        transform: translate(-50%, -50%) scale(0);
+        background: linear-gradient(135deg, #F44336, #D32F2F);
+        color: white;
+        padding: 20px 25px;
+        border-radius: 14px;
+        font-size: 16px;
+        font-weight: bold;
+        text-align: center;
+        z-index: 7000;
+        box-shadow: 0 10px 30px rgba(244, 67, 54, 0.4);
+        border: 2px solid rgba(255, 255, 255, 0.2);
+        backdrop-filter: blur(10px);
+        transition: all 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
+        pointer-events: none;
+        max-width: 320px;
+    `;
+    
+    notification.innerHTML = `
+        <div style="font-size: 36px; margin-bottom: 10px;">⚠️</div>
+        <div style="font-size: 18px; margin-bottom: 6px; text-shadow: 0 2px 4px rgba(0,0,0,0.3);">${title}</div>
+        <div style="font-size: 14px; opacity: 0.9; text-shadow: 0 1px 2px rgba(0,0,0,0.3);">${message}</div>
+    `;
+    
+    document.body.appendChild(notification);
+    
+    // Animate in
+    requestAnimationFrame(() => {
+        notification.style.transform = 'translate(-50%, -50%) scale(1)';
+        notification.style.opacity = '1';
+    });
+    
+    // Animate out and remove
+    setTimeout(() => {
+        notification.style.transform = 'translate(-50%, -50%) scale(0.8)';
+        notification.style.opacity = '0';
+        
+        setTimeout(() => {
+            document.body.removeChild(notification);
+        }, 300);
+    }, 2500);
+}
+
+// Show insufficient funds notification
+function showInsufficientFundsNotification(cost, itemType) {
+    const notification = document.createElement('div');
+    notification.style.cssText = `
+        position: fixed;
+        top: 50%;
+        left: 50%;
+        transform: translate(-50%, -50%) scale(0);
+        background: linear-gradient(135deg, #FF5722, #D84315);
+        color: white;
+        padding: 25px 30px;
+        border-radius: 16px;
+        font-size: 18px;
+        font-weight: bold;
+        text-align: center;
+        z-index: 5000;
+        box-shadow: 0 12px 40px rgba(255, 87, 34, 0.4);
+        border: 2px solid rgba(255, 255, 255, 0.2);
+        backdrop-filter: blur(10px);
+        transition: all 0.4s cubic-bezier(0.34, 1.56, 0.64, 1);
+        pointer-events: none;
+        max-width: 320px;
+    `;
+    
+    const currentCoins = totalCoins;
+    const needed = cost - currentCoins;
+    
+    notification.innerHTML = `
+        <div style="font-size: 42px; margin-bottom: 12px;">💸</div>
+        <div style="font-size: 20px; margin-bottom: 8px; text-shadow: 0 2px 4px rgba(0,0,0,0.3);">Not Enough Coins!</div>
+        <div style="font-size: 14px; opacity: 0.9; margin-bottom: 8px;">You have: ${currentCoins} coins</div>
+        <div style="font-size: 14px; opacity: 0.9; margin-bottom: 8px;">Need: ${cost} coins</div>
+        <div style="font-size: 16px; color: #FFD700; text-shadow: 0 1px 2px rgba(0,0,0,0.3);">Play more to earn ${needed} more coins!</div>
+    `;
+    
+    document.body.appendChild(notification);
+    
+    // Animate in
+    requestAnimationFrame(() => {
+        notification.style.transform = 'translate(-50%, -50%) scale(1)';
+        notification.style.opacity = '1';
+    });
+    
+    // Animate out and remove
+    setTimeout(() => {
+        notification.style.transform = 'translate(-50%, -50%) scale(0.8)';
+        notification.style.opacity = '0';
+        
+        setTimeout(() => {
+            document.body.removeChild(notification);
+        }, 400);
+    }, 3000);
+}
         
         function startGame() {
 
@@ -7924,11 +9797,7 @@ initializeAbilityStatusBar();
             document.getElementById('modalOverlay').style.display = 'none';
             
             // Show game UI elements
-            document.getElementById('pauseBtn').style.display = 'block';
-            document.getElementById('speedIndicator').style.display = 'block';
-            if (isMobile) {
-                document.getElementById('swipeInstructions').style.display = 'block';
-            }
+            showGameUI();
             
             // Update game state
             gameState = "playing";
@@ -8103,6 +9972,18 @@ dragonFireCooldown = 0;
 // Keyboard input, key handling, and desktop controls
 // Dependencies: Game Loop, Player Controls  
 // Functions: onKeyDown(), onKeyUp(), handleKeyboard(), etc.
+
+// Add keyboard support for username editing
+document.addEventListener('keydown', function(e) {
+    const modal = document.getElementById('usernameEditModal');
+    if (modal && modal.style.display === 'flex') {
+        if (e.key === 'Enter') {
+            saveUsername();
+        } else if (e.key === 'Escape') {
+            closeUsernameModal();
+        }
+    }
+});
         
         function onKeyDown(event) {
             if (gameOver) return;
@@ -8301,7 +10182,7 @@ function showCharacterSelectScreenFromPause() {
             gameState = "gameOver";
         }
 
-        // Show settings screen during gameplay
+// Show settings screen during gameplay
         function toggleSettingsFromGame() {
             // Pause the game
             gamePaused = true;
@@ -8312,6 +10193,84 @@ function showCharacterSelectScreenFromPause() {
             
             // Set game state
             gameState = "playing"; // Remember we're coming from playing state
+        }
+
+        // Show main menu from pause menu
+        function showMainMenuFromPause() {
+            // Hide pause screen
+            document.getElementById('pauseScreen').style.display = 'none';
+            
+            // Stop any background music
+            if (musicPlaying) {
+                try {
+                    musicLayers.forEach(layer => {
+                        if (layer.pattern) {
+                            layer.pattern.stop(0);
+                        }
+                        if (layer.synth) {
+                            layer.synth.volume.rampTo(-60, 0.01);
+                        }
+                    });
+                    Tone.Transport.stop();
+                    Tone.Transport.cancel();
+                    musicPlaying = false;
+                } catch (error) {
+                    debug('Audio stop error (non-critical):', error);
+                }
+            }
+            
+            // Reset game state
+            resetGameForMenu();
+            
+            // Show main menu
+            document.getElementById('mainMenuScreen').style.display = 'flex';
+            gameState = "mainMenu";
+        }
+
+        // Show main menu from game over screen
+        function showMainMenuFromGameOver() {
+            // Hide game over screen
+            document.getElementById('gameOver').style.display = 'none';
+            
+            // Reset game state
+            resetGameForMenu();
+            
+            // Show main menu
+            document.getElementById('mainMenuScreen').style.display = 'flex';
+            gameState = "mainMenu";
+        }
+
+// Reset game state when returning to menu
+        function resetGameForMenu() {
+            // Reset game flags
+            gameStarted = false;
+            gameOver = false;
+            gamePaused = false;
+            
+            // Reset score and coins display
+            score = 0;
+            updateScore();
+            updateTotalCoins();
+            
+            // Hide game UI elements
+            document.getElementById('score').style.display = 'none';
+            document.getElementById('totalCoins').style.display = 'none';
+            document.getElementById('pauseBtn').style.display = 'none';
+            document.getElementById('speedIndicator').style.display = 'none';
+            document.getElementById('powerUpStatusBar').style.display = 'none';
+            document.getElementById('swipeInstructions').style.display = 'none';
+        }
+        
+// Show game UI elements when starting game
+        function showGameUI() {
+            document.getElementById('score').style.display = 'block';
+            document.getElementById('totalCoins').style.display = 'block';
+            document.getElementById('pauseBtn').style.display = 'block';
+            document.getElementById('speedIndicator').style.display = 'block';
+            document.getElementById('powerUpStatusBar').style.display = 'flex'; // Important: Use flex, not block
+            if (isMobile) {
+                document.getElementById('swipeInstructions').style.display = 'block';
+            }
         }
         
         function moveLeft() {
@@ -9490,6 +11449,14 @@ function endGame() {
 
         if (isHighScore) {
             debug('🏆 Showing name entry form');
+            
+            // Update the username display
+            const playerName = currentProfile.username || 'Anonymous';
+            const playerDisplay = document.getElementById('highScorePlayerDisplay');
+            if (playerDisplay) {
+                playerDisplay.textContent = `Playing as: ${playerName}`;
+            }
+            
             document.getElementById('newHighScoreMessage').style.display = 'block';
         } else {
             debug('🏆 Not a high score - hiding name entry');
