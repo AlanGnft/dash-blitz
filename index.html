@@ -8623,24 +8623,78 @@ function initializeCloudSave() {
         console.log('🔥 Already authenticated, using existing user');
         playerId = firebase.auth().currentUser.uid;
         cloudSaveEnabled = true;
-        syncProfileWithCloud();
+        
+        // IMPORTANT: For anonymous users, always prioritize local data over cloud
+        if (firebase.auth().currentUser.isAnonymous) {
+            console.log('👤 Anonymous user - prioritizing local profile data');
+            prioritizeLocalProfileForAnonymous();
+        } else {
+            syncProfileWithCloud();
+        }
         return;
     }
-    
     
     firebase.auth().signInAnonymously()
         .then((userCredential) => {
             playerId = userCredential.user.uid;
             cloudSaveEnabled = true;
-            debug('🔥 Cloud save enabled! Player ID:', playerId.substring(0, 8) + '...');
+            debug('🔥 Cloud save enabled! Anonymous Player ID:', playerId.substring(0, 8) + '...');
             
-            // Try to sync existing profile with cloud
-            syncProfileWithCloud();
+            // For new anonymous users, always start with local profile
+            console.log('👤 New anonymous user - using local profile data');
+            prioritizeLocalProfileForAnonymous();
         })
         .catch((error) => {
             debug('⚠️ Cloud save unavailable, using local storage:', error);
             cloudSaveEnabled = false;
         });
+}
+
+// Prioritize local profile data for anonymous users
+function prioritizeLocalProfileForAnonymous() {
+    if (!firebase.auth().currentUser || !firebase.auth().currentUser.isAnonymous) {
+        return; // Only for anonymous users
+    }
+    
+    console.log('👤 Setting up unique anonymous profile...');
+    
+    // Check if we have a local profile already
+    const localProfile = currentProfile;
+    
+    if (localProfile && (localProfile.username || localProfile.totalCoins > 0)) {
+        // User has local progress - keep it and upload to cloud
+        console.log('📱 Found local progress - preserving it');
+        
+        // Ensure anonymous user has unique username if they don't have one
+        if (!localProfile.username || localProfile.username === 'Anonymous') {
+            localProfile.username = generateDefaultUsername();
+            console.log('🎮 Generated unique username for anonymous user:', localProfile.username);
+        }
+        
+        // Ensure they have default avatar if missing
+        if (!localProfile.avatarType) {
+            localProfile.avatarType = 'emoji';
+            localProfile.avatarData = '🏃';
+        }
+        
+        // Save the local profile to cloud (don't sync down)
+        currentProfile = localProfile;
+        saveProfile();
+        showSaveIndicator('👤 Anonymous Profile Created');
+        
+    } else {
+        // No local profile - create a fresh one
+        console.log('🆕 Creating fresh anonymous profile');
+        
+        currentProfile.username = generateDefaultUsername();
+        currentProfile.avatarType = 'emoji';
+        currentProfile.avatarData = '🏃';
+        
+        // Save the new profile
+        saveProfile();
+        syncProfileToGameState();
+        showSaveIndicator('👤 New Anonymous Profile');
+    }
 }
 
 // Visual save indicator
@@ -8677,7 +8731,14 @@ function showSaveIndicator(message) {
 function syncProfileWithCloud() {
     if (!cloudSaveEnabled || !playerId || !currentProfileName) return;
     
-    // Check if cloud has newer data for current player
+    // Special handling for anonymous users
+    if (firebase.auth().currentUser && firebase.auth().currentUser.isAnonymous) {
+        console.log('👤 Anonymous user - skipping cloud sync to preserve unique profile');
+        prioritizeLocalProfileForAnonymous();
+        return;
+    }
+    
+    // Check if cloud has newer data for current player (only for signed-in users)
     firebase.database().ref('profiles/' + playerId + '/' + currentProfileName).once('value')
         .then((snapshot) => {
             const cloudProfile = snapshot.val();
@@ -9483,6 +9544,15 @@ function initializeProfile() {
     if (!currentProfile.avatarType) {
         currentProfile.avatarType = 'emoji';
         currentProfile.avatarData = '🏃';
+    }
+    
+    // For anonymous users, always ensure they have a unique profile
+    if (firebase.auth && firebase.auth().currentUser && firebase.auth().currentUser.isAnonymous) {
+        // Make sure anonymous users get a fresh username if it's generic
+        if (currentProfile.username === 'Anonymous' || !currentProfile.username) {
+            currentProfile.username = generateDefaultUsername();
+            debug('👤 Generated fresh username for anonymous user:', currentProfile.username);
+        }
     }
     
     // Save the updated profile
