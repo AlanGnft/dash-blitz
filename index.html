@@ -6,6 +6,16 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>3D Endless Runner</title>
 
+    <link rel="manifest" href="manifest.json">
+
+    <!-- PWA Meta Tags -->
+<meta name="theme-color" content="#4CAF50">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="Running Blitz">
+<link rel="apple-touch-icon" href="icon-192.png">
+
+
 <!-- Firebase Scripts -->
 <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-app-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-auth-compat.js"></script>
@@ -1678,11 +1688,6 @@ setTimeout(() => {
     <h2 style="margin-top: 0;">Game Over</h2>
     <span id="finalScore" style="font-size: 24px;"></span><br>
     <span id="coinsCollected" style="font-size: 20px; margin-bottom: 15px; display: inline-block;"></span><br>
-    <div id="newHighScoreMessage" style="display: none; color: gold; margin: 10px 0;">
-        <div style="margin-bottom: 10px; font-size: 22px;">New High Score!</div>
-        <div id="highScorePlayerDisplay" style="margin-bottom: 10px; font-size: 16px; color: white;">Playing as: Loading...</div>
-        <button id="saveScoreButton">Save Score</button>
-    </div>
     <div class="game-buttons" style="display: flex; flex-direction: column; gap: 10px; width: 100%; max-width: 250px; margin: 0 auto;">
         <button id="restartButton" class="game-button">Restart</button>
         <button id="gameOverMainMenuBtn" class="game-button">Main Menu</button>
@@ -2982,7 +2987,6 @@ loadWorldScenery(currentWorld).then(() => {
             document.getElementById('closeSettingsButton').onclick = closeSettingsScreen;
             document.getElementById('modModeButton').onclick = toggleModMode;
             document.getElementById('resetDataButton').onclick = resetGameData;
-            document.getElementById('saveScoreButton').onclick = saveHighScore;
             document.getElementById('applyDifficultyButton').onclick = applyDifficultyOverride;
 
 document.getElementById('soundEffectsCheckbox').addEventListener('change', function() {
@@ -3488,7 +3492,7 @@ function formatDate(dateString) {
     
     // Remove the name input requirement
     const nameInput = document.getElementById('playerNameInput');
-    const saveButton = document.getElementById('saveScoreButton');
+
     
     if (nameInput) nameInput.style.display = 'none';
     if (saveButton) saveButton.textContent = 'Saving...';
@@ -3514,6 +3518,12 @@ function formatDate(dateString) {
     
     // Save back to localStorage
     localStorage.setItem('runningBlitzLeaderboard', JSON.stringify(leaderboard));
+
+    // Update profile high score if this is a new personal best
+    if (currentScore > (currentProfile.highScore || 0)) {
+        currentProfile.highScore = currentScore;
+        debug('🏆 New personal best recorded:', currentScore);
+    }
     
     // Hide name entry section
     document.getElementById('newHighScoreMessage').style.display = 'none';
@@ -3529,6 +3539,52 @@ function formatDate(dateString) {
     
     // Show beautiful confirmation notification
     showHighScoreNotification(playerName, currentScore);
+
+    
+}
+
+// Auto-save high score (called automatically when game ends)
+function autoSaveHighScore(currentScore) {
+    const playerName = currentProfile.username || 'Anonymous';
+    
+    // Get existing leaderboard
+    let leaderboard = JSON.parse(localStorage.getItem('runningBlitzLeaderboard') || '[]');
+    
+    // Add new score with avatar data
+    leaderboard.push({
+        name: playerName,
+        score: currentScore,
+        character: currentCharacter,
+        date: new Date().toLocaleDateString(),
+        avatar: currentProfile.avatarData || '🏃',
+        avatarType: currentProfile.avatarType || 'emoji'
+    });
+    
+    // Sort by score (highest first)
+    leaderboard.sort((a, b) => b.score - a.score);
+    
+    // Keep only top 10
+    leaderboard = leaderboard.slice(0, 10);
+    
+    // Save back to localStorage
+    localStorage.setItem('runningBlitzLeaderboard', JSON.stringify(leaderboard));
+    
+    debug('💾 Auto-saved high score for:', playerName, 'Score:', currentScore);
+
+    // Submit to global leaderboard
+    submitToGlobalLeaderboard(playerName, currentScore, currentCharacter);
+    
+    // Save profile with high score reason
+    saveGameData('high_score');
+    
+    // Only show "New High Score" notification if it's actually a personal best
+    const isPersonalBest = currentScore > (currentProfile.highScore || 0);
+    if (isPersonalBest) {
+        showHighScoreNotification(playerName, currentScore);
+    } else {
+        // Show a different notification for leaderboard saves that aren't personal bests
+        showLeaderboardSaveNotification(playerName, currentScore);
+    }
 }
 
 // Show high score saved notification
@@ -3579,6 +3635,55 @@ function showHighScoreNotification(playerName, score) {
             document.body.removeChild(notification);
         }, 400);
     }, 2500);
+}
+
+// Show notification for leaderboard save (not necessarily a personal best)
+function showLeaderboardSaveNotification(playerName, currentScore) {
+    const notification = document.createElement('div');
+    notification.style.cssText = `
+        position: fixed;
+        top: 50%;
+        left: 50%;
+        transform: translate(-50%, -50%) scale(0);
+        background: linear-gradient(135deg, #4CAF50, #45a049);
+        color: white;
+        padding: 25px 30px;
+        border-radius: 16px;
+        font-size: 16px;
+        font-weight: bold;
+        text-align: center;
+        z-index: 5000;
+        box-shadow: 0 12px 40px rgba(76, 175, 80, 0.4);
+        border: 2px solid rgba(255, 255, 255, 0.2);
+        backdrop-filter: blur(10px);
+        transition: all 0.4s cubic-bezier(0.34, 1.56, 0.64, 1);
+        pointer-events: none;
+        max-width: 350px;
+    `;
+    
+    notification.innerHTML = `
+        <div style="font-size: 42px; margin-bottom: 12px;">📊</div>
+        <div style="font-size: 18px; margin-bottom: 8px; text-shadow: 0 2px 4px rgba(0,0,0,0.3);">Score Saved!</div>
+        <div style="font-size: 14px; opacity: 0.9; line-height: 1.4;">${playerName}: ${currentScore.toLocaleString()} points</div>
+    `;
+    
+    document.body.appendChild(notification);
+    
+    // Animate in
+    requestAnimationFrame(() => {
+        notification.style.transform = 'translate(-50%, -50%) scale(1)';
+        notification.style.opacity = '1';
+    });
+    
+    // Animate out and remove
+    setTimeout(() => {
+        notification.style.transform = 'translate(-50%, -50%) scale(0.8)';
+        notification.style.opacity = '0';
+        
+        setTimeout(() => {
+            document.body.removeChild(notification);
+        }, 400);
+    }, 3000);
 }
 
 // Show mod mode notification
@@ -5008,9 +5113,25 @@ function updateProfileDisplay() {
     // Update avatar
     setAvatarImage(currentProfile.avatarData || '🏃');
     
-    // Update high score (handle if highScore is undefined)
-    const currentHighScore = typeof highScore !== 'undefined' ? highScore : 0;
-    document.getElementById('profileHighScore').textContent = currentHighScore;
+    // Update high score - use the highest score from profile or leaderboard
+    let playerHighScore = 0;
+    
+    // Check profile's stored high score
+    if (currentProfile.highScore) {
+        playerHighScore = currentProfile.highScore;
+    }
+    
+    // Also check local leaderboard for this player's best score
+    const playerName = currentProfile.username || 'Anonymous';
+    const leaderboardData = JSON.parse(localStorage.getItem('runningBlitzLeaderboard') || '[]');
+    const playerScores = leaderboardData.filter(entry => entry.name === playerName);
+    
+    if (playerScores.length > 0) {
+        const leaderboardHighScore = Math.max(...playerScores.map(entry => entry.score));
+        playerHighScore = Math.max(playerHighScore, leaderboardHighScore);
+    }
+    
+    document.getElementById('profileHighScore').textContent = playerHighScore.toLocaleString();
     
     // Update total coins
     document.getElementById('profileTotalCoins').textContent = totalCoins;
@@ -9320,6 +9441,11 @@ function syncProfileToGameState() {
         }
     }
 
+    // Sync high score to a global variable if you need it elsewhere
+    if (currentProfile.highScore) {
+        window.playerHighScore = currentProfile.highScore;
+    }
+
     // Update UI elements
     updateTotalCoins();
     updateLeaderboardDisplay();
@@ -10006,7 +10132,6 @@ dragonFireCooldown = 0;
             document.getElementById('modalOverlay').style.display = 'none';
             document.getElementById('pauseBtn').style.display = 'block';
             document.getElementById('speedIndicator').style.display = 'block';
-            document.getElementById('newHighScoreMessage').style.display = 'none';
             if (isMobile) {
                 document.getElementById('swipeInstructions').style.display = 'block';
             }
@@ -11518,20 +11643,13 @@ function endGame() {
         debug('🏆 Is high score result:', isHighScore);
 
         if (isHighScore) {
-            debug('🏆 Showing name entry form');
-            
-            // Update the username display
-            const playerName = currentProfile.username || 'Anonymous';
-            const playerDisplay = document.getElementById('highScorePlayerDisplay');
-            if (playerDisplay) {
-                playerDisplay.textContent = `Playing as: ${playerName}`;
-            }
-            
-            document.getElementById('newHighScoreMessage').style.display = 'block';
+            debug('🏆 High score achieved and auto-saved!');
+            // Score was automatically saved in checkHighScore()
         } else {
-            debug('🏆 Not a high score - hiding name entry');
-            document.getElementById('newHighScoreMessage').style.display = 'none';
+            debug('🏆 Not a high score - no save needed');
         }
+        
+        // No need to show/hide save message since we removed it
         
         document.getElementById('gameOver').style.display = 'flex';
         
@@ -11545,11 +11663,38 @@ function checkHighScore(currentScore) {
     
     // It's a high score if leaderboard has less than 10 entries OR current score beats the lowest score
     const isHighScore = leaderboard.length < 10 || currentScore > (leaderboard[leaderboard.length - 1]?.score || 0);
+
+    // Debug the high score update
+    debug('🏆 High score check:', {
+        currentScore: currentScore,
+        profileHighScore: currentProfile.highScore || 0,
+        willUpdate: currentScore > (currentProfile.highScore || 0)
+    });
+
+    // Update profile high score regardless of leaderboard position
+    if (currentScore > (currentProfile.highScore || 0)) {
+        const oldScore = currentProfile.highScore || 0;
+        currentProfile.highScore = currentScore;
+        currentProfile.lastPlayed = new Date().toISOString();
+        saveGameData('high_score');
+        
+        debug('🏆 Profile high score updated!', {
+            oldScore: oldScore,
+            newScore: currentScore
+        });
+    }
+    
+    // AUTO-SAVE: If it's a high score, automatically save it to leaderboard
+    if (isHighScore) {
+        debug('🏆 Auto-saving high score to leaderboard...');
+        autoSaveHighScore(currentScore);
+    }
     
     debug(`Checking high score: ${currentScore}, is high score: ${isHighScore}`);
     debug(`Need to beat: ${leaderboard[leaderboard.length - 1]?.score || 0}`);
     return isHighScore;
 }
+
 
         // ==================== CHARACTER ABILITIES ====================
 // Special character powers, abilities, and unique mechanics
@@ -12924,5 +13069,19 @@ window.addEventListener('blur', function() {
 // Start auto-save when game starts
 startAutoSave();
     </script>
+
+    <script>
+if ('serviceWorker' in navigator) {
+  window.addEventListener('load', () => {
+    navigator.serviceWorker.register('/sw.js')
+      .then(registration => {
+        console.log('SW registered: ', registration);
+      })
+      .catch(registrationError => {
+        console.log('SW registration failed: ', registrationError);
+      });
+  });
+}
+</script>
 </body>
 </html>
