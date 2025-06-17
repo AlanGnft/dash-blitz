@@ -223,6 +223,16 @@ setTimeout(() => {
 }
 }
 
+#pauseBtn:focus, #skipBtn:focus {
+    outline: none;
+}
+
+#pauseBtn, #skipBtn {
+    /* existing properties */
+    outline: none;
+    -webkit-tap-highlight-color: transparent;
+}
+
 /* Speed level animations */
 .speed-level-1 {
     background: linear-gradient(45deg, rgba(135, 206, 235, 0.8), rgba(100, 149, 237, 0.8));
@@ -3082,7 +3092,10 @@ loadWorldScenery(currentWorld).then(() => {
             document.getElementById('pauseRestartButton').onclick = restartFromPause;
             document.getElementById('pauseMainMenuBtn').onclick = showMainMenuFromPause;
             document.getElementById('pauseSettingsBtn').onclick = toggleSettingsFromPause;
-            document.getElementById('pauseBtn').onclick = togglePause;
+            ddocument.getElementById('pauseBtn').onclick = function(e) {
+                e.target.blur(); // Remove focus immediately
+                togglePause();
+            };
             document.getElementById('closeSettingsButton').onclick = closeSettingsScreen;
             document.getElementById('modModeButton').onclick = toggleModMode;
             document.getElementById('resetDataButton').onclick = resetGameData;
@@ -3096,7 +3109,10 @@ document.getElementById('soundEffectsCheckbox').addEventListener('change', funct
 // Skip button
 const skipBtn = document.getElementById('skipBtn');
 if (skipBtn) {
-    skipBtn.addEventListener('click', () => {
+    skipBtn.addEventListener('click', (e) => {
+        // Remove focus immediately to prevent space bar from triggering it
+        e.target.blur();
+        
         if (window.skipToNextTrack) {
             window.skipToNextTrack();
         } else if (window.AudioSystem && window.AudioSystem.skipToNextTrack) {
