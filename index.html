@@ -89,19 +89,76 @@ setTimeout(() => {
         #pauseBtn {
     position: absolute;
     top: 95px;
-    right: 20px;
-    width: 40px;
-    height: 40px;
-    background-color: rgba(255, 255, 255, 0.3);
+    right: 70px;
+    width: 44px;
+    height: 44px;
+    background: rgba(0, 0, 0, 0.7);
+    border: 2px solid rgba(255, 255, 255, 0.8);
     border-radius: 50%;
     display: flex;
     justify-content: center;
     align-items: center;
-    font-size: 24px;
     color: white;
     cursor: pointer;
     z-index: 100;
-    border: none;
+    transition: all 0.2s ease;
+    backdrop-filter: blur(10px);
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+    padding: 0;
+}
+
+#pauseBtn:hover {
+    background: rgba(255, 255, 255, 0.9);
+    color: #333;
+    transform: scale(1.05);
+    box-shadow: 0 6px 16px rgba(0, 0, 0, 0.4);
+}
+
+#pauseBtn:active {
+    transform: scale(0.95);
+}
+
+#skipBtn {
+    position: absolute;
+    top: 95px;
+    right: 20px;
+    width: 44px;
+    height: 44px;
+    background: rgba(0, 0, 0, 0.7);
+    border: 2px solid rgba(255, 255, 255, 0.8);
+    border-radius: 50%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    color: white;
+    cursor: pointer;
+    z-index: 100;
+    transition: all 0.2s ease;
+    backdrop-filter: blur(10px);
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+    padding: 0;
+}
+
+#skipBtn:hover {
+    background: rgba(76, 175, 80, 0.9);
+    color: white;
+    transform: scale(1.05);
+    box-shadow: 0 6px 16px rgba(0, 0, 0, 0.4);
+    border-color: rgba(76, 175, 80, 1);
+}
+
+/* Reset hover state quickly on mobile */
+#skipBtn:not(:hover) {
+    transition: all 0.3s ease;
+}
+
+#skipBtn:active {
+    transform: scale(0.95);
+}
+
+/* SVG icons inherit color from parent */
+#pauseBtn svg, #skipBtn svg {
+    pointer-events: none;
 }
         
         #speedIndicator {
@@ -141,12 +198,20 @@ setTimeout(() => {
     }
     
     #pauseBtn {
-        width: 35px;
-        height: 35px;
-        font-size: 20px;
-        top: 80px;
-        right: 15px;
-    }
+    width: 38px;
+    height: 38px;
+    font-size: 16px;
+    top: 80px;
+    right: 60px;
+}
+
+#skipBtn {
+    width: 38px;
+    height: 38px;
+    font-size: 16px;
+    top: 80px;
+    right: 15px;
+}
     
     #speedIndicator {
     top: 15px;
@@ -1015,6 +1080,8 @@ setTimeout(() => {
     }
 }
 
+
+
     </style>
 </head>
 <body>
@@ -1682,7 +1749,18 @@ setTimeout(() => {
 <!-- Game Over Screen -->
 <div id="score">Score: 0</div>
     <div id="totalCoins">Coins: 0</div>
-    <button id="pauseBtn">⏸️</button>
+    <button id="pauseBtn">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor">
+            <rect x="6" y="4" width="4" height="16" rx="1"/>
+            <rect x="14" y="4" width="4" height="16" rx="1"/>
+        </svg>
+    </button>
+    <button id="skipBtn">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor">
+            <polygon points="5,4 15,12 5,20"/>
+            <rect x="17" y="4" width="2" height="16"/>
+        </svg>
+    </button>
     <div id="speedIndicator">Speed: 1x</div>
     <div id="gameOver">
     <h2 style="margin-top: 0;">Game Over</h2>
@@ -1749,12 +1827,19 @@ setTimeout(() => {
 <div class="settings-section">
     <h3>🎵 Jukebox</h3>
     <p style="color: white; font-size: 14px; margin-bottom: 15px; opacity: 0.8;">Choose your soundtrack for the ultimate running experience!</p>
-    <div id="jukeboxTracks">
-        <!-- Track options will be populated by JavaScript -->
+    
+    <!-- Shuffle Mode Toggle -->
+    <div style="margin-bottom: 15px;">
+        <button id="shuffleToggleBtn" class="game-button" style="padding: 8px 16px; font-size: 16px; width: 100%;">🔀 Shuffle: OFF</button>
     </div>
-    <div style="margin-top: 15px; padding: 10px; background: rgba(255, 255, 255, 0.1); border-radius: 8px;">
-        <button id="previewTrackBtn" class="game-button" style="padding: 8px 16px; font-size: 16px; margin-right: 10px;">🎧 Preview</button>
-        <button id="applyTrackBtn" class="game-button" style="padding: 8px 16px; font-size: 16px;">✅ Apply Track</button>
+    
+    <!-- Track Selection (only shown when shuffle is off) -->
+    <div id="manualTrackSelection">
+        <label for="trackSelector" style="color: white; font-size: 14px; display: block; margin-bottom: 8px;">Select Track:</label>
+        <select id="trackSelector" class="game-button" style="width: 100%; padding: 10px; font-size: 16px; margin-bottom: 15px;">
+            <!-- Options will be populated by JavaScript -->
+        </select>
+        <button id="applyTrackBtn" class="game-button" style="padding: 8px 16px; font-size: 16px; width: 100%;">✅ Apply Track</button>
     </div>
 </div>
     
@@ -2392,11 +2477,25 @@ let soundEffectsEnabled = true;
 let backgroundMusicEnabled = true;
 
 // Jukebox system variables
+// TRACK INJECTION POINT: Add new tracks here in this format:
+// { id: 'filename-without-extension', name: 'Display Name', description: 'Short description', artist: 'Artist Name (optional)' }
 let availableTracks = [
-    { id: 'medieval', name: 'The Throne', description: 'Epic fantasy adventure music' },
-    { id: 'electronic', name: 'Cybershock', description: 'Futuristic electronic beats' },
-    { id: 'ambient', name: 'Field of Memories', description: 'Dreamy ethereal lofi vibes' }
+    { id: 'lofi', name: 'Coffee Shop', description: 'Chill lofi beats', artist: 'Alan G.' },
+    { id: 'electronic', name: 'Cybershock', description: 'Futuristic electronic beats', artist: 'Alan G.' },
+    { id: 'ambient', name: 'Field of Memories', description: 'Dreamy ethereal lofi vibes', artist: 'Alan G.' },
+    { id: 'BitCrushed', name: 'Bit Crushed', description: 'Retro arcade vibes', artist: 'ArtForFartSake' },
+    { id: 'SolandianVibes', name: 'Solandian Vibes', description: 'Lofi goodness', artist: 'ArtForFartSake' }
+  //  { id: 'slot6', name: 'Field of Memories', description: 'Dreamy ethereal lofi vibes', artist: 'Alan G.' }
+  //  { id: 'slot7', name: 'Field of Memories', description: 'Dreamy ethereal lofi vibes', artist: 'Alan G.' }
+  //  { id: 'slot8', name: 'Field of Memories', description: 'Dreamy ethereal lofi vibes', artist: 'Alan G.' }
+  //  { id: 'slot9', name: 'Field of Memories', description: 'Dreamy ethereal lofi vibes', artist: 'Alan G.' }
+  //  { id: 'slot10', name: 'Field of Memories', description: 'Dreamy ethereal lofi vibes', artist: 'Alan G.' }
+  //  { id: 'slot11', name: 'Field of Memories', description: 'Dreamy ethereal lofi vibes', artist: 'Alan G.' }
 ];
+
+// Make availableTracks accessible to audio system
+window.availableTracks = availableTracks;
+
 let currentTrack = 'ambient'; // Default to ambient music
 let selectedTrack = 'ambient'; // Track selected in jukebox
 
@@ -2994,6 +3093,27 @@ document.getElementById('soundEffectsCheckbox').addEventListener('change', funct
     saveGameData('settings_change');
 });
 
+// Skip button
+const skipBtn = document.getElementById('skipBtn');
+if (skipBtn) {
+    skipBtn.addEventListener('click', () => {
+        if (window.skipToNextTrack) {
+            window.skipToNextTrack();
+        } else if (window.AudioSystem && window.AudioSystem.skipToNextTrack) {
+            window.AudioSystem.skipToNextTrack();
+        }
+    });
+    
+    // Hide skip button when not in shuffle mode
+    const updateSkipButton = () => {
+        const isShuffleMode = window.shuffleMode || (window.AudioSystem && window.AudioSystem.getShuffleMode && window.AudioSystem.getShuffleMode());
+        skipBtn.style.display = isShuffleMode ? 'inline-block' : 'none';
+        skipBtn.style.opacity = isShuffleMode ? '1' : '0.5';
+    };
+    
+    updateSkipButton();
+    setInterval(updateSkipButton, 1000);
+}
 
 
 document.getElementById('backgroundMusicCheckbox').addEventListener('change', function() {
@@ -3025,9 +3145,23 @@ document.getElementById('backgroundMusicCheckbox').addEventListener('change', fu
 // Functions: setupSettingsUI(), updateCharactersInSettings(), toggleSettings(), etc.
 
         // Setup settings UI
-        function setupSettingsUI() {
+function setupSettingsUI() {
     // Initialize jukebox
     initializeJukebox();
+    
+    // Initialize shuffle mode by default (wait a bit for audio system to load)
+    setTimeout(() => {
+        if (window.AudioSystem) {
+            // Initialize shuffle queue since we're starting in shuffle mode
+            if (window.AudioSystem.toggleShuffleMode) {
+                // Shuffle is already true by default, just need to initialize the queue
+                if (window.shuffleMode && typeof initializeShuffleQueue === 'function') {
+                    // The function is in audio.js, so call it through the audio system
+                    window.AudioSystem.initializeShuffleQueue?.();
+                }
+            }
+        }
+    }, 100);
 
     // Update mod mode UI based on CURRENT state
     if (modModeEnabled) {
@@ -3053,310 +3187,75 @@ document.getElementById('backgroundMusicCheckbox').addEventListener('change', fu
 
         // Initialize jukebox system
 function initializeJukebox() {
-    const jukeboxContainer = document.getElementById('jukeboxTracks');
-    
-    // Clear existing tracks
-    jukeboxContainer.innerHTML = '';
-    
-    // Create track options
-    availableTracks.forEach(track => {
-        const trackElement = document.createElement('div');
-        trackElement.className = 'track-option';
-        trackElement.dataset.trackId = track.id;
-        
-        // Add selected class if this is the current track
-        if (track.id === selectedTrack) {
-            trackElement.classList.add('selected');
+
+    // Ensure audio system is available
+        if (!window.AudioSystem) {
+            console.warn('Audio system not yet loaded, retrying jukebox init...');
+            setTimeout(initializeJukebox, 100);
+            return;
         }
-        
-        // Set track icon based on type
-        let trackIcon = '🎵';
-        if (track.id === 'medieval') trackIcon = '⚔️';
-        else if (track.id === 'electronic') trackIcon = '🌈';
-        else if (track.id === 'ambient') trackIcon = '🌌';
-        
-        trackElement.innerHTML = `
-            <div class="track-icon">${trackIcon}</div>
-            <div class="track-info">
-                <div class="track-name">${track.name}</div>
-                <div class="track-description">${track.description}</div>
-            </div>
-            <div class="track-status ${track.id === currentTrack ? 'track-playing' : (track.id === selectedTrack ? 'track-selected' : '')}" id="status-${track.id}">
-                ${track.id === currentTrack ? 'Playing' : (track.id === selectedTrack ? 'Selected' : '')}
-            </div>
-        `;
-        
-        // Add click listener
-        trackElement.addEventListener('click', () => selectTrack(track.id));
-        
-        jukeboxContainer.appendChild(trackElement);
-    });
+
+    const trackSelector = document.getElementById('trackSelector');
+    const manualSelection = document.getElementById('manualTrackSelection');
     
-    // Add button listeners
-    document.getElementById('previewTrackBtn').addEventListener('click', previewSelectedTrack);
-    document.getElementById('applyTrackBtn').addEventListener('click', applySelectedTrack);
+    // Clear and populate track selector
+    if (trackSelector) {
+        trackSelector.innerHTML = '';
+        
+        // INJECTION POINT: availableTracks array will automatically populate this dropdown
+        availableTracks.forEach(track => {
+            const option = document.createElement('option');
+            option.value = track.id;
+            option.textContent = `${track.name} - ${track.description}`;
+            if (track.id === selectedTrack) {
+                option.selected = true;
+            }
+            trackSelector.appendChild(option);
+        });
+        
+        // Add change listener
+        trackSelector.addEventListener('change', (e) => {
+            selectedTrack = e.target.value;
+            debug(`🎵 Selected track: ${selectedTrack}`);
+        });
+    }
+    
+  // Initialize shuffle button
+const shuffleBtn = document.getElementById('shuffleToggleBtn');
+if (shuffleBtn) {
+    shuffleBtn.addEventListener('click', () => {
+        if (window.toggleShuffleMode) {
+            window.toggleShuffleMode();
+        } else if (window.AudioSystem && window.AudioSystem.toggleShuffleMode) {
+            window.AudioSystem.toggleShuffleMode();
+        }
+        // Small delay to ensure state is updated
+        setTimeout(updateShuffleUI, 50);
+    });
+    updateShuffleUI();
+}
+    
+    // Show/hide manual selection based on shuffle mode
+    if (manualSelection) {
+        manualSelection.style.display = shuffleMode ? 'none' : 'block';
+    }
+    
+    // Add apply button listener
+    const applyBtn = document.getElementById('applyTrackBtn');
+    if (applyBtn) {
+        applyBtn.addEventListener('click', applySelectedTrack);
+    }
     
     debug('🎵 Jukebox system initialized!');
 }
 
-// Select a track in the jukebox
-function selectTrack(trackId) {
-    selectedTrack = trackId;
-    
-    // Update UI
-    document.querySelectorAll('.track-option').forEach(option => {
-        option.classList.remove('selected');
-        const status = option.querySelector('.track-status');
-        if (option.dataset.trackId === currentTrack) {
-            status.textContent = 'Playing';
-            status.className = 'track-status track-playing';
-        } else if (option.dataset.trackId === selectedTrack) {
-            status.textContent = 'Selected';
-            status.className = 'track-status track-selected';
-        } else {
-            status.textContent = '';
-            status.className = 'track-status';
-        }
-    });
-    
-    // Add selected class to clicked track
-    document.querySelector(`[data-track-id="${trackId}"]`).classList.add('selected');
-    
-    debug(`🎵 Selected track: ${trackId}`);
-}
-
-// Preview the selected track
-// Preview the selected track
-function previewSelectedTrack() {
-    debug(`🎧 Previewing track: ${selectedTrack}`);
-    
-    // Stop any existing preview
-    if (window.previewMusic && window.previewMusic.playing) {
-        stopPreview();
-    }
-    
-    // Don't preview if it's already the current track
-    if (selectedTrack === currentTrack && musicPlaying) {
-        debug('🎵 Track already playing - no preview needed!');
-        alert(`🎵 "${availableTracks.find(t => t.id === selectedTrack)?.name}" is already playing!`);
-        return;
-    }
-    
-    // Create and start preview
-    startPreview(selectedTrack);
-    
-    // Update button text to show preview is playing
-    const previewBtn = document.getElementById('previewTrackBtn');
-    previewBtn.textContent = '⏹️ Stop Preview';
-    previewBtn.onclick = stopPreview;
-    
-    // Auto-stop preview after 15 seconds
-    if (window.previewTimeout) {
-        clearTimeout(window.previewTimeout);
-    }
-    window.previewTimeout = setTimeout(() => {
-        stopPreview();
-    }, 15000); // 15 second preview
-}
-
-// Start preview of a specific track
-function startPreview(trackId) {
-    if (!audioInitialized) {
-        alert('🔇 Audio not ready yet! Try clicking the start button first.');
-        return;
-    }
-    
-    try {
-        debug(`🎧 Starting preview of: ${trackId}`);
-        
-        // Create preview music layers
-        window.previewMusic = {
-            layers: [],
-            playing: true,
-            trackId: trackId
-        };
-        
-        // Create preview music based on track
-        if (trackId === 'medieval') {
-            createPreviewMedieval();
-        } else if (trackId === 'electronic') {
-            createPreviewElectronic();
-        } else if (trackId === 'ambient') {
-            createPreviewAmbient();
-        }
-        
-        // Start all preview patterns
-        window.previewMusic.layers.forEach(layer => {
-            if (layer.pattern) {
-                layer.pattern.start(0);
-            }
-        });
-        
-        // Start transport if not already running
-        if (Tone.Transport.state !== 'started') {
-            Tone.Transport.start();
-        }
-        
-        debug(`✅ Preview started for: ${availableTracks.find(t => t.id === trackId)?.name}`);
-        
-    } catch (error) {
-        console.error('❌ Error starting preview:', error);
-        alert('❌ Error starting preview! Check console for details.');
-    }
-}
-
-// Stop preview
-function stopPreview() {
-    debug('🛑 Stopping preview...');
-    
-    if (window.previewMusic && window.previewMusic.layers) {
-        // Stop and dispose all preview patterns
-        window.previewMusic.layers.forEach(layer => {
-            if (layer.pattern) {
-                layer.pattern.stop();
-                layer.pattern.dispose();
-            }
-            if (layer.synth && layer.synth.dispose) {
-                layer.synth.dispose();
-            }
-        });
-        
-        window.previewMusic = null;
-    }
-    
-    // Clear timeout
-    if (window.previewTimeout) {
-        clearTimeout(window.previewTimeout);
-        window.previewTimeout = null;
-    }
-    
-    // Reset button
-    const previewBtn = document.getElementById('previewTrackBtn');
-    previewBtn.textContent = '🎧 Preview';
-    previewBtn.onclick = previewSelectedTrack;
-    
-    debug('✅ Preview stopped');
-}
-
-// Preview versions of each track (shorter, simpler versions)
-function createPreviewMedieval() {
-    debug('🎧 Creating medieval preview...');
-    
-    // Just drums and lute for preview
-    const drumSynth = new Tone.MembraneSynth({
-        pitchDecay: 0.08,
-        octaves: 12,
-        oscillator: { type: "sine" },
-        envelope: { attack: 0.01, decay: 0.6, sustain: 0.1, release: 2.0 }
-    }).toDestination();
-    
-    const drumPattern = new Tone.Pattern((time, note) => {
-        drumSynth.triggerAttackRelease(note, "4n", time);
-    }, ["C1", "C1", "G1", "C1"], "up");
-    
-    drumPattern.interval = "2n";
-    drumSynth.volume.value = -10;
-    
-    const luteSynth = new Tone.Synth({
-        oscillator: { type: "triangle" },
-        envelope: { attack: 0.02, decay: 0.4, sustain: 0.3, release: 0.8 }
-    }).toDestination();
-    
-    const lutePattern = new Tone.Pattern((time, note) => {
-        luteSynth.triggerAttackRelease(note, "8n", time);
-    }, ["D3", "F3", "A3", "D4"], "up");
-    
-    lutePattern.interval = "4n";
-    luteSynth.volume.value = -12;
-    
-    window.previewMusic.layers = [
-        { name: "drums", pattern: drumPattern, synth: drumSynth },
-        { name: "lute", pattern: lutePattern, synth: luteSynth }
-    ];
-}
-
-function createPreviewElectronic() {
-    debug('🎧 Creating electronic preview...');
-    
-    // Kick and lead synth for preview
-    const kickSynth = new Tone.MembraneSynth({
-        pitchDecay: 0.05,
-        octaves: 10,
-        oscillator: { type: "sine" },
-        envelope: { attack: 0.001, decay: 0.4, sustain: 0.01, release: 1.4 }
-    }).toDestination();
-    
-    const kickPattern = new Tone.Pattern((time, note) => {
-        kickSynth.triggerAttackRelease(note, "8n", time);
-    }, ["C1", "C1", "C1", "C1"], "up");
-    
-    kickPattern.interval = "4n";
-    kickSynth.volume.value = -8;
-    
-    const leadSynth = new Tone.Synth({
-        oscillator: { type: "square" },
-        envelope: { attack: 0.05, decay: 0.3, sustain: 0.4, release: 1.0 }
-    }).toDestination();
-    
-    const leadPattern = new Tone.Pattern((time, note) => {
-        leadSynth.triggerAttackRelease(note, "8n", time);
-    }, ["A4", "C5", "E5", "G5"], "up");
-    
-    leadPattern.interval = "8n";
-    leadSynth.volume.value = -10;
-    
-    // Set faster tempo for electronic music
-    Tone.Transport.bpm.value = 128;
-    
-    window.previewMusic.layers = [
-        { name: "kick", pattern: kickPattern, synth: kickSynth },
-        { name: "lead", pattern: leadPattern, synth: leadSynth }
-    ];
-}
-
-function createPreviewAmbient() {
-    debug('🎧 Creating ambient preview...');
-    
-    // Drone and bells for preview
-    const droneSynth = new Tone.Synth({
-        oscillator: { type: "sine" },
-        envelope: { attack: 2.0, decay: 1.0, sustain: 0.8, release: 3.0 }
-    }).toDestination();
-    
-    const dronePattern = new Tone.Pattern((time, note) => {
-        droneSynth.triggerAttackRelease(note, "2n", time);
-    }, ["C2", "G2"], "up");
-    
-    dronePattern.interval = "1n";
-    droneSynth.volume.value = -8;
-    
-    const bellSynth = new Tone.MetalSynth({
-        frequency: 200,
-        envelope: { attack: 0.001, decay: 1.0, release: 2.0 },
-        harmonicity: 5.1,
-        modulationIndex: 32,
-        resonance: 4000,
-        octaves: 1.5
-    }).toDestination();
-    
-    const bellPattern = new Tone.Pattern((time, note) => {
-        bellSynth.triggerAttackRelease(note, "4n", time);
-    }, ["C4", "E4", "G4", "C5"], "up");
-    
-    bellPattern.interval = "2n";
-    bellSynth.volume.value = -12;
-    
-    // Set slower tempo for ambient music
-    Tone.Transport.bpm.value = 60;
-    
-    window.previewMusic.layers = [
-        { name: "drone", pattern: dronePattern, synth: droneSynth },
-        { name: "bells", pattern: bellPattern, synth: bellSynth }
-    ];
-}
-
 // Apply the selected track
 function applySelectedTrack() {
+    if (shuffleMode) {
+        debug('🔀 In shuffle mode - tracks change automatically');
+        return;
+    }
+    
     if (selectedTrack === currentTrack) {
         debug('🎵 Track already playing!');
         return;
@@ -3372,20 +3271,59 @@ function applySelectedTrack() {
     // Update current track
     currentTrack = selectedTrack;
     
-    // Track will be loaded automatically when startBackgroundMusic is called
-    
     // Start new music if game is playing and music is enabled
     if (gameStarted && !gameOver && !gamePaused && backgroundMusicEnabled) {
         startBackgroundMusic();
     }
     
-    // Update UI
-    initializeJukebox();
-    
     // Save preference
-    saveGameData('settings_change');
+    if (typeof saveGameData === 'function') {
+        saveGameData('settings_change');
+    }
     
     debug(`✅ Successfully switched to: ${availableTracks.find(t => t.id === currentTrack)?.name}`);
+}
+
+// Update jukebox UI when shuffle mode changes
+function updateJukeboxUI() {
+    const manualSelection = document.getElementById('manualTrackSelection');
+    if (manualSelection) {
+        manualSelection.style.display = shuffleMode ? 'none' : 'block';
+    }
+    updateShuffleUI();
+}
+
+// Call this function when shuffle mode changes
+function updateShuffleUI() {
+    // Get shuffle mode from audio system (check both sources)
+    const currentShuffleMode = window.AudioSystem ? (window.AudioSystem.getShuffleMode ? window.AudioSystem.getShuffleMode() : window.shuffleMode) : false;
+    
+    const shuffleBtn = document.getElementById('shuffleToggleBtn');
+    if (shuffleBtn) {
+        shuffleBtn.textContent = currentShuffleMode ? '🔀 Shuffle: ON' : '🔀 Shuffle: OFF';
+        shuffleBtn.style.background = currentShuffleMode ? 'rgba(0, 255, 0, 0.3)' : 'rgba(255, 255, 255, 0.1)';
+        
+        // Add hover effect styles to make it more reactive
+        shuffleBtn.style.transition = 'all 0.2s ease';
+        shuffleBtn.style.cursor = 'pointer';
+        
+        // Add active/pressed styling
+        shuffleBtn.onmousedown = () => {
+            shuffleBtn.style.transform = 'scale(0.95)';
+            shuffleBtn.style.background = currentShuffleMode ? 'rgba(0, 200, 0, 0.5)' : 'rgba(255, 255, 255, 0.2)';
+        };
+        
+        shuffleBtn.onmouseup = shuffleBtn.onmouseleave = () => {
+            shuffleBtn.style.transform = 'scale(1)';
+            shuffleBtn.style.background = currentShuffleMode ? 'rgba(0, 255, 0, 0.3)' : 'rgba(255, 255, 255, 0.1)';
+        };
+    }
+    
+    // Update manual selection visibility
+    const manualSelection = document.getElementById('manualTrackSelection');
+    if (manualSelection) {
+        manualSelection.style.display = currentShuffleMode ? 'none' : 'block';
+    }
 }
         
 // Leaderboard functions - Updated with data preservation
