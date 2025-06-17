@@ -3092,7 +3092,7 @@ loadWorldScenery(currentWorld).then(() => {
             document.getElementById('pauseRestartButton').onclick = restartFromPause;
             document.getElementById('pauseMainMenuBtn').onclick = showMainMenuFromPause;
             document.getElementById('pauseSettingsBtn').onclick = toggleSettingsFromPause;
-            ddocument.getElementById('pauseBtn').onclick = function(e) {
+            document.getElementById('pauseBtn').onclick = function(e) {
                 e.target.blur(); // Remove focus immediately
                 togglePause();
             };
