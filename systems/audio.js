@@ -528,7 +528,7 @@ function createPlaceholderSounds() {
     window.playCrashSound = () => {
         if (!audioInitialized || !soundEffectsEnabled) return;
         createBeep(150, 0.3, 'sawtooth');
-    };s
+    };
     
     window.playPowerUpSound = () => {
         if (!audioInitialized || !soundEffectsEnabled) return;
