@@ -1,4 +1,4 @@
-const CACHE_NAME = 'running-blitz-v2';
+const CACHE_NAME = 'running-blitz-v2.1';
 const urlsToCache = [
   '/',
   '/manifest.json',
