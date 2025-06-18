@@ -358,35 +358,38 @@ function showNowPlayingNotification(trackId) {
         
     } else {
         // Full desktop version with scrolling animation
-        notification.style.cssText = `
-            position: fixed;
-            top: 20px;
-            left: 50%;
-            transform: translateX(-50%) translateY(-100%);
-            background: rgba(0, 0, 0, 0.9);
-            color: white;
-            padding: 10px 16px;
-            border-radius: 25px;
-            font-size: 14px;
-            z-index: 10000;
-            width: 400px;
-            max-width: 80vw;
-            height: 40px;
-            border: 2px solid #4CAF50;
-            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.4);
-            transition: transform 0.4s ease;
-            overflow: hidden;
-            white-space: nowrap;
-            display: flex;
-            align-items: center;
-        `;
-        
-        // Create scrolling text for desktop
-        const scrollText = document.createElement('div');
-        scrollText.style.cssText = `
-            animation: scrollTextOnce 6s linear forwards;
-            font-weight: 500;
-        `;
+notification.style.cssText = `
+    position: fixed;
+    top: 20px;
+    left: 50%;
+    transform: translateX(-50%) translateY(-100%);
+    background: rgba(0, 0, 0, 0.9);
+    color: white;
+    padding: 12px 20px;
+    border-radius: 25px;
+    font-size: 16px;
+    z-index: 10000;
+    width: 420px;
+    max-width: 80vw;
+    height: 44px;
+    border: 2px solid #4CAF50;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.4);
+    transition: transform 0.4s ease;
+    overflow: hidden;
+    white-space: nowrap;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+`;
+
+// Create scrolling text for desktop
+const scrollText = document.createElement('div');
+scrollText.style.cssText = `
+    animation: scrollTextOnce 6s linear forwards;
+    font-weight: 500;
+    text-align: center;
+    width: 100%;
+`;
         scrollText.textContent = `♪ Now Playing: ${track.name} by ${track.artist || 'Unknown Artist'}`;
         notification.appendChild(scrollText);
         
