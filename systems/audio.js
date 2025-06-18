@@ -340,12 +340,12 @@ function showNowPlayingNotification(trackId) {
     // Simplified mobile detection
     const isMobile = window.innerWidth <= 768;
     
-    // Create lighter notification
+    // Create notification
     const notification = document.createElement('div');
     notification.id = 'nowPlayingNotification';
     
-    // Simpler styling - no complex animations on mobile
     if (isMobile) {
+        // Simple mobile version
         notification.style.cssText = `
             position: fixed; top: 20px; left: 50%; transform: translateX(-50%);
             background: rgba(0, 0, 0, 0.9); color: white; padding: 8px 12px;
@@ -353,15 +353,53 @@ function showNowPlayingNotification(trackId) {
             width: 280px; max-width: 90vw; text-align: center;
             border: 2px solid #4CAF50;
         `;
-        // Simple text, no scrolling animation on mobile
         notification.textContent = `♪ ${track.name} by ${track.artist || 'Unknown Artist'}`;
-        
-        // Shorter display time on mobile
         setTimeout(() => notification.remove(), 3000);
         
     } else {
-        // Full desktop version with animations
-        // (keep your existing desktop notification code here)
+        // Full desktop version with scrolling animation
+        notification.style.cssText = `
+            position: fixed;
+            top: 20px;
+            left: 50%;
+            transform: translateX(-50%) translateY(-100%);
+            background: rgba(0, 0, 0, 0.9);
+            color: white;
+            padding: 10px 16px;
+            border-radius: 25px;
+            font-size: 14px;
+            z-index: 10000;
+            width: 400px;
+            max-width: 80vw;
+            height: 40px;
+            border: 2px solid #4CAF50;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.4);
+            transition: transform 0.4s ease;
+            overflow: hidden;
+            white-space: nowrap;
+            display: flex;
+            align-items: center;
+        `;
+        
+        // Create scrolling text for desktop
+        const scrollText = document.createElement('div');
+        scrollText.style.cssText = `
+            animation: scrollTextOnce 6s linear forwards;
+            font-weight: 500;
+        `;
+        scrollText.textContent = `♪ Now Playing: ${track.name} by ${track.artist || 'Unknown Artist'}`;
+        notification.appendChild(scrollText);
+        
+        // Animate in
+        setTimeout(() => {
+            notification.style.transform = 'translateX(-50%) translateY(0)';
+        }, 100);
+        
+        // Auto-hide after scroll completes
+        setTimeout(() => {
+            notification.style.transform = 'translateX(-50%) translateY(-100%)';
+            setTimeout(() => notification.remove(), 500);
+        }, 6500);
     }
     
     document.body.appendChild(notification);
