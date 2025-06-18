@@ -1981,28 +1981,28 @@ setTimeout(() => {
  
 
 <!-- Character System - New Modular Approach -->
-<script src="characters/shared.js?v=v2.1"></script>
-<script src="characters/installed/happyface.js?v=v2.1"></script>
-<script src="characters/installed/ghost.js?v=v2.1"></script>
-<script src="characters/installed/robot.js?v=v2.1"></script>
-<script src="characters/installed/dragon.js?v=v2.1"></script>
-<script src="characters/installed/ufo.js?v=v2.1"></script>
-<script src="characters/installed/atom.js?v=v2.1"></script>
-<script src="characters/installed/slime.js?v=v2.1"></script>
-<script src="characters/installed/apple.js?v=v2.1"></script>
-<script src="characters/installed/carrot.js?v=v2.1"></script>
-<script src="characters/installed/pumpkin.js?v=v2.1"></script>
-<script src="characters/installed/monster.js?v=v2.1"></script>
-<script src="characters/installed/creature.js?v=v2.1"></script>
+<script src="characters/shared.js?v=v2.2"></script>
+<script src="characters/installed/happyface.js?v=v2.2"></script>
+<script src="characters/installed/ghost.js?v=v2.2"></script>
+<script src="characters/installed/robot.js?v=v2.2"></script>
+<script src="characters/installed/dragon.js?v=v2.2"></script>
+<script src="characters/installed/ufo.js?v=v2.2"></script>
+<script src="characters/installed/atom.js?v=v2.2"></script>
+<script src="characters/installed/slime.js?v=v2.2"></script>
+<script src="characters/installed/apple.js?v=v2.2"></script>
+<script src="characters/installed/carrot.js?v=v2.2"></script>
+<script src="characters/installed/pumpkin.js?v=v2.2"></script>
+<script src="characters/installed/monster.js?v=v2.2"></script>
+<script src="characters/installed/creature.js?v=v2.2"></script>
 <!-- CHARACTER INJECTION POINT - Additional characters will be loaded here -->
-<script src="worlds/forest.js?v=v2.1"></script>
-<script src="worlds/desert.js?v=v2.1"></script>
-<script src="worlds/underwater.js?v=v2.1"></script>
-<script src="systems/obstacles.js?v=v2.1"></script>
+<script src="worlds/forest.js?v=v2.2"></script>
+<script src="worlds/desert.js?v=v2.2"></script>
+<script src="worlds/underwater.js?v=v2.2"></script>
+<script src="systems/obstacles.js?v=v2.2"></script>
 <!----   <script src="obstacle-pack-converter.js"></script>   !--OBSTACLE GLB CONVERTER -->
 <!----   <script src="scenery-pack-converter.js"></script>    !--SCENERY GLB CONVERTER -->
-<script src="systems/audio.js?v=v2.1"></script>
-<script src="systems/powerups.js?v=v2.1"></script>
+<script src="systems/audio.js?v=v2.2"></script>
+<script src="systems/powerups.js?v=v2.2"></script>
 
 
 
@@ -13027,6 +13027,57 @@ window.addEventListener('blur', function() {
 
 // Start auto-save when game starts
 startAutoSave();
+
+// Force service worker update on version change
+if ('serviceWorker' in navigator) {
+    navigator.serviceWorker.register('sw.js').then(registration => {
+        // Check for updates every time page loads
+        registration.update();
+        
+        // Listen for new service worker
+        registration.addEventListener('updatefound', () => {
+            const newWorker = registration.installing;
+            newWorker.addEventListener('statechange', () => {
+                if (newWorker.state === 'installed' && navigator.serviceWorker.controller) {
+                    // Detect if it's a mobile app or browser
+                    const isMobileApp = window.navigator.standalone || window.matchMedia('(display-mode: standalone)').matches;
+                    
+                    let message;
+                    if (isMobileApp) {
+                        message = `🎮 New game update available!\n\nFor the latest features:\n• Close the app completely\n• Reopen the app\n\nUpdate now?`;
+                    } else {
+                        // Browser version
+                        const isMobile = window.innerWidth <= 768;
+                        if (isMobile) {
+                            message = `🎮 New game update available!\n\nFor the latest features:\n• Clear your browser cache\n• Or close and reopen your browser\n\nTry automatic update now?`;
+                        } else {
+                            message = `🎮 New game update available!\n\nFor the latest features:\n• Press Ctrl+Shift+R to hard refresh\n• Or clear your browser cache\n\nTry automatic update now?`;
+                        }
+                    }
+                    
+                    if (confirm(message)) {
+                        window.location.reload();
+                    } else {
+                        // Show a subtle reminder
+                        const reminder = document.createElement('div');
+                        reminder.style.cssText = `
+                            position: fixed; top: 10px; right: 10px; background: rgba(76, 175, 80, 0.9);
+                            color: white; padding: 8px 12px; border-radius: 8px; font-size: 12px;
+                            z-index: 10001; cursor: pointer;
+                        `;
+                        reminder.textContent = '🎮 Update available - Click to refresh';
+                        reminder.onclick = () => window.location.reload();
+                        document.body.appendChild(reminder);
+                        
+                        // Auto-remove reminder after 10 seconds
+                        setTimeout(() => reminder.remove(), 10000);
+                    }
+                }
+            });
+        });
+    });
+}
+
     </script>
 
     <script>
