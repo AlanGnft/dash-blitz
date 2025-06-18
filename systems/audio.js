@@ -22,7 +22,7 @@ let audioInitialized = false;
 let musicPlaying = false;
 
 // Shuffle mode variables
-let shuffleMode = true; // Default to shuffle mode
+let shuffleMode = false; // Temporarily disable for testing
 let shuffleQueue = [];
 let currentShuffleIndex = 0;
 let trackTransitioning = false;
