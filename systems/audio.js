@@ -435,52 +435,35 @@ function showNowPlayingNotification(trackId) {
 }
 
 
-// Skip to next track (for shuffle mode)
+// Mobile-optimized skip function
 function skipToNextTrack() {
-    console.log('=== SKIP BUTTON CLICKED ===');
+    if (!shuffleMode || !backgroundMusicEnabled) return;
     
-    if (!shuffleMode) {
-        console.log('⏭️ Skip only works in shuffle mode');
-        return;
-    }
+    console.log('⏭️ Mobile-optimized skip...');
     
-    if (!backgroundMusicEnabled) {
-        console.log('⏭️ Background music is disabled');
-        return;
-    }
-    
-    console.log('⏭️ Skipping to next track...');
-    console.log('shuffleQueue before skip:', shuffleQueue);
-    console.log('currentShuffleIndex before skip:', currentShuffleIndex);
-    
-    // Check if shuffle queue exists
-    if (!shuffleQueue || shuffleQueue.length === 0) {
-        console.log('⚠️ Shuffle queue is empty, initializing...');
-        initializeShuffleQueue();
-    }
-    
-    // Advance to next track in queue BEFORE starting music
-    currentShuffleIndex = (currentShuffleIndex + 1) % shuffleQueue.length;
-    
-    // Re-shuffle when we've played all tracks
-    if (currentShuffleIndex === 0) {
-        shuffleArray(shuffleQueue);
-        console.log('🔀 Re-shuffled queue:', shuffleQueue);
-    }
-    
-    console.log('currentShuffleIndex after skip:', currentShuffleIndex);
-    console.log('Next track will be:', shuffleQueue[currentShuffleIndex]);
-    
-    // Stop current music cleanly
-    stopBackgroundMusic();
-    
-    // Wait a moment then start next track
-    setTimeout(() => {
-        console.log('Starting next track...');
-        if (backgroundMusicEnabled && gameStarted && !gameOver && !gamePaused) {
-            startBackgroundMusic();
+    // Don't create new objects - just switch the source
+    if (backgroundMusic) {
+        // Get next track
+        currentShuffleIndex = (currentShuffleIndex + 1) % shuffleQueue.length;
+        if (currentShuffleIndex === 0) {
+            shuffleArray(shuffleQueue);
         }
-    }, 500);
+        
+        const nextTrack = shuffleQueue[currentShuffleIndex];
+        
+        // Reuse existing audio element instead of creating new one
+        backgroundMusic.src = `assets/audio/${nextTrack}-track.mp3`;
+        backgroundMusic.currentTime = 0;
+        
+        // Update tracking
+        currentTrackName = nextTrack;
+        
+        // Play immediately (no setTimeout delays)
+        backgroundMusic.play().then(() => {
+            console.log('✅ Skipped to:', nextTrack);
+            showNowPlayingNotification(nextTrack);
+        }).catch(e => console.log('Skip failed:', e));
+    }
 }
 
 // Make shuffle functions globally accessible
