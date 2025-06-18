@@ -1,4 +1,4 @@
-const CACHE_NAME = 'running-blitz-v2.1';
+const CACHE_NAME = 'running-blitz-v2.2'; // Your current version
 const urlsToCache = [
   '/',
   '/manifest.json',
@@ -6,14 +6,16 @@ const urlsToCache = [
   '/icon-512.png'
 ];
 
+// More aggressive install
 self.addEventListener('install', event => {
+  self.skipWaiting(); // Force immediate activation
   event.waitUntil(
     caches.open(CACHE_NAME)
       .then(cache => cache.addAll(urlsToCache))
-      .then(() => self.skipWaiting()) // Force immediate activation
   );
 });
 
+// More aggressive activate
 self.addEventListener('activate', event => {
   event.waitUntil(
     caches.keys().then(cacheNames => {
@@ -25,7 +27,9 @@ self.addEventListener('activate', event => {
           }
         })
       );
-    }).then(() => self.clients.claim()) // Take control immediately
+    }).then(() => {
+      return self.clients.claim(); // Take control immediately
+    })
   );
 });
 
