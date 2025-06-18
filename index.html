@@ -8,7 +8,7 @@
 
     <link rel="manifest" href="manifest.json">
 
-<!-- testing -->
+
 
     <!-- PWA Meta Tags -->
 <meta name="theme-color" content="#4CAF50">
@@ -3115,14 +3115,17 @@ document.getElementById('soundEffectsCheckbox').addEventListener('change', funct
 const skipBtn = document.getElementById('skipBtn');
 if (skipBtn) {
     skipBtn.addEventListener('click', (e) => {
-        // Remove focus immediately to prevent space bar from triggering it
         e.target.blur();
+        console.log('Skip button disabled for testing');
+        // Temporarily disable skip function
+        return;
         
-        if (window.skipToNextTrack) {
-            window.skipToNextTrack();
-        } else if (window.AudioSystem && window.AudioSystem.skipToNextTrack) {
-            window.AudioSystem.skipToNextTrack();
-        }
+        // Original code commented out:
+        // if (window.skipToNextTrack) {
+        //     window.skipToNextTrack();
+        // } else if (window.AudioSystem && window.AudioSystem.skipToNextTrack) {
+        //     window.AudioSystem.skipToNextTrack();
+        // }
     });
     
     // Hide skip button when not in shuffle mode
