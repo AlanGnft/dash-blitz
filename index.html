@@ -4,7 +4,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>3D Endless Runner</title>
+    <title>Dash Blitz</title>
 
     <link rel="manifest" href="manifest.json">
 
@@ -2359,7 +2359,9 @@ setTimeout(() => {
             <!-- Avatar with upload functionality -->
             <div style="position: relative; display: inline-block; margin-bottom: 12px;">
                 <div id="profileAvatar" style="width: 80px; height: 80px; background: linear-gradient(45deg, #4CAF50, #2196F3); border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 36px; cursor: pointer; transition: transform 0.2s ease; overflow: hidden; border: 3px solid rgba(255, 255, 255, 0.2);" onclick="triggerAvatarUpload()">
-                    <span id="avatarEmoji">🏃</span>
+                    <span id="avatarEmoji">
+                        <img src="assets/default-profile.png" style="width: 100%; height: 100%; object-fit: cover;" alt="Default Profile">
+                    </span>
                     <img id="avatarImage" style="width: 100%; height: 100%; object-fit: cover; display: none;" alt="Profile Avatar">
                 </div>
                 <!-- Upload overlay -->
@@ -10334,19 +10336,37 @@ function setAvatarImage(imageData) {
     const avatarEmoji = document.getElementById('avatarEmoji');
     const avatarImage = document.getElementById('avatarImage');
     
-    if (imageData.startsWith('data:image/')) {
+    if (imageData && imageData.startsWith('data:image/')) {
         // It's an uploaded image
         avatarImage.src = imageData;
         avatarImage.style.display = 'block';
         avatarEmoji.style.display = 'none';
         avatarContainer.style.background = 'none';
-    } else {
-        // It's an emoji
+    } else if (imageData && imageData !== '🏃') {
+        // It's an emoji (but not the default runner)
         avatarEmoji.textContent = imageData;
         avatarEmoji.style.display = 'flex';
         avatarImage.style.display = 'none';
         avatarContainer.style.background = 'linear-gradient(45deg, #4CAF50, #2196F3)';
+    } else {
+        // Default: use branded logo instead of runner emoji
+        avatarEmoji.innerHTML = '<img src="assets/default-profile.png" style="width: 100%; height: 100%; object-fit: cover; border-radius: 50%;" alt="Dash Blitz">';
+        avatarEmoji.style.display = 'flex';
+        avatarEmoji.style.alignItems = 'center';
+        avatarEmoji.style.justifyContent = 'center';
+        avatarEmoji.style.width = '100%';
+        avatarEmoji.style.height = '100%';
+        avatarEmoji.style.position = 'absolute';
+        avatarEmoji.style.top = '0';
+        avatarEmoji.style.left = '0';
+        avatarImage.style.display = 'none';
+        avatarContainer.style.background = 'none';
     }
+}
+
+// Call this when profile loads with no custom avatar
+function initDefaultProfile() {
+    setAvatarImage(null); // This will trigger the default branded logo
 }
 
 // Edit username
