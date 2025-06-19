@@ -995,69 +995,7 @@ setTimeout(() => {
     }
 }
 
-/* ==================== TITLE SCREEN PARTICLES ==================== */
-/* Beautiful floating particle animation for the title screen */
 
-.particle-container {
-    position: absolute;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
-    overflow: hidden;
-    pointer-events: none;
-    z-index: 1;
-}
-
-.particle {
-    position: absolute;
-    border-radius: 50%;
-    background: linear-gradient(45deg, #00a2ff, #0070f3);
-    opacity: 0.6;
-    animation: float-up 8s infinite linear;
-    box-shadow: 0 0 20px rgba(0, 162, 255, 0.5);
-}
-
-.particle:nth-child(odd) {
-    background: linear-gradient(45deg, #ff6b6b, #ff8e53);
-    box-shadow: 0 0 20px rgba(255, 107, 107, 0.5);
-    animation-duration: 12s;
-}
-
-.particle:nth-child(3n) {
-    background: linear-gradient(45deg, #4ecdc4, #44a08d);
-    box-shadow: 0 0 20px rgba(78, 205, 196, 0.5);
-    animation-duration: 10s;
-}
-
-.particle:nth-child(4n) {
-    background: linear-gradient(45deg, #ffd93d, #ff8f00);
-    box-shadow: 0 0 20px rgba(255, 217, 61, 0.5);
-    animation-duration: 14s;
-}
-
-.particle:nth-child(5n) {
-    background: linear-gradient(45deg, #a8edea, #fed6e3);
-    box-shadow: 0 0 20px rgba(168, 237, 234, 0.5);
-    animation-duration: 9s;
-}
-
-@keyframes float-up {
-    0% {
-        transform: translateY(100vh) scale(0);
-        opacity: 0;
-    }
-    10% {
-        opacity: 0.6;
-    }
-    90% {
-        opacity: 0.6;
-    }
-    100% {
-        transform: translateY(-100vh) scale(1);
-        opacity: 0;
-    }
-}
 
 /* Pulsing title enhancement */
 .title-logo {
@@ -1095,50 +1033,752 @@ setTimeout(() => {
     }
 }
 
+/* Logo pulsing animation */
+@keyframes logo-pulse {
+    0%, 100% {
+        transform: scale(1);
+        filter: drop-shadow(0 0 20px rgba(255, 33, 49, 0.6));
+    }
+    50% {
+        transform: scale(1.05);
+        filter: drop-shadow(0 0 30px rgba(255, 33, 49, 0.8)) drop-shadow(0 0 60px rgba(255, 33, 49, 0.4));
+    }
+}
 
+.game-logo {
+    transition: all 0.3s ease;
+}
+
+.game-logo:hover {
+    transform: scale(1.08) !important;
+    filter: drop-shadow(0 0 40px rgba(255, 33, 49, 1)) !important;
+}
+
+/* Main Menu Button Hover Effects */
+.main-menu-btn:hover {
+    transform: translateY(-3px) scale(1.02);
+    filter: brightness(1.1);
+    box-shadow: 0 10px 30px rgba(255, 255, 255, 0.1), inset 0 1px 0 rgba(255, 255, 255, 0.3);
+}
+
+.main-menu-btn:active {
+    transform: translateY(-1px) scale(1.01);
+    filter: brightness(0.95);
+}
+
+/* Main Menu Button specific hover colors */
+#runButton:hover {
+    box-shadow: 0 10px 30px rgba(255, 33, 49, 0.5), inset 0 1px 0 rgba(255, 255, 255, 0.3);
+}
+
+#charactersButton:hover {
+    box-shadow: 0 10px 30px rgba(102, 126, 234, 0.5), inset 0 1px 0 rgba(255, 255, 255, 0.3);
+}
+
+#shopButton:hover {
+    box-shadow: 0 10px 30px rgba(240, 147, 251, 0.5), inset 0 1px 0 rgba(255, 255, 255, 0.3);
+}
+
+#mainMenuSettingsButton:hover {
+    box-shadow: 0 10px 30px rgba(168, 237, 234, 0.5), inset 0 1px 0 rgba(255, 255, 255, 0.3);
+}
+
+#profileButton:hover {
+    box-shadow: 0 10px 30px rgba(67, 67, 67, 0.5), inset 0 1px 0 rgba(255, 255, 255, 0.3);
+}
+
+/* Character/World Navigation Button Hover Effects */
+.char-nav-btn:hover, .world-nav-btn:hover {
+    transform: translateY(-2px) scale(1.05);
+    box-shadow: 0 8px 25px rgba(67, 67, 67, 0.5), inset 0 1px 0 rgba(255, 255, 255, 0.3);
+}
+
+.char-nav-btn:active, .world-nav-btn:active {
+    transform: translateY(0) scale(1.02);
+}
+
+/* Character/World Action Button Hover Effects */
+.char-action-btn:hover, .world-action-btn:hover {
+    transform: translateY(-2px) scale(1.02);
+    filter: brightness(1.1);
+}
+
+.char-action-btn:active, .world-action-btn:active {
+    transform: translateY(0) scale(1.01);
+}
+
+/* Character Select Button Pulse */
+@keyframes select-pulse {
+    0%, 100% {
+        box-shadow: 0 6px 20px rgba(255, 33, 49, 0.3), inset 0 1px 0 rgba(255, 255, 255, 0.2);
+    }
+    50% {
+        box-shadow: 0 8px 30px rgba(255, 33, 49, 0.5), inset 0 1px 0 rgba(255, 255, 255, 0.3);
+    }
+}
+
+/* Adventure Button Pulse */
+@keyframes adventure-pulse {
+    0%, 100% {
+        box-shadow: 0 8px 25px rgba(255, 33, 49, 0.4), inset 0 1px 0 rgba(255, 255, 255, 0.2);
+        transform: scale(1);
+    }
+    50% {
+        box-shadow: 0 12px 35px rgba(255, 33, 49, 0.6), inset 0 1px 0 rgba(255, 255, 255, 0.3);
+        transform: scale(1.02);
+    }
+}
+
+/* Character SELECT button specific hover */
+#selectCharacterButton:hover {
+    box-shadow: 0 10px 30px rgba(255, 33, 49, 0.6), inset 0 1px 0 rgba(255, 255, 255, 0.4);
+}
+
+/* Adventure button specific hover */
+#startGameFromWorldButton:hover {
+    box-shadow: 0 12px 35px rgba(255, 33, 49, 0.7), inset 0 1px 0 rgba(255, 255, 255, 0.4);
+}
+
+/* Shop Tab Hover Effects */
+.shop-tab:hover {
+    transform: translateY(-2px);
+    filter: brightness(1.1);
+}
+
+.shop-tab.active {
+    transform: translateY(-2px);
+    filter: brightness(1.2);
+}
+
+/* Shop Back Button Hover */
+#backToMainMenuFromShop:hover {
+    transform: translateY(-2px) scale(1.05);
+    box-shadow: 0 8px 25px rgba(67, 67, 67, 0.5), inset 0 1px 0 rgba(255, 255, 255, 0.3);
+}
+
+/* Shop Tab Active State Colors */
+.shop-tab[data-tab="characters"].active {
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%) !important;
+    box-shadow: 0 6px 20px rgba(102, 126, 234, 0.4), inset 0 1px 0 rgba(255, 255, 255, 0.3) !important;
+}
+
+.shop-tab[data-tab="worlds"].active {
+    background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%) !important;
+    box-shadow: 0 6px 20px rgba(240, 147, 251, 0.4), inset 0 1px 0 rgba(255, 255, 255, 0.3) !important;
+}
+
+.shop-tab[data-tab="drip"].active {
+    background: linear-gradient(135deg, #47C6D5 0%, #207079 100%) !important;
+    box-shadow: 0 6px 20px rgba(71, 198, 213, 0.4), inset 0 1px 0 rgba(255, 255, 255, 0.3) !important;
+}
+
+/* Shop Tab Hover Colors */
+.shop-tab[data-tab="characters"]:hover {
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%) !important;
+    box-shadow: 0 6px 20px rgba(102, 126, 234, 0.4), inset 0 1px 0 rgba(255, 255, 255, 0.3) !important;
+}
+
+.shop-tab[data-tab="worlds"]:hover {
+    background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%) !important;
+    box-shadow: 0 6px 20px rgba(240, 147, 251, 0.4), inset 0 1px 0 rgba(255, 255, 255, 0.3) !important;
+}
+
+.shop-tab[data-tab="drip"]:hover {
+    background: linear-gradient(135deg, #47C6D5 0%, #207079 100%) !important;
+    box-shadow: 0 6px 20px rgba(71, 198, 213, 0.4), inset 0 1px 0 rgba(255, 255, 255, 0.3) !important;
+}
+
+/* Settings & Profile Back Button Hover */
+#backToMainMenuFromSettings:hover, #backToMainMenuFromProfile:hover {
+    transform: translateY(-2px) scale(1.05);
+    box-shadow: 0 8px 25px rgba(67, 67, 67, 0.5), inset 0 1px 0 rgba(255, 255, 255, 0.3);
+}
+
+/* Settings Tab Hover Effects */
+.settings-tab:hover {
+    transform: translateY(-2px);
+    filter: brightness(1.1);
+}
+
+.settings-tab.active {
+    transform: translateY(-2px);
+    filter: brightness(1.2);
+}
+
+/* Settings Tab Active Colors */
+.settings-tab[data-tab="general"].active {
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%) !important;
+    box-shadow: 0 6px 20px rgba(102, 126, 234, 0.4), inset 0 1px 0 rgba(255, 255, 255, 0.3) !important;
+}
+
+.settings-tab[data-tab="leaderboard"].active {
+    background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%) !important;
+    box-shadow: 0 6px 20px rgba(240, 147, 251, 0.4), inset 0 1px 0 rgba(255, 255, 255, 0.3) !important;
+}
+
+.settings-tab[data-tab="mods"].active {
+    background: linear-gradient(135deg, #ff2131 0%, #ff4757 100%) !important;
+    box-shadow: 0 6px 20px rgba(255, 33, 49, 0.4), inset 0 1px 0 rgba(255, 255, 255, 0.3) !important;
+}
+
+/* Save System Button Hovers */
+#generateSaveCodeBtn:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 8px 25px rgba(52, 199, 89, 0.5), inset 0 1px 0 rgba(255, 255, 255, 0.3);
+}
+
+#restoreSaveCodeBtn:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 8px 25px rgba(255, 149, 0, 0.5), inset 0 1px 0 rgba(255, 255, 255, 0.3);
+}
+
+#googleAuthBtn:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 8px 25px rgba(66, 133, 244, 0.5), inset 0 1px 0 rgba(255, 255, 255, 0.3);
+}
+
+/* Profile Avatar Hover */
+#profileAvatar:hover {
+    transform: scale(1.05);
+    box-shadow: 0 8px 25px rgba(255, 33, 49, 0.3);
+}
+
+/* Game Over Title Pulse Animation */
+@keyframes game-over-pulse {
+    0%, 100% {
+        transform: scale(1);
+        text-shadow: 0 0 20px rgba(255, 33, 49, 0.8), 0 0 40px rgba(255, 33, 49, 0.4);
+    }
+    50% {
+        transform: scale(1.02);
+        text-shadow: 0 0 30px rgba(255, 33, 49, 1), 0 0 60px rgba(255, 33, 49, 0.6), 0 0 80px rgba(255, 33, 49, 0.3);
+    }
+}
+
+/* Restart Button Pulse Animation */
+@keyframes restart-pulse {
+    0%, 100% {
+        box-shadow: 0 8px 25px rgba(255, 33, 49, 0.4), inset 0 1px 0 rgba(255, 255, 255, 0.2);
+    }
+    50% {
+        box-shadow: 0 12px 35px rgba(255, 33, 49, 0.6), inset 0 1px 0 rgba(255, 255, 255, 0.3);
+    }
+}
+
+/* Pause Button Hover Effects */
+.pause-btn:hover {
+    transform: translateY(-3px) scale(1.02);
+    filter: brightness(1.1);
+}
+
+.pause-btn:active {
+    transform: translateY(-1px) scale(1.01);
+}
+
+/* Game Over Button Hover Effects */
+.game-over-btn:hover {
+    transform: translateY(-3px) scale(1.02);
+    filter: brightness(1.1);
+}
+
+.game-over-btn:active {
+    transform: translateY(-1px) scale(1.01);
+}
+
+/* Specific Pause Button Hover Colors */
+#resumeButton:hover {
+    box-shadow: 0 10px 30px rgba(255, 33, 49, 0.6), inset 0 1px 0 rgba(255, 255, 255, 0.3);
+}
+
+#pauseRestartButton:hover {
+    box-shadow: 0 10px 30px rgba(102, 126, 234, 0.5), inset 0 1px 0 rgba(255, 255, 255, 0.3);
+}
+
+#pauseMainMenuBtn:hover {
+    box-shadow: 0 10px 30px rgba(67, 67, 67, 0.5), inset 0 1px 0 rgba(255, 255, 255, 0.3);
+}
+
+#pauseSettingsBtn:hover {
+    box-shadow: 0 10px 30px rgba(168, 237, 234, 0.5), inset 0 1px 0 rgba(255, 255, 255, 0.3);
+}
+
+/* Specific Game Over Button Hover Colors */
+#restartButton:hover {
+    box-shadow: 0 12px 35px rgba(255, 33, 49, 0.7), inset 0 1px 0 rgba(255, 255, 255, 0.4);
+}
+
+#gameOverMainMenuBtn:hover {
+    box-shadow: 0 10px 30px rgba(67, 67, 67, 0.5), inset 0 1px 0 rgba(255, 255, 255, 0.3);
+}
+
+#gameOverSettingsBtn:hover {
+    box-shadow: 0 10px 30px rgba(168, 237, 234, 0.5), inset 0 1px 0 rgba(255, 255, 255, 0.3);
+}
+
+/* Glass morphism effect for overlays */
+#pauseScreen, #gameOver {
+    backdrop-filter: blur(15px);
+    -webkit-backdrop-filter: blur(15px);
+}
+
+/* In-Game Settings Tab Hover Effects */
+.in-game-tab:hover {
+    transform: translateY(-2px);
+    filter: brightness(1.1);
+}
+
+.in-game-tab.active {
+    transform: translateY(-2px);
+    filter: brightness(1.2);
+}
+
+/* In-Game Tab Active Colors */
+.in-game-tab[data-tab="settings-tab"].active {
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%) !important;
+    box-shadow: 0 6px 20px rgba(102, 126, 234, 0.4), inset 0 1px 0 rgba(255, 255, 255, 0.3) !important;
+}
+
+.in-game-tab[data-tab="leaderboard-tab"].active {
+    background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%) !important;
+    box-shadow: 0 6px 20px rgba(240, 147, 251, 0.4), inset 0 1px 0 rgba(255, 255, 255, 0.3) !important;
+}
+
+.in-game-tab[data-tab="global-leaderboard-tab"].active {
+    background: linear-gradient(135deg, #47C6D5 0%, #207079 100%) !important;
+    box-shadow: 0 6px 20px rgba(71, 198, 213, 0.4), inset 0 1px 0 rgba(255, 255, 255, 0.3) !important;
+}
+
+/* Jukebox Button Hover Effects */
+.jukebox-btn:hover {
+    transform: translateY(-2px);
+    filter: brightness(1.1);
+}
+
+#shuffleToggleBtn:hover {
+    box-shadow: 0 8px 25px rgba(240, 147, 251, 0.5), inset 0 1px 0 rgba(255, 255, 255, 0.3);
+}
+
+#applyTrackBtn:hover {
+    box-shadow: 0 8px 25px rgba(52, 199, 89, 0.5), inset 0 1px 0 rgba(255, 255, 255, 0.3);
+}
+
+/* Mod Action Button Hover Effects */
+.mod-action:hover {
+    transform: translateY(-2px);
+    filter: brightness(1.1);
+}
+
+#modModeButton:hover {
+    box-shadow: 0 8px 25px rgba(255, 33, 49, 0.5), inset 0 1px 0 rgba(255, 255, 255, 0.3);
+}
+
+#applyDifficultyButton:hover {
+    box-shadow: 0 8px 25px rgba(102, 126, 234, 0.5), inset 0 1px 0 rgba(255, 255, 255, 0.3);
+}
+
+#resetDataButton:hover {
+    box-shadow: 0 8px 25px rgba(255, 107, 107, 0.5), inset 0 1px 0 rgba(255, 255, 255, 0.3);
+}
+
+/* Refresh Button Hover */
+.refresh-btn:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 10px 30px rgba(76, 175, 80, 0.5), inset 0 1px 0 rgba(255, 255, 255, 0.3);
+}
+
+/* In-Game Settings Glass Morphism */
+#settingsScreen {
+    backdrop-filter: blur(15px);
+    -webkit-backdrop-filter: blur(15px);
+}
+
+/* Leaderboard Table Styling for In-Game Settings */
+.leaderboard-table {
+    background: linear-gradient(135deg, rgba(255, 255, 255, 0.05) 0%, rgba(255, 255, 255, 0.02) 100%);
+    border-radius: 12px;
+    overflow: hidden;
+    border: 2px solid rgba(255, 255, 255, 0.1);
+}
+
+.leaderboard-table th {
+    background: linear-gradient(135deg, rgba(255, 33, 49, 0.2) 0%, rgba(255, 33, 49, 0.1) 100%);
+    color: white;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+}
+
+.leaderboard-table td {
+    color: rgba(255, 255, 255, 0.9);
+    border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.leaderboard-table tr:hover {
+    background: rgba(255, 255, 255, 0.05);
+}
+
+/* Background Icon Styling */
+.btn-bg-icon {
+    position: absolute;
+    bottom: 10px;
+    right: 15px;
+    font-size: 32px;
+    opacity: 0.4;
+    filter: grayscale(1) brightness(0.1) contrast(2);
+    transition: all 0.5s ease;
+    pointer-events: none;
+    z-index: 1;
+    text-shadow: 0 0 8px rgba(0, 0, 0, 0.8);
+}
+
+/* Lightning bolt animation */
+#runButton:hover .btn-bg-icon {
+    transform: translate(-8px, -8px) scale(1.3);
+    opacity: 0.9;
+    filter: grayscale(0) brightness(2) contrast(1.5) drop-shadow(0 0 15px rgba(255, 255, 0, 0.9)) drop-shadow(0 0 25px rgba(255, 255, 255, 0.4));
+    animation: lightning-bounce 0.6s ease-in-out;
+}
+
+/* Character bounce animation */
+#charactersButton:hover .btn-bg-icon {
+    transform: translate(-8px, -8px) scale(1.3);
+    opacity: 0.9;
+    filter: grayscale(0) brightness(2) contrast(1.5) drop-shadow(0 0 15px rgba(102, 126, 234, 0.8)) drop-shadow(0 0 25px rgba(255, 255, 255, 0.4));
+    animation: character-float 0.8s ease-in-out;
+}
+
+/* Shop cart swing animation */
+#shopButton:hover .btn-bg-icon {
+    transform: translate(-8px, -8px) scale(1.3);
+    opacity: 0.9;
+    filter: grayscale(0) brightness(2) contrast(1.5) drop-shadow(0 0 15px rgba(240, 147, 251, 0.8)) drop-shadow(0 0 25px rgba(255, 255, 255, 0.4));
+    animation: shop-swing 0.6s ease-in-out;
+}
+
+/* Settings gear spin (the one you remembered!) */
+#mainMenuSettingsButton:hover .btn-bg-icon {
+    transform: translate(-8px, -8px) scale(1.3);
+    opacity: 0.9;
+    filter: grayscale(0) brightness(2) contrast(1.5) drop-shadow(0 0 15px rgba(168, 237, 234, 0.8)) drop-shadow(0 0 25px rgba(255, 255, 255, 0.4));
+    animation: settings-gear-spin 0.8s ease-in-out;
+}
+
+/* Profile chart grow animation */
+#profileButton:hover .btn-bg-icon {
+    transform: translate(-8px, -8px) scale(1.3);
+    opacity: 0.9;
+    filter: grayscale(0) brightness(2) contrast(1.5) drop-shadow(0 0 15px rgba(67, 67, 67, 0.8)) drop-shadow(0 0 25px rgba(255, 255, 255, 0.4));
+    animation: profile-pulse 0.6s ease-in-out;
+}
+
+/* Animations */
+@keyframes lightning-bounce {
+    0%, 100% { transform: translate(-8px, -8px) scale(1.2); }
+    50% { transform: translate(-8px, -8px) scale(1.4) rotate(5deg); }
+}
+
+@keyframes character-float {
+    0%, 100% { transform: translate(-8px, -8px) scale(1.2); }
+    50% { transform: translate(-8px, -12px) scale(1.3); }
+}
+
+@keyframes shop-swing {
+    0%, 100% { transform: translate(-8px, -8px) scale(1.2) rotate(0deg); }
+    25% { transform: translate(-8px, -8px) scale(1.2) rotate(-10deg); }
+    75% { transform: translate(-8px, -8px) scale(1.2) rotate(10deg); }
+}
+
+@keyframes settings-gear-spin {
+    0% { transform: translate(-8px, -8px) scale(1.2) rotate(0deg); }
+    100% { transform: translate(-8px, -8px) scale(1.2) rotate(360deg); }
+}
+
+@keyframes profile-pulse {
+    0%, 100% { transform: translate(-8px, -8px) scale(1.2); }
+    50% { transform: translate(-8px, -8px) scale(1.4); }
+}
+
+/* Consistent Menu Background Animation */
+.menu-bg-animation {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    overflow: hidden;
+    pointer-events: none;
+    z-index: 0;
+    opacity: 0.6;
+}
+
+/* Animated orbs */
+.bg-orb {
+    position: absolute;
+    border-radius: 50%;
+    background: radial-gradient(circle at 30% 30%, rgba(255, 33, 49, 0.1), rgba(255, 33, 49, 0.05), transparent);
+    filter: blur(2px);
+    animation: float-slow infinite ease-in-out;
+}
+
+.bg-orb-1 {
+    width: 200px;
+    height: 200px;
+    top: 10%;
+    left: 5%;
+    animation-duration: 20s;
+    animation-delay: 0s;
+}
+
+.bg-orb-2 {
+    width: 150px;
+    height: 150px;
+    top: 60%;
+    right: 10%;
+    background: radial-gradient(circle at 30% 30%, rgba(168, 237, 234, 0.1), rgba(168, 237, 234, 0.05), transparent);
+    animation-duration: 25s;
+    animation-delay: -8s;
+}
+
+.bg-orb-3 {
+    width: 120px;
+    height: 120px;
+    top: 30%;
+    left: 60%;
+    background: radial-gradient(circle at 30% 30%, rgba(102, 126, 234, 0.1), rgba(102, 126, 234, 0.05), transparent);
+    animation-duration: 30s;
+    animation-delay: -15s;
+}
+
+/* Subtle grid pattern */
+.bg-grid {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-image: 
+        linear-gradient(rgba(255, 255, 255, 0.02) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(255, 255, 255, 0.02) 1px, transparent 1px);
+    background-size: 50px 50px;
+    background-position: 0 0, 0 0;
+    animation: grid-shift 40s linear infinite;
+}
+
+/* Animations */
+@keyframes float-slow {
+    0%, 100% {
+        transform: translate(0, 0) scale(1);
+    }
+    25% {
+        transform: translate(20px, -20px) scale(1.1);
+    }
+    50% {
+        transform: translate(-10px, 20px) scale(0.9);
+    }
+    75% {
+        transform: translate(-20px, -10px) scale(1.05);
+    }
+}
+
+@keyframes grid-shift {
+    0% {
+        background-position: 0 0, 0 0;
+    }
+    100% {
+        background-position: 50px 50px, 50px 50px;
+    }
+}
+
+/* Ensure content stays above background */
+.title-container,
+.menu-container,
+.character-grid,
+.world-grid,
+.shop-grid,
+.settings-content,
+.profile-content {
+    position: relative;
+    z-index: 2;
+}
+
+/* Shop 3D Preview Containers */
+.shop-preview-container {
+    width: 100%;
+    height: 140px;
+    background: linear-gradient(135deg, rgba(0, 0, 0, 0.4) 0%, rgba(0, 0, 0, 0.2) 100%);
+    border-radius: 12px;
+    margin-bottom: 15px;
+    position: relative;
+    overflow: hidden;
+    border: 2px solid rgba(255, 255, 255, 0.1);
+    transition: all 0.3s ease;
+}
+
+.shop-preview-container:hover {
+    border-color: rgba(255, 33, 49, 0.4);
+    box-shadow: 0 0 20px rgba(255, 33, 49, 0.3);
+    transform: translateY(-2px);
+}
+
+.shop-3d-preview {
+    width: 100%;
+    height: 100%;
+    position: relative;
+}
+
+.preview-overlay {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0, 0, 0, 0.7);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    opacity: 0;
+    transition: all 0.3s ease;
+    cursor: pointer;
+    backdrop-filter: blur(2px);
+}
+
+.shop-preview-container:hover .preview-overlay {
+    opacity: 1;
+}
+
+.preview-icon {
+    font-size: 32px;
+    color: white;
+    text-shadow: 0 0 10px rgba(255, 255, 255, 0.5);
+    animation: preview-pulse 2s ease-in-out infinite;
+}
+
+@keyframes preview-pulse {
+    0%, 100% { transform: scale(1); }
+    50% { transform: scale(1.1); }
+}
+
+/* Shop Actions Row */
+.shop-actions {
+    display: flex;
+    gap: 8px;
+    margin-top: 10px;
+}
+
+.preview-btn {
+    flex: 1;
+    padding: 8px 12px;
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    color: white;
+    border: 2px solid rgba(255, 255, 255, 0.2);
+    border-radius: 8px;
+    cursor: pointer;
+    font-weight: 600;
+    transition: all 0.3s ease;
+    font-size: 12px;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+}
+
+.preview-btn:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 6px 20px rgba(102, 126, 234, 0.4);
+}
+
+.buy-btn {
+    flex: 2;
+    padding: 8px 12px;
+    background: linear-gradient(135deg, #ff2131 0%, #ff4757 100%);
+    color: white;
+    border: 2px solid rgba(255, 255, 255, 0.2);
+    border-radius: 8px;
+    cursor: pointer;
+    font-weight: 600;
+    transition: all 0.3s ease;
+    font-size: 12px;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+}
+
+.buy-btn:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 6px 20px rgba(255, 33, 49, 0.4);
+}
 
     </style>
 </head>
 <body>
 
-<div id="titleScreen" style="position: absolute; top: 0; left: 0; width: 100%; height: 100%; display: flex; flex-direction: column; justify-content: center; align-items: center; z-index: 300; background: linear-gradient(to bottom, #000428, #004e92); overflow: hidden;">
-    <!-- Particle Animation Background -->
-    <div class="particle-container" id="particleContainer" style="position: absolute; top: 0; left: 0; width: 100%; height: 100%; overflow: hidden; pointer-events: none; z-index: 1;"></div>
+<div id="titleScreen" style="position: absolute; top: 0; left: 0; width: 100%; height: 100%; display: flex; flex-direction: column; justify-content: center; align-items: center; z-index: 300; background: linear-gradient(135deg, #0c0c0c 0%, #1a1a1a 25%, #2d1b1b 50%, #1a1a1a 75%, #0c0c0c 100%); overflow: hidden;">
+    <div class="menu-bg-animation">
+        <div class="bg-orb bg-orb-1"></div>
+        <div class="bg-orb bg-orb-2"></div>
+        <div class="bg-orb bg-orb-3"></div>
+        <div class="bg-grid"></div>
+    </div>
     
     <!-- Title Canvas for 3D Character Orbits -->
     <div style="position: absolute; top: 0; left: 0; width: 100%; height: 100%;" id="titleCanvas"></div>
     
-    <!-- Enhanced title with pulsing animation -->
-    <h1 class="title-logo" style="color: white; font-size: 72px; margin-bottom: 20px; text-shadow: 0 0 10px #00a2ff, 0 0 20px #00a2ff; position: relative; z-index: 10; animation: title-pulse 3s ease-in-out infinite;">Dash Blitz</h1>
+    <!-- Logo with pulsing animation -->
+<div class="logo-container" style="position: relative; z-index: 10; margin-bottom: 30px;">
+<img src="dash-blitz-logo.svg"
+         alt="Dash Blitz Logo" 
+         class="game-logo"
+         style="
+             max-width: 400px; 
+             height: auto; 
+             filter: drop-shadow(0 0 20px rgba(255, 33, 49, 0.6));
+             animation: logo-pulse 2.5s ease-in-out infinite;
+         ">
+</div>
     
 
     <!-- Enhanced start button with hover effects -->
-    <button id="titleStartButton" class="game-button start-button" style="font-size: 28px; padding: 15px 40px; background-color: #4CAF50; color: white; border: none; border-radius: 5px; cursor: pointer; position: relative; z-index: 10; animation: pulse 1.5s infinite; transition: all 0.3s ease; box-shadow: 0 0 20px rgba(0, 162, 255, 0.3); width: 240px;">START</button>
-    
+<button id="titleStartButton" class="game-button start-button" style="
+    font-size: 24px; 
+    font-weight: 700;
+    padding: 16px 40px; 
+    background: linear-gradient(135deg, #ff2131 0%, #ff4757 100%);
+    color: white; 
+    border: 2px solid rgba(255, 255, 255, 0.2);
+    border-radius: 12px; 
+    cursor: pointer; 
+    position: relative; 
+    z-index: 10; 
+    transition: all 0.3s ease; 
+    box-shadow: 0 8px 25px rgba(255, 33, 49, 0.3), inset 0 1px 0 rgba(255, 255, 255, 0.2);
+    width: 240px;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    animation: subtle-pulse 3s ease-in-out infinite;
+">START</button>
+
 <!-- Add this AFTER your START button -->
 <div id="titleScreenAuth" style="text-align: center; margin: 20px 0; position: relative; z-index: 1000;">
     <!-- Google Sign-In Button (matches START button width) -->
     <button onclick="signInWithGoogle()" id="googleSignInBtn" 
-        style="
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            margin: 0 auto 12px auto;
-            background: white;
-            color: #757575;
-            border: 1px solid #dadce0;
-            border-radius: 8px;
-            padding: 14px 20px;
-            font-size: 16px;
-            font-weight: 500;
-            cursor: pointer;
-            transition: all 0.2s;
-            box-shadow: 0 2px 8px rgba(0,0,0,0.15);
-            min-width: 240px;
-            width: 240px;
-            position: relative;
-            z-index: 1001;
-        "
+    style="
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        margin: 0 auto 12px auto;
+        background: linear-gradient(135deg, #ffffff 0%, #f8f9fa 100%);
+        color: #3c4043;
+        border: 2px solid rgba(255, 255, 255, 0.3);
+        border-radius: 12px;
+        padding: 14px 20px;
+        font-size: 16px;
+        font-weight: 600;
+        cursor: pointer;
+        transition: all 0.3s ease;
+        box-shadow: 0 6px 20px rgba(0, 0, 0, 0.15), inset 0 1px 0 rgba(255, 255, 255, 0.8);
+        min-width: 240px;
+        width: 240px;
+        position: relative;
+        z-index: 1001;
+        backdrop-filter: blur(10px);
+    "
         onmouseover="this.style.boxShadow='0 4px 12px rgba(0,0,0,0.2)'; this.style.backgroundColor='#f8f9fa'; this.style.transform='translateY(-1px)';"
         onmouseout="this.style.boxShadow='0 2px 8px rgba(0,0,0,0.15)'; this.style.backgroundColor='white'; this.style.transform='translateY(0)';">
         
@@ -1167,24 +1807,43 @@ setTimeout(() => {
 </div>
 
     <style>
-        /* Keep your existing pulse animation */
-        @keyframes pulse {
-            0% { transform: scale(1); }
-            50% { transform: scale(1.1); }
-            100% { transform: scale(1); }
-        }
-        
-        /* Enhanced title pulse animation */
-        @keyframes title-pulse {
-            0%, 100% {
-                transform: scale(1);
-                text-shadow: 0 0 10px #00a2ff, 0 0 20px #00a2ff;
-            }
-            50% {
-                transform: scale(1.02);
-                text-shadow: 0 0 15px #00a2ff, 0 0 30px #00a2ff, 0 0 40px #00a2ff;
-            }
-        }
+        /* Subtle pulsing animation for START button */
+@keyframes subtle-pulse {
+    0%, 100% {
+        transform: scale(1);
+        box-shadow: 0 8px 25px rgba(255, 33, 49, 0.3), inset 0 1px 0 rgba(255, 255, 255, 0.2);
+    }
+    50% {
+        transform: scale(1.02);
+        box-shadow: 0 12px 35px rgba(255, 33, 49, 0.4), inset 0 1px 0 rgba(255, 255, 255, 0.3);
+    }
+}
+
+/* Enhanced button hover effects */
+.start-button:hover {
+    transform: translateY(-3px) scale(1.05);
+    box-shadow: 0 15px 40px rgba(255, 33, 49, 0.5), inset 0 1px 0 rgba(255, 255, 255, 0.4);
+    background: linear-gradient(135deg, #ff4757 0%, #ff3742 100%);
+    border-color: rgba(255, 255, 255, 0.4);
+}
+
+.start-button:active {
+    transform: translateY(-1px) scale(1.02);
+    box-shadow: 0 8px 20px rgba(255, 33, 49, 0.4);
+}
+
+/* Google button hover effects */
+#googleSignInBtn:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2), inset 0 1px 0 rgba(255, 255, 255, 0.9);
+    background: linear-gradient(135deg, #f8f9fa 0%, #ffffff 100%);
+    border-color: rgba(255, 255, 255, 0.5);
+}
+
+#googleSignInBtn:active {
+    transform: translateY(0px);
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.15);
+}
         
         /* Particle styles */
         .particle {
@@ -1237,12 +1896,7 @@ setTimeout(() => {
             }
         }
 
-        /* Enhanced start button hover */
-        .start-button:hover {
-            transform: translateY(-2px) scale(1.05);
-            box-shadow: 0 10px 30px rgba(76, 175, 80, 0.5);
-            background-color: #45a049;
-        }
+
 
         /* Mobile World Select Optimizations */
 @media (max-width: 768px) {
@@ -1318,33 +1972,43 @@ setTimeout(() => {
 </div>
 
 <!-- Main Menu Screen -->
-<div id="mainMenuScreen" style="position: absolute; top: 0; left: 0; width: 100%; height: 100%; display: none; flex-direction: column; justify-content: center; align-items: center; z-index: 300; background: linear-gradient(to bottom, #000428, #004e92); overflow: hidden;">
-    <!-- Background particles (reuse same container) -->
-    <div class="particle-container" style="position: absolute; top: 0; left: 0; width: 100%; height: 100%; overflow: hidden; pointer-events: none; z-index: 1;"></div>
-    
+<div id="mainMenuScreen" style="position: absolute; top: 0; left: 0; width: 100%; height: 100%; display: none; flex-direction: column; justify-content: center; align-items: center; z-index: 300; background: linear-gradient(135deg, #0c0c0c 0%, #1a1a1a 25%, #2d1b1b 50%, #1a1a1a 75%, #0c0c0c 100%); overflow: hidden;">
+    <div class="menu-bg-animation">
+        <div class="bg-orb bg-orb-1"></div>
+        <div class="bg-orb bg-orb-2"></div>
+        <div class="bg-orb bg-orb-3"></div>
+        <div class="bg-grid"></div>
+    </div>
+
+
     <!-- Main Menu Title -->
-    <h1 style="color: white; font-size: 56px; margin-bottom: 40px; text-shadow: 0 0 10px #00a2ff, 0 0 20px #00a2ff; position: relative; z-index: 10; text-align: center;">Main Menu</h1>
+    <h1 style="color: white; font-size: 48px; margin-bottom: 40px; text-shadow: 0 0 15px rgba(255, 33, 49, 0.8); position: relative; z-index: 10; text-align: center; font-weight: 700; letter-spacing: 2px;">MAIN MENU</h1>    
     
-    <!-- Menu Options -->
+<!-- Menu Options -->
     <div style="display: flex; flex-direction: column; gap: 20px; position: relative; z-index: 10; width: 300px;">
-        <button id="runButton" class="game-button" style="font-size: 24px; padding: 15px 30px; background-color: #4CAF50; color: white; border: none; border-radius: 8px; cursor: pointer; transition: all 0.3s ease;">
-            🏃 RUN
+        <button id="runButton" class="game-button main-menu-btn" style="font-size: 20px; font-weight: 600; padding: 16px 30px; background: linear-gradient(135deg, #ff2131 0%, #ff4757 100%); color: white; border: 2px solid rgba(255, 255, 255, 0.2); border-radius: 12px; cursor: pointer; transition: all 0.3s ease; box-shadow: 0 6px 20px rgba(255, 33, 49, 0.3), inset 0 1px 0 rgba(255, 255, 255, 0.2); text-transform: uppercase; letter-spacing: 1px; position: relative; overflow: hidden;">
+            RUN
+            <div class="btn-bg-icon">⚡</div>
         </button>
         
-        <button id="charactersButton" class="game-button" style="font-size: 24px; padding: 15px 30px; background-color: #2196F3; color: white; border: none; border-radius: 8px; cursor: pointer; transition: all 0.3s ease;">
-            👤 CHARACTERS
+        <button id="charactersButton" class="game-button main-menu-btn" style="font-size: 20px; font-weight: 600; padding: 16px 30px; background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: white; border: 2px solid rgba(255, 255, 255, 0.2); border-radius: 12px; cursor: pointer; transition: all 0.3s ease; box-shadow: 0 6px 20px rgba(102, 126, 234, 0.3), inset 0 1px 0 rgba(255, 255, 255, 0.2); text-transform: uppercase; letter-spacing: 1px; position: relative; overflow: hidden;">
+            CHARACTERS
+            <div class="btn-bg-icon">👤</div>
         </button>
         
-        <button id="shopButton" class="game-button" style="font-size: 24px; padding: 15px 30px; background-color: #FF9800; color: white; border: none; border-radius: 8px; cursor: pointer; transition: all 0.3s ease;">
-            🛒 SHOP
+        <button id="shopButton" class="game-button main-menu-btn" style="font-size: 20px; font-weight: 600; padding: 16px 30px; background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%); color: white; border: 2px solid rgba(255, 255, 255, 0.2); border-radius: 12px; cursor: pointer; transition: all 0.3s ease; box-shadow: 0 6px 20px rgba(240, 147, 251, 0.3), inset 0 1px 0 rgba(255, 255, 255, 0.2); text-transform: uppercase; letter-spacing: 1px; position: relative; overflow: hidden;">
+            SHOP
+            <div class="btn-bg-icon">🛒</div>
         </button>
         
-        <button id="mainMenuSettingsButton" class="game-button" style="font-size: 24px; padding: 15px 30px; background-color: #9C27B0; color: white; border: none; border-radius: 8px; cursor: pointer; transition: all 0.3s ease;">
-            ⚙️ SETTINGS
+        <button id="mainMenuSettingsButton" class="game-button main-menu-btn" style="font-size: 20px; font-weight: 600; padding: 16px 30px; background: linear-gradient(135deg, #a8edea 0%, #fed6e3 100%); color: #333; border: 2px solid rgba(255, 255, 255, 0.2); border-radius: 12px; cursor: pointer; transition: all 0.3s ease; box-shadow: 0 6px 20px rgba(168, 237, 234, 0.3), inset 0 1px 0 rgba(255, 255, 255, 0.2); text-transform: uppercase; letter-spacing: 1px; position: relative; overflow: hidden;">
+            SETTINGS
+            <div class="btn-bg-icon">⚙️</div>
         </button>
         
-        <button id="profileButton" class="game-button" style="font-size: 24px; padding: 15px 30px; background-color: #607D8B; color: white; border: none; border-radius: 8px; cursor: pointer; transition: all 0.3s ease;">
-            📊 PROFILE
+        <button id="profileButton" class="game-button main-menu-btn" style="font-size: 20px; font-weight: 600; padding: 16px 30px; background: linear-gradient(135deg, #434343 0%, #000000 100%); color: white; border: 2px solid rgba(255, 255, 255, 0.2); border-radius: 12px; cursor: pointer; transition: all 0.3s ease; box-shadow: 0 6px 20px rgba(67, 67, 67, 0.3), inset 0 1px 0 rgba(255, 255, 255, 0.2); text-transform: uppercase; letter-spacing: 1px; position: relative; overflow: hidden;">
+            PROFILE
+            <div class="btn-bg-icon">📊</div>
         </button>
     </div>
 </div>
@@ -1358,7 +2022,7 @@ setTimeout(() => {
 
 
 <!-- Main Menu Settings Screen -->
-<div id="mainMenuSettingsScreen" style="position: absolute; top: 0; left: 0; width: 100%; height: 100%; display: none; flex-direction: column; z-index: 400; background: linear-gradient(to bottom, #000428, #004e92); overflow: hidden;">
+<div id="mainMenuSettingsScreen" style="position: absolute; top: 0; left: 0; width: 100%; height: 100%; display: none; flex-direction: column; z-index: 400; background: linear-gradient(135deg, #0c0c0c 0%, #1a1a1a 25%, #2d1b1b 50%, #1a1a1a 75%, #0c0c0c 100%); overflow: hidden;">
     
     <!-- Settings Container - Centered with max width -->
     <div style="max-width: 800px; width: 100%; margin: 0 auto; display: flex; flex-direction: column; height: 100%;">
@@ -1366,17 +2030,17 @@ setTimeout(() => {
         <!-- Settings Header -->
         <div style="padding: 15px 20px; text-align: center; position: relative; flex-shrink: 0;">
         <!-- Back Button -->
-        <button id="backToMainMenuFromSettings" style="position: absolute; top: 15px; left: 15px; background: #666; color: white; border: none; padding: 8px 12px; border-radius: 6px; cursor: pointer; font-size: 14px;">← Back</button>
+        <button id="backToMainMenuFromSettings" style="position: absolute; top: 15px; left: 15px; background: linear-gradient(135deg, #434343 0%, #000000 100%); color: white; border: 2px solid rgba(255, 255, 255, 0.2); padding: 10px 15px; border-radius: 10px; cursor: pointer; font-size: 14px; font-weight: 600; transition: all 0.3s ease; box-shadow: 0 4px 15px rgba(67, 67, 67, 0.3), inset 0 1px 0 rgba(255, 255, 255, 0.2);">← Back</button>
         
         <!-- Settings Title -->
-        <h2 style="color: white; margin: 0; text-shadow: 0 2px 4px rgba(0,0,0,0.5); font-size: 24px;">⚙️ Settings</h2>
+        <h2 style="color: white; margin: 0; text-shadow: 0 0 15px rgba(255, 33, 49, 0.8); font-size: 28px; font-weight: 700; letter-spacing: 2px;">⚙️ SETTINGS</h2>
     </div>
     
     <!-- Settings Tabs -->
     <div style="display: flex; justify-content: center; margin: 0 20px 15px 20px; flex-shrink: 0;">
-        <button class="settings-tab active" data-tab="general" style="background: #2196F3; color: white; border: none; padding: 10px 15px; border-radius: 8px 0 0 8px; cursor: pointer; font-size: 13px; border-right: 1px solid #fff; flex: 1; max-width: 120px;">🔊 General</button>
-        <button class="settings-tab" data-tab="leaderboard" style="background: #666; color: white; border: none; padding: 10px 15px; cursor: pointer; font-size: 13px; border-right: 1px solid #fff; flex: 1; max-width: 120px;">🏆 Global</button>
-        <button class="settings-tab" data-tab="mods" style="background: #666; color: white; border: none; padding: 10px 15px; border-radius: 0 8px 8px 0; cursor: pointer; font-size: 13px; border-left: 1px solid #fff; flex: 1; max-width: 120px;">🔧 Mods</button>
+        <button class="settings-tab active" data-tab="general" style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: white; border: 2px solid rgba(255, 255, 255, 0.2); padding: 12px 15px; border-radius: 10px 0 0 10px; cursor: pointer; font-size: 13px; font-weight: 600; flex: 1; max-width: 120px; transition: all 0.3s ease; box-shadow: 0 4px 15px rgba(102, 126, 234, 0.3), inset 0 1px 0 rgba(255, 255, 255, 0.2); text-transform: uppercase;">🔊 General</button>
+        <button class="settings-tab" data-tab="leaderboard" style="background: linear-gradient(135deg, #434343 0%, #000000 100%); color: white; border: 2px solid rgba(255, 255, 255, 0.2); padding: 12px 15px; cursor: pointer; font-size: 13px; font-weight: 600; flex: 1; max-width: 120px; transition: all 0.3s ease; box-shadow: 0 4px 15px rgba(67, 67, 67, 0.3), inset 0 1px 0 rgba(255, 255, 255, 0.2); text-transform: uppercase;">🏆 Global</button>
+        <button class="settings-tab" data-tab="mods" style="background: linear-gradient(135deg, #434343 0%, #000000 100%); color: white; border: 2px solid rgba(255, 255, 255, 0.2); padding: 12px 15px; border-radius: 0 10px 10px 0; cursor: pointer; font-size: 13px; font-weight: 600; flex: 1; max-width: 120px; transition: all 0.3s ease; box-shadow: 0 4px 15px rgba(67, 67, 67, 0.3), inset 0 1px 0 rgba(255, 255, 255, 0.2); text-transform: uppercase;">🔧 Mods</button>
     </div>
     
         <!-- Settings Content Area -->
@@ -1386,7 +2050,8 @@ setTimeout(() => {
         <div id="settings-general" class="settings-tab-content active">
             
             <!-- Audio Settings Section -->
-            <div style="margin-bottom: 20px; padding: 15px; background: rgba(255, 255, 255, 0.05); border-radius: 12px; border: 1px solid rgba(255, 255, 255, 0.1);">
+            <div style="margin-bottom: 25px; padding: 20px; background: linear-gradient(135deg, rgba(255, 255, 255, 0.08) 0%, rgba(255, 255, 255, 0.03) 100%); border-radius: 15px; border: 2px solid rgba(255, 255, 255, 0.15); box-shadow: 0 8px 25px rgba(0, 0, 0, 0.2), inset 0 1px 0 rgba(255, 255, 255, 0.1);">
+
                 <h3 style="color: white; margin: 0 0 15px 0; font-size: 18px;">🔊 Audio Settings</h3>
                 
                 <label style="display: flex; align-items: center; margin: 10px 0; cursor: pointer;">
@@ -1401,7 +2066,7 @@ setTimeout(() => {
             </div>
             
             <!-- Save System Section -->
-            <div style="margin-bottom: 20px; padding: 15px; background: rgba(255, 255, 255, 0.05); border-radius: 12px; border: 1px solid rgba(255, 255, 255, 0.1);">
+            <div style="margin-bottom: 25px; padding: 20px; background: linear-gradient(135deg, rgba(255, 255, 255, 0.08) 0%, rgba(255, 255, 255, 0.03) 100%); border-radius: 15px; border: 2px solid rgba(255, 255, 255, 0.15); box-shadow: 0 8px 25px rgba(0, 0, 0, 0.2), inset 0 1px 0 rgba(255, 255, 255, 0.1);">
                 <h3 style="color: white; margin: 0 0 15px 0; font-size: 18px;">💾 Save System</h3>
                 
                 <div id="authStatusDisplay" style="margin-bottom: 15px; text-align: center; font-size: 14px;">
@@ -1409,9 +2074,9 @@ setTimeout(() => {
                 </div>
                 
                 <div style="display: flex; flex-wrap: wrap; gap: 8px; justify-content: center;">
-                    <button id="generateSaveCodeBtn" style="background: #34C759; color: white; border: none; padding: 8px 12px; border-radius: 6px; cursor: pointer; font-size: 12px; flex: 1; min-width: 90px;">📱 Get Code</button>
-                    <button id="restoreSaveCodeBtn" style="background: #FF9500; color: white; border: none; padding: 8px 12px; border-radius: 6px; cursor: pointer; font-size: 12px; flex: 1; min-width: 90px;">📥 Use Code</button>
-                    <button id="googleAuthBtn" style="background: #4285f4; color: white; border: none; padding: 8px 12px; border-radius: 6px; cursor: pointer; font-size: 12px; flex: 1; min-width: 90px;">🔗 Google</button>
+                    <button id="generateSaveCodeBtn" style="background: linear-gradient(135deg, #34C759 0%, #28A745 100%); color: white; border: 2px solid rgba(255, 255, 255, 0.2); padding: 10px 12px; border-radius: 8px; cursor: pointer; font-size: 12px; font-weight: 600; flex: 1; min-width: 90px; transition: all 0.3s ease; box-shadow: 0 4px 15px rgba(52, 199, 89, 0.3), inset 0 1px 0 rgba(255, 255, 255, 0.2);">📱 Get Code</button>
+                    <button id="restoreSaveCodeBtn" style="background: linear-gradient(135deg, #FF9500 0%, #FF8C00 100%); color: white; border: 2px solid rgba(255, 255, 255, 0.2); padding: 10px 12px; border-radius: 8px; cursor: pointer; font-size: 12px; font-weight: 600; flex: 1; min-width: 90px; transition: all 0.3s ease; box-shadow: 0 4px 15px rgba(255, 149, 0, 0.3), inset 0 1px 0 rgba(255, 255, 255, 0.2);">📥 Use Code</button>
+                    <button id="googleAuthBtn" style="background: linear-gradient(135deg, #4285f4 0%, #3367d6 100%); color: white; border: 2px solid rgba(255, 255, 255, 0.2); padding: 10px 12px; border-radius: 8px; cursor: pointer; font-size: 12px; font-weight: 600; flex: 1; min-width: 90px; transition: all 0.3s ease; box-shadow: 0 4px 15px rgba(66, 133, 244, 0.3), inset 0 1px 0 rgba(255, 255, 255, 0.2);">🔗 Google</button>
                 </div>
             </div>
             
@@ -1448,7 +2113,7 @@ setTimeout(() => {
                 
                 <!-- Refresh Button -->
                 <div style="text-align: center; margin-top: 15px;">
-                    <button onclick="refreshSettingsGlobalLeaderboard()" style="background: #4CAF50; color: white; border: none; padding: 10px 20px; border-radius: 8px; cursor: pointer; font-size: 14px; transition: background 0.2s ease;" onmouseover="this.style.background='#45a049'" onmouseout="this.style.background='#4CAF50'">
+                    <button onclick="refreshSettingsGlobalLeaderboard()" style="background: linear-gradient(135deg, #4CAF50 0%, #45a049 100%); color: white; border: 2px solid rgba(255, 255, 255, 0.2); padding: 12px 24px; border-radius: 10px; cursor: pointer; font-size: 14px; font-weight: 600; transition: all 0.3s ease; box-shadow: 0 6px 20px rgba(76, 175, 80, 0.3), inset 0 1px 0 rgba(255, 255, 255, 0.2); text-transform: uppercase; letter-spacing: 1px;" onmouseover="this.style.transform='translateY(-2px)'; this.style.boxShadow='0 10px 30px rgba(76, 175, 80, 0.5), inset 0 1px 0 rgba(255, 255, 255, 0.3)'" onmouseout="this.style.transform='translateY(0)'; this.style.boxShadow='0 6px 20px rgba(76, 175, 80, 0.3), inset 0 1px 0 rgba(255, 255, 255, 0.2)'">
                         🔄 Refresh Leaderboard
                     </button>
                 </div>
@@ -1486,30 +2151,37 @@ setTimeout(() => {
 </div> <!-- End settings screen -->
 
 <!-- Shop Screen -->
-<div id="shopScreen" style="position: absolute; top: 0; left: 0; width: 100%; height: 100%; display: none; flex-direction: column; z-index: 400; background: linear-gradient(to bottom, #000428, #004e92); overflow: hidden;">
-    
+<div id="shopScreen" style="position: absolute; top: 0; left: 0; width: 100%; height: 100%; display: none; flex-direction: column; z-index: 400; background: linear-gradient(135deg, #0c0c0c 0%, #1a1a1a 25%, #2d1b1b 50%, #1a1a1a 75%, #0c0c0c 100%); overflow: hidden;">
+    <div class="menu-bg-animation">
+        <div class="bg-orb bg-orb-1"></div>
+        <div class="bg-orb bg-orb-2"></div>
+        <div class="bg-orb bg-orb-3"></div>
+        <div class="bg-grid"></div>
+    </div>
+
+
     <!-- Shop Container - Centered with max width -->
     <div style="max-width: 1000px; width: 100%; margin: 0 auto; display: flex; flex-direction: column; height: 100%;">
     
         <!-- Shop Header -->
         <div style="padding: 20px; text-align: center; position: relative; flex-shrink: 0;">
         <!-- Back Button -->
-        <button id="backToMainMenuFromShop" style="position: absolute; top: 20px; left: 20px; background: #666; color: white; border: none; padding: 10px 15px; border-radius: 6px; cursor: pointer; font-size: 16px;">← Back</button>
+        <button id="backToMainMenuFromShop" style="position: absolute; top: 20px; left: 20px; background: linear-gradient(135deg, #434343 0%, #000000 100%); color: white; border: 2px solid rgba(255, 255, 255, 0.2); padding: 12px 18px; border-radius: 10px; cursor: pointer; font-size: 16px; font-weight: 600; transition: all 0.3s ease; box-shadow: 0 4px 15px rgba(67, 67, 67, 0.3), inset 0 1px 0 rgba(255, 255, 255, 0.2);">← Back</button>
         
         <!-- Shop Title -->
-        <h2 style="color: white; margin: 0; text-shadow: 0 2px 4px rgba(0,0,0,0.5); font-size: 28px;">🛒 Shop</h2>
+        <h2 style="color: white; margin: 0; text-shadow: 0 0 15px rgba(255, 33, 49, 0.8); font-size: 32px; font-weight: 700; letter-spacing: 2px;">🛒 SHOP</h2>
         
         <!-- Current Coins Display -->
-        <div style="margin-top: 15px; padding: 10px 20px; background: rgba(255, 215, 0, 0.1); border-radius: 10px; border: 1px solid rgba(255, 215, 0, 0.3); display: inline-block;">
-            <span style="color: #FFD700; font-size: 20px; font-weight: bold;">💰 <span id="shopCoinsDisplay">0</span> Coins</span>
+        <div style="margin-top: 15px; padding: 12px 24px; background: linear-gradient(135deg, rgba(255, 215, 0, 0.15) 0%, rgba(255, 193, 7, 0.1) 100%); border-radius: 15px; border: 2px solid rgba(255, 215, 0, 0.4); display: inline-block; box-shadow: 0 4px 15px rgba(255, 215, 0, 0.2), inset 0 1px 0 rgba(255, 255, 255, 0.1);">
+            <span style="color: #FFD700; font-size: 22px; font-weight: 700; text-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);">💰 <span id="shopCoinsDisplay">0</span> Coins</span>
         </div>
     </div>
     
     <!-- Shop Tabs -->
     <div style="display: flex; justify-content: center; margin: 0 20px 20px 20px;">
-        <button class="shop-tab active" data-tab="characters" style="background: #2196F3; color: white; border: none; padding: 12px 24px; border-radius: 8px 0 0 8px; cursor: pointer; font-size: 16px; border-right: 1px solid #fff;">👤 Characters</button>
-        <button class="shop-tab" data-tab="worlds" style="background: #666; color: white; border: none; padding: 12px 24px; cursor: pointer; font-size: 16px;">🌍 Worlds</button>
-        <button class="shop-tab" data-tab="drip" style="background: #666; color: white; border: none; padding: 12px 24px; border-radius: 0 8px 8px 0; cursor: pointer; font-size: 16px; border-left: 1px solid #fff;">🎁 DRiP</button>
+        <button class="shop-tab active" data-tab="characters" style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: white; border: 2px solid rgba(255, 255, 255, 0.2); padding: 14px 24px; border-radius: 12px 0 0 12px; cursor: pointer; font-size: 16px; font-weight: 600; transition: all 0.3s ease; box-shadow: 0 4px 15px rgba(102, 126, 234, 0.3), inset 0 1px 0 rgba(255, 255, 255, 0.2); text-transform: uppercase; letter-spacing: 1px;">👤 Characters</button>
+        <button class="shop-tab" data-tab="worlds" style="background: linear-gradient(135deg, #434343 0%, #000000 100%); color: white; border: 2px solid rgba(255, 255, 255, 0.2); padding: 14px 24px; cursor: pointer; font-size: 16px; font-weight: 600; transition: all 0.3s ease; box-shadow: 0 4px 15px rgba(67, 67, 67, 0.3), inset 0 1px 0 rgba(255, 255, 255, 0.2); text-transform: uppercase; letter-spacing: 1px;">🌍 Worlds</button>
+        <button class="shop-tab" data-tab="drip" style="background: linear-gradient(135deg, #434343 0%, #000000 100%); color: white; border: 2px solid rgba(255, 255, 255, 0.2); padding: 14px 24px; border-radius: 0 12px 12px 0; cursor: pointer; font-size: 16px; font-weight: 600; transition: all 0.3s ease; box-shadow: 0 4px 15px rgba(67, 67, 67, 0.3), inset 0 1px 0 rgba(255, 255, 255, 0.2); text-transform: uppercase; letter-spacing: 1px;">🎁 DRiP</button>
     </div>
     
         <!-- Shop Content Area -->
@@ -1529,7 +2201,7 @@ setTimeout(() => {
         <div id="shop-drip" class="shop-tab-content" style="display: none; padding: 20px; overflow-y: auto;">
             
             <!-- DRiP Rewards Section -->
-            <div style="background: rgba(255, 255, 255, 0.05); border-radius: 15px; padding: 20px; margin: 0 auto 20px auto; text-align: center; max-width: 600px;">
+            <div style="background: linear-gradient(135deg, rgba(255, 255, 255, 0.08) 0%, rgba(255, 255, 255, 0.03) 100%); border-radius: 20px; padding: 25px; margin: 0 auto 25px auto; text-align: center; max-width: 600px; border: 2px solid rgba(255, 255, 255, 0.1); box-shadow: 0 8px 25px rgba(0, 0, 0, 0.2), inset 0 1px 0 rgba(255, 255, 255, 0.1);">
                 <h3 style="color: white; margin: 0 0 15px 0; font-size: 20px;">🎁 DRiP Rewards</h3>
                 <p style="color: #ccc; margin: 0 0 15px 0; line-height: 1.4; font-size: 14px;">Exclusive unlockables coming soon! Connect your wallet to verify CNFTs and unlock rare characters, worlds, and special items.</p>
                 <div style="background: rgba(255, 255, 255, 0.1); border-radius: 8px; padding: 12px;">
@@ -1538,7 +2210,7 @@ setTimeout(() => {
             </div>
             
             <!-- Support Creator Section -->
-            <div style="background: rgba(255, 255, 255, 0.05); border-radius: 15px; padding: 20px; text-align: center; max-width: 600px; margin: 0 auto;">
+            <div style="background: linear-gradient(135deg, rgba(255, 255, 255, 0.08) 0%, rgba(255, 255, 255, 0.03) 100%); border-radius: 20px; padding: 25px; text-align: center; max-width: 600px; margin: 0 auto; border: 2px solid rgba(255, 255, 255, 0.1); box-shadow: 0 8px 25px rgba(0, 0, 0, 0.2), inset 0 1px 0 rgba(255, 255, 255, 0.1);">
                 <h3 style="color: white; margin: 0 0 15px 0; font-size: 20px;">💧 Support the Creator</h3>
                 <p style="color: #ccc; margin: 0 0 15px 0; line-height: 1.4; font-size: 14px;">Thank me on DRiP.haus and discover more of my creations!</p>
                 
@@ -1613,15 +2285,19 @@ setTimeout(() => {
                 <div style="margin-top: 15px;">
                     <a href="https://drip.haus/alangnft/home" target="_blank" style="
                         display: inline-block;
-                        background: linear-gradient(135deg, #47C6D5, #207079);
+                        background: linear-gradient(135deg, #47C6D5 0%, #207079 100%);
                         color: white;
                         text-decoration: none;
-                        padding: 10px 20px;
-                        border-radius: 8px;
-                        font-size: 14px;
-                        font-weight: bold;
-                        transition: transform 0.2s ease;
-                    " onmouseover="this.style.transform='scale(1.05)'" onmouseout="this.style.transform='scale(1)'">
+                        padding: 12px 24px;
+                        border-radius: 12px;
+                        font-size: 16px;
+                        font-weight: 700;
+                        transition: all 0.3s ease;
+                        box-shadow: 0 6px 20px rgba(71, 198, 213, 0.3), inset 0 1px 0 rgba(255, 255, 255, 0.2);
+                        text-transform: uppercase;
+                        letter-spacing: 1px;
+                        border: 2px solid rgba(255, 255, 255, 0.2);
+                    " onmouseover="this.style.transform='translateY(-2px) scale(1.05)'; this.style.boxShadow='0 10px 30px rgba(71, 198, 213, 0.5), inset 0 1px 0 rgba(255, 255, 255, 0.3)'" onmouseout="this.style.transform='translateY(0) scale(1)'; this.style.boxShadow='0 6px 20px rgba(71, 198, 213, 0.3), inset 0 1px 0 rgba(255, 255, 255, 0.2)'">
                         🔗 Visit My DRiP Profile
                     </a>
                 </div>
@@ -1634,15 +2310,22 @@ setTimeout(() => {
 </div> <!-- End shop screen -->
 
 <!-- Profile Screen -->
-<div id="profileScreen" style="position: absolute; top: 0; left: 0; width: 100%; height: 100%; display: none; flex-direction: column; z-index: 400; background: linear-gradient(to bottom, #000428, #004e92); overflow: hidden;">
-    
+<div id="profileScreen" style="position: absolute; top: 0; left: 0; width: 100%; height: 100%; display: none; flex-direction: column; z-index: 400; background: linear-gradient(135deg, #0c0c0c 0%, #1a1a1a 25%, #2d1b1b 50%, #1a1a1a 75%, #0c0c0c 100%); overflow: hidden;">
+    <div class="menu-bg-animation">
+        <div class="bg-orb bg-orb-1"></div>
+        <div class="bg-orb bg-orb-2"></div>
+        <div class="bg-orb bg-orb-3"></div>
+        <div class="bg-grid"></div>
+    </div>
+
+
     <!-- Profile Header -->
     <div style="padding: 15px 20px; text-align: center; position: relative; flex-shrink: 0;">
         <!-- Back Button -->
-        <button id="backToMainMenuFromProfile" style="position: absolute; top: 15px; left: 15px; background: #666; color: white; border: none; padding: 8px 12px; border-radius: 6px; cursor: pointer; font-size: 14px;">← Back</button>
+        <button id="backToMainMenuFromProfile" style="position: absolute; top: 15px; left: 15px; background: linear-gradient(135deg, #434343 0%, #000000 100%); color: white; border: 2px solid rgba(255, 255, 255, 0.2); padding: 10px 15px; border-radius: 10px; cursor: pointer; font-size: 14px; font-weight: 600; transition: all 0.3s ease; box-shadow: 0 4px 15px rgba(67, 67, 67, 0.3), inset 0 1px 0 rgba(255, 255, 255, 0.2);">← Back</button>
         
         <!-- Profile Title -->
-        <h2 style="color: white; margin: 0; text-shadow: 0 2px 4px rgba(0,0,0,0.5); font-size: 24px;">📊 Profile</h2>
+        <h2 style="color: white; margin: 0; text-shadow: 0 0 15px rgba(255, 33, 49, 0.8); font-size: 28px; font-weight: 700; letter-spacing: 2px;">📊 PROFILE</h2>
     </div>
     
     <!-- Profile Content -->
@@ -1687,26 +2370,22 @@ setTimeout(() => {
         
         <!-- Stats Grid -->
         <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-bottom: 20px; width: 100%; max-width: 300px;">
-            <div style="background: rgba(255, 255, 255, 0.05); padding: 12px; border-radius: 8px; text-align: center;">
-                <div style="font-size: 20px; color: #FFD700; font-weight: bold;" id="profileHighScore">0</div>
+            <div style="background: linear-gradient(135deg, rgba(255, 255, 255, 0.08) 0%, rgba(255, 255, 255, 0.03) 100%); padding: 15px; border-radius: 12px; text-align: center; border: 2px solid rgba(255, 255, 255, 0.1); box-shadow: 0 6px 20px rgba(0, 0, 0, 0.2), inset 0 1px 0 rgba(255, 255, 255, 0.1); transition: all 0.3s ease;" onmouseover="this.style.transform='translateY(-2px)'; this.style.boxShadow='0 10px 30px rgba(0, 0, 0, 0.3), inset 0 1px 0 rgba(255, 255, 255, 0.2)'" onmouseout="this.style.transform='translateY(0)'; this.style.boxShadow='0 6px 20px rgba(0, 0, 0, 0.2), inset 0 1px 0 rgba(255, 255, 255, 0.1)'">                <div style="font-size: 20px; color: #FFD700; font-weight: bold;" id="profileHighScore">0</div>
                 <div style="color: #ccc; font-size: 12px;">High Score</div>
             </div>
-            <div style="background: rgba(255, 255, 255, 0.05); padding: 12px; border-radius: 8px; text-align: center;">
-                <div style="font-size: 20px; color: #4CAF50; font-weight: bold;" id="profileTotalCoins">0</div>
+            <div style="background: linear-gradient(135deg, rgba(255, 255, 255, 0.08) 0%, rgba(255, 255, 255, 0.03) 100%); padding: 15px; border-radius: 12px; text-align: center; border: 2px solid rgba(255, 255, 255, 0.1); box-shadow: 0 6px 20px rgba(0, 0, 0, 0.2), inset 0 1px 0 rgba(255, 255, 255, 0.1); transition: all 0.3s ease;" onmouseover="this.style.transform='translateY(-2px)'; this.style.boxShadow='0 10px 30px rgba(0, 0, 0, 0.3), inset 0 1px 0 rgba(255, 255, 255, 0.2)'" onmouseout="this.style.transform='translateY(0)'; this.style.boxShadow='0 6px 20px rgba(0, 0, 0, 0.2), inset 0 1px 0 rgba(255, 255, 255, 0.1)'">                <div style="font-size: 20px; color: #4CAF50; font-weight: bold;" id="profileTotalCoins">0</div>
                 <div style="color: #ccc; font-size: 12px;">Total Coins</div>
             </div>
-            <div style="background: rgba(255, 255, 255, 0.05); padding: 12px; border-radius: 8px; text-align: center;">
-                <div style="font-size: 20px; color: #2196F3; font-weight: bold;" id="profileCharactersUnlocked">1</div>
+            <div style="background: linear-gradient(135deg, rgba(255, 255, 255, 0.08) 0%, rgba(255, 255, 255, 0.03) 100%); padding: 15px; border-radius: 12px; text-align: center; border: 2px solid rgba(255, 255, 255, 0.1); box-shadow: 0 6px 20px rgba(0, 0, 0, 0.2), inset 0 1px 0 rgba(255, 255, 255, 0.1); transition: all 0.3s ease;" onmouseover="this.style.transform='translateY(-2px)'; this.style.boxShadow='0 10px 30px rgba(0, 0, 0, 0.3), inset 0 1px 0 rgba(255, 255, 255, 0.2)'" onmouseout="this.style.transform='translateY(0)'; this.style.boxShadow='0 6px 20px rgba(0, 0, 0, 0.2), inset 0 1px 0 rgba(255, 255, 255, 0.1)'">                <div style="font-size: 20px; color: #2196F3; font-weight: bold;" id="profileCharactersUnlocked">1</div>
                 <div style="color: #ccc; font-size: 12px;">Characters</div>
             </div>
-            <div style="background: rgba(255, 255, 255, 0.05); padding: 12px; border-radius: 8px; text-align: center;">
-                <div style="font-size: 20px; color: #FF9800; font-weight: bold;" id="profileWorldsUnlocked">1</div>
+            <div style="background: linear-gradient(135deg, rgba(255, 255, 255, 0.08) 0%, rgba(255, 255, 255, 0.03) 100%); padding: 15px; border-radius: 12px; text-align: center; border: 2px solid rgba(255, 255, 255, 0.1); box-shadow: 0 6px 20px rgba(0, 0, 0, 0.2), inset 0 1px 0 rgba(255, 255, 255, 0.1); transition: all 0.3s ease;" onmouseover="this.style.transform='translateY(-2px)'; this.style.boxShadow='0 10px 30px rgba(0, 0, 0, 0.3), inset 0 1px 0 rgba(255, 255, 255, 0.2)'" onmouseout="this.style.transform='translateY(0)'; this.style.boxShadow='0 6px 20px rgba(0, 0, 0, 0.2), inset 0 1px 0 rgba(255, 255, 255, 0.1)'">                <div style="font-size: 20px; color: #FF9800; font-weight: bold;" id="profileWorldsUnlocked">1</div>
                 <div style="color: #ccc; font-size: 12px;">Worlds</div>
             </div>
         </div>
         
         <!-- Coming Soon Features -->
-        <div style="width: 100%; max-width: 350px; padding: 15px; background: rgba(255, 255, 255, 0.05); border-radius: 12px; border: 1px solid rgba(255, 255, 255, 0.1);">
+        <div style="width: 100%; max-width: 350px; padding: 20px; background: linear-gradient(135deg, rgba(255, 255, 255, 0.08) 0%, rgba(255, 255, 255, 0.03) 100%); border-radius: 15px; border: 2px solid rgba(255, 255, 255, 0.15); box-shadow: 0 8px 25px rgba(0, 0, 0, 0.2), inset 0 1px 0 rgba(255, 255, 255, 0.1);">
             <h3 style="color: white; margin: 0 0 12px 0; font-size: 16px; text-align: center;">🚀 Coming Soon</h3>
             <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 8px; color: #ccc; font-size: 14px;">
                 <div>🏆 Achievements</div>
@@ -1721,13 +2400,20 @@ setTimeout(() => {
     </div>
 </div>
 
-<div id="characterSelectScreen" style="position: absolute; top: 0; left: 0; width: 100%; height: 100%; display: none; flex-direction: column; justify-content: center; align-items: center; z-index: 300; background: linear-gradient(to bottom, #000428, #004e92);">
+<div id="characterSelectScreen" style="position: absolute; top: 0; left: 0; width: 100%; height: 100%; display: none; flex-direction: column; justify-content: center; align-items: center; z-index: 300; background: linear-gradient(135deg, #0c0c0c 0%, #1a1a1a 25%, #2d1b1b 50%, #1a1a1a 75%, #0c0c0c 100%);">
+    <div class="menu-bg-animation">
+        <div class="bg-orb bg-orb-1"></div>
+        <div class="bg-orb bg-orb-2"></div>
+        <div class="bg-orb bg-orb-3"></div>
+        <div class="bg-grid"></div>
+    </div>
+    
     <div style="position: absolute; top: 0; left: 0; width: 100%; height: 100%;" id="characterSelectCanvas"></div>
-    <h2 style="color: white; font-size: 48px; margin-bottom: 20px; text-shadow: 0 0 10px #00a2ff, 0 0 20px #00a2ff; position: relative; z-index: 10; text-align: center;">Select Your Character</h2>
+<h2 style="color: white; font-size: 42px; margin-bottom: 30px; text-shadow: 0 0 15px rgba(255, 33, 49, 0.8); position: relative; z-index: 10; text-align: center; font-weight: 700; letter-spacing: 2px;">SELECT YOUR CHARACTER</h2>
     <div style="display: flex; align-items: center; margin-bottom: 30px; position: relative; z-index: 10;">
-        <button id="prevCharacterBtn" class="game-button" style="font-size: 24px; padding: 10px 20px; margin-right: 20px;">←</button>
+        <button id="prevCharacterBtn" class="game-button char-nav-btn" style="font-size: 24px; font-weight: 700; padding: 15px 25px; margin-right: 20px; background: linear-gradient(135deg, #434343 0%, #000000 100%); color: white; border: 2px solid rgba(255, 255, 255, 0.2); border-radius: 12px; cursor: pointer; transition: all 0.3s ease; box-shadow: 0 6px 20px rgba(67, 67, 67, 0.3), inset 0 1px 0 rgba(255, 255, 255, 0.2);">←</button>
 <div id="characterDisplay" style="width: 180px; height: 180px;"></div>
-        <button id="nextCharacterBtn" class="game-button" style="font-size: 24px; padding: 10px 20px; margin-left: 20px;">→</button>
+        <button id="nextCharacterBtn" class="game-button char-nav-btn" style="font-size: 24px; font-weight: 700; padding: 15px 25px; margin-left: 20px; background: linear-gradient(135deg, #434343 0%, #000000 100%); color: white; border: 2px solid rgba(255, 255, 255, 0.2); border-radius: 12px; cursor: pointer; transition: all 0.3s ease; box-shadow: 0 6px 20px rgba(67, 67, 67, 0.3), inset 0 1px 0 rgba(255, 255, 255, 0.2);">→</button>
     </div>
     <div id="characterInfo" style="color: white; text-align: center; margin-bottom: 20px; position: relative; z-index: 10;">
         <h3 id="characterName" style="font-size: 32px; margin-bottom: 10px;">Apple</h3>
@@ -1735,20 +2421,27 @@ setTimeout(() => {
         <p id="characterUnlockStatus" style="font-size: 16px; color: #4CAF50;">Unlocked</p>
     </div>
 <div style="display: flex; gap: 15px; position: relative; z-index: 10; justify-content: center; width: 100%; max-width: 400px; margin: 0 auto;">
-        <button id="backToMainMenuFromCharacters" class="game-button" style="font-size: 18px; padding: 10px 20px; background-color: #666; color: white; border: none; border-radius: 5px; cursor: pointer; flex: 1; max-width: 120px;">← BACK</button>
-        <button id="selectCharacterButton" class="game-button" style="font-size: 20px; padding: 12px 25px; background-color: #4CAF50; color: white; border: none; border-radius: 5px; cursor: pointer; animation: pulse 1.5s infinite; flex: 2; max-width: 200px;">SELECT</button>
+        <button id="backToMainMenuFromCharacters" class="game-button char-action-btn" style="font-size: 16px; font-weight: 600; padding: 14px 20px; background: linear-gradient(135deg, #434343 0%, #000000 100%); color: white; border: 2px solid rgba(255, 255, 255, 0.2); border-radius: 10px; cursor: pointer; flex: 1; max-width: 120px; transition: all 0.3s ease; box-shadow: 0 4px 15px rgba(67, 67, 67, 0.3), inset 0 1px 0 rgba(255, 255, 255, 0.2); text-transform: uppercase; letter-spacing: 1px;">← BACK</button>
+        <button id="selectCharacterButton" class="game-button char-action-btn" style="font-size: 18px; font-weight: 700; padding: 16px 25px; background: linear-gradient(135deg, #ff2131 0%, #ff4757 100%); color: white; border: 2px solid rgba(255, 255, 255, 0.2); border-radius: 10px; cursor: pointer; flex: 2; max-width: 200px; transition: all 0.3s ease; box-shadow: 0 6px 20px rgba(255, 33, 49, 0.3), inset 0 1px 0 rgba(255, 255, 255, 0.2); text-transform: uppercase; letter-spacing: 1px; animation: select-pulse 3s ease-in-out infinite;">SELECT</button>
     </div>
 </div>
 <!-- World Select Screen -->
-<div id="worldSelectScreen" style="position: absolute; top: 0; left: 0; width: 100%; height: 100%; display: none; flex-direction: column; justify-content: center; align-items: center; z-index: 300; background: linear-gradient(to bottom, #000428, #004e92); padding: 20px; box-sizing: border-box;">
+<div id="worldSelectScreen" style="position: absolute; top: 0; left: 0; width: 100%; height: 100%; display: none; flex-direction: column; justify-content: center; align-items: center; z-index: 300; background: linear-gradient(135deg, #0c0c0c 0%, #1a1a1a 25%, #2d1b1b 50%, #1a1a1a 75%, #0c0c0c 100%); padding: 20px; box-sizing: border-box;">
+   <div class="menu-bg-animation">
+        <div class="bg-orb bg-orb-1"></div>
+        <div class="bg-orb bg-orb-2"></div>
+        <div class="bg-orb bg-orb-3"></div>
+        <div class="bg-grid"></div>
+    </div>
+   
     <div style="position: absolute; top: 0; left: 0; width: 100%; height: 100%;" id="worldSelectCanvas"></div>
-    <h2 id="worldSelectTitle" style="color: white; font-size: 48px; margin-bottom: 20px; text-shadow: 0 0 10px #00a2ff, 0 0 20px #00a2ff; position: relative; z-index: 10; text-align: center;">Select Your World</h2>
+        <h2 id="worldSelectTitle" style="color: white; font-size: 42px; margin-bottom: 30px; text-shadow: 0 0 15px rgba(255, 33, 49, 0.8); position: relative; z-index: 10; text-align: center; font-weight: 700; letter-spacing: 2px;">SELECT YOUR WORLD</h2>
     <div id="worldNavigation" style="display: flex; align-items: center; margin-bottom: 30px; position: relative; z-index: 10; width: 100%; max-width: 500px; justify-content: center;">
-        <button id="prevWorldBtn" class="game-button" style="font-size: 24px; padding: 10px 20px; margin-right: 20px; flex-shrink: 0;">←</button>
-        <div id="worldDisplay" style="width: 300px; height: 200px; max-width: calc(100vw - 140px); background-color: rgba(0, 0, 0, 0.3); border-radius: 15px; display: flex; justify-content: center; align-items: center; box-shadow: 0 0 20px rgba(0, 162, 255, 0.5); position: relative; overflow: hidden;">
+        <button id="prevWorldBtn" class="game-button world-nav-btn" style="font-size: 24px; font-weight: 700; padding: 15px 25px; margin-right: 20px; flex-shrink: 0; background: linear-gradient(135deg, #434343 0%, #000000 100%); color: white; border: 2px solid rgba(255, 255, 255, 0.2); border-radius: 12px; cursor: pointer; transition: all 0.3s ease; box-shadow: 0 6px 20px rgba(67, 67, 67, 0.3), inset 0 1px 0 rgba(255, 255, 255, 0.2);">←</button>
+        <div id="worldDisplay" style="width: 300px; height: 200px; max-width: calc(100vw - 140px); background-color: rgba(0, 0, 0, 0.3); border-radius: 15px; display: flex; justify-content: center; align-items: center; box-shadow: 0 0 20px rgba(255, 33, 49, 0.4), 0 0 40px rgba(255, 33, 49, 0.2); position: relative; overflow: hidden;">
             <div id="worldPreview" style="width: 100%; height: 100%; border-radius: 15px;"></div>
         </div>
-        <button id="nextWorldBtn" class="game-button" style="font-size: 24px; padding: 10px 20px; margin-left: 20px; flex-shrink: 0;">→</button>
+        <button id="nextWorldBtn" class="game-button world-nav-btn" style="font-size: 24px; font-weight: 700; padding: 15px 25px; margin-left: 20px; flex-shrink: 0; background: linear-gradient(135deg, #434343 0%, #000000 100%); color: white; border: 2px solid rgba(255, 255, 255, 0.2); border-radius: 12px; cursor: pointer; transition: all 0.3s ease; box-shadow: 0 6px 20px rgba(67, 67, 67, 0.3), inset 0 1px 0 rgba(255, 255, 255, 0.2);">→</button>
     </div>
     <div id="worldInfo" style="color: white; text-align: center; margin-bottom: 20px; position: relative; z-index: 10; width: 100%; max-width: 400px;">
         <h3 id="worldName" style="font-size: 32px; margin-bottom: 10px; word-wrap: break-word;">Classic Plains</h3>
@@ -1756,8 +2449,8 @@ setTimeout(() => {
         <p id="worldUnlockStatus" style="font-size: 16px; color: #4CAF50;">Unlocked</p>
     </div>
     <div style="display: flex; gap: 20px; position: relative; z-index: 10; flex-wrap: wrap; justify-content: center;">
-        <button id="backToMainMenuFromWorld" class="game-button" style="font-size: 24px; padding: 12px 25px; background-color: #666; color: white; border: none; border-radius: 5px; cursor: pointer;">← BACK</button>
-        <button id="startGameFromWorldButton" class="game-button" style="font-size: 32px; padding: 15px 50px; background-color: #4CAF50; color: white; border: none; border-radius: 5px; cursor: pointer; animation: pulse 1.5s infinite; max-width: calc(100vw - 120px); word-wrap: break-word;">START ADVENTURE!</button>
+        <button id="backToMainMenuFromWorld" class="game-button world-action-btn" style="font-size: 18px; font-weight: 600; padding: 14px 25px; background: linear-gradient(135deg, #434343 0%, #000000 100%); color: white; border: 2px solid rgba(255, 255, 255, 0.2); border-radius: 10px; cursor: pointer; transition: all 0.3s ease; box-shadow: 0 4px 15px rgba(67, 67, 67, 0.3), inset 0 1px 0 rgba(255, 255, 255, 0.2); text-transform: uppercase; letter-spacing: 1px;">← BACK</button>
+        <button id="startGameFromWorldButton" class="game-button world-action-btn" style="font-size: 24px; font-weight: 700; padding: 18px 50px; background: linear-gradient(135deg, #ff2131 0%, #ff4757 100%); color: white; border: 2px solid rgba(255, 255, 255, 0.2); border-radius: 12px; cursor: pointer; max-width: calc(100vw - 120px); word-wrap: break-word; transition: all 0.3s ease; box-shadow: 0 8px 25px rgba(255, 33, 49, 0.4), inset 0 1px 0 rgba(255, 255, 255, 0.2); text-transform: uppercase; letter-spacing: 2px; animation: adventure-pulse 3s ease-in-out infinite;">DASH!</button>
     </div>
 </div>
 
@@ -1777,14 +2470,14 @@ setTimeout(() => {
         </svg>
     </button>
     <div id="speedIndicator">Speed: 1x</div>
-    <div id="gameOver">
-    <h2 style="margin-top: 0;">Game Over</h2>
-    <span id="finalScore" style="font-size: 24px;"></span><br>
-    <span id="coinsCollected" style="font-size: 20px; margin-bottom: 15px; display: inline-block;"></span><br>
+    <div id="gameOver" style="background: linear-gradient(135deg, rgba(12, 12, 12, 0.95) 0%, rgba(26, 26, 26, 0.95) 25%, rgba(45, 27, 27, 0.95) 50%, rgba(26, 26, 26, 0.95) 75%, rgba(12, 12, 12, 0.95) 100%); backdrop-filter: blur(15px); border: 2px solid rgba(255, 255, 255, 0.1); border-radius: 20px; padding: 30px;">
+    <h2 style="margin-top: 0; color: white; font-size: 42px; margin-bottom: 20px; text-shadow: 0 0 20px rgba(255, 33, 49, 0.8), 0 0 40px rgba(255, 33, 49, 0.4); font-weight: 700; letter-spacing: 3px; text-transform: uppercase; animation: game-over-pulse 2s ease-in-out infinite;">Game Over</h2>
+    <span id="finalScore" style="font-size: 28px; color: #FFD700; font-weight: 700; text-shadow: 0 2px 10px rgba(255, 215, 0, 0.5); display: block; margin-bottom: 10px;"></span>
+    <span id="coinsCollected" style="font-size: 22px; margin-bottom: 20px; display: block; color: #4CAF50; font-weight: 600; text-shadow: 0 2px 8px rgba(76, 175, 80, 0.4);"></span>
     <div class="game-buttons" style="display: flex; flex-direction: column; gap: 10px; width: 100%; max-width: 250px; margin: 0 auto;">
-        <button id="restartButton" class="game-button">Restart</button>
-        <button id="gameOverMainMenuBtn" class="game-button">Main Menu</button>
-        <button id="gameOverSettingsBtn" class="game-button">Settings</button>
+        <button id="restartButton" class="game-button game-over-btn" style="background: linear-gradient(135deg, #ff2131 0%, #ff4757 100%); color: white; border: 2px solid rgba(255, 255, 255, 0.2); padding: 16px 35px; border-radius: 12px; cursor: pointer; font-size: 18px; font-weight: 700; transition: all 0.3s ease; box-shadow: 0 8px 25px rgba(255, 33, 49, 0.4), inset 0 1px 0 rgba(255, 255, 255, 0.2); text-transform: uppercase; letter-spacing: 1px; margin-bottom: 12px; animation: restart-pulse 3s ease-in-out infinite;">Restart</button>
+        <button id="gameOverMainMenuBtn" class="game-button game-over-btn" style="background: linear-gradient(135deg, #434343 0%, #000000 100%); color: white; border: 2px solid rgba(255, 255, 255, 0.2); padding: 16px 35px; border-radius: 12px; cursor: pointer; font-size: 18px; font-weight: 700; transition: all 0.3s ease; box-shadow: 0 8px 25px rgba(67, 67, 67, 0.3), inset 0 1px 0 rgba(255, 255, 255, 0.2); text-transform: uppercase; letter-spacing: 1px; margin-bottom: 12px;">Main Menu</button>
+        <button id="gameOverSettingsBtn" class="game-button game-over-btn" style="background: linear-gradient(135deg, #a8edea 0%, #fed6e3 100%); color: #333; border: 2px solid rgba(255, 255, 255, 0.2); padding: 16px 35px; border-radius: 12px; cursor: pointer; font-size: 18px; font-weight: 700; transition: all 0.3s ease; box-shadow: 0 8px 25px rgba(168, 237, 234, 0.3), inset 0 1px 0 rgba(255, 255, 255, 0.2); text-transform: uppercase; letter-spacing: 1px; margin-bottom: 12px;">Settings</button>
     </div>
 </div>
     <div id="startScreen">
@@ -1798,31 +2491,38 @@ setTimeout(() => {
     </div>
 
     <!-- Pause Screen -->
-    <div id="pauseScreen">
-    <h2>Paused</h2>
-    <p>Press P or tap to resume</p>
+    <div id="pauseScreen" style="background: linear-gradient(135deg, rgba(12, 12, 12, 0.95) 0%, rgba(26, 26, 26, 0.95) 25%, rgba(45, 27, 27, 0.95) 50%, rgba(26, 26, 26, 0.95) 75%, rgba(12, 12, 12, 0.95) 100%); backdrop-filter: blur(15px); border: 2px solid rgba(255, 255, 255, 0.1);">
+    <h2 style="color: white; font-size: 36px; margin-bottom: 15px; text-shadow: 0 0 15px rgba(255, 33, 49, 0.8); font-weight: 700; letter-spacing: 2px; text-transform: uppercase;">Paused</h2>
+    <p style="color: rgba(255, 255, 255, 0.8); font-size: 16px; margin-bottom: 25px; font-weight: 500;">Press P or tap to resume</p>
     <div class="game-buttons" style="display: flex; flex-direction: column; gap: 10px; width: 100%; max-width: 250px; margin: 0 auto;">
-        <button id="resumeButton" class="game-button">Resume Game</button>
-        <button id="pauseRestartButton" class="game-button">Restart</button>
-        <button id="pauseMainMenuBtn" class="game-button">Main Menu</button>
-        <button id="pauseSettingsBtn" class="game-button">Settings</button>
+        <button id="resumeButton" class="game-button pause-btn" style="background: linear-gradient(135deg, #ff2131 0%, #ff4757 100%); color: white; border: 2px solid rgba(255, 255, 255, 0.2); padding: 14px 30px; border-radius: 10px; cursor: pointer; font-size: 16px; font-weight: 600; transition: all 0.3s ease; box-shadow: 0 6px 20px rgba(255, 33, 49, 0.3), inset 0 1px 0 rgba(255, 255, 255, 0.2); text-transform: uppercase; letter-spacing: 1px; margin-bottom: 10px;">Resume Game</button>
+        <button id="pauseRestartButton" class="game-button pause-btn" style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: white; border: 2px solid rgba(255, 255, 255, 0.2); padding: 14px 30px; border-radius: 10px; cursor: pointer; font-size: 16px; font-weight: 600; transition: all 0.3s ease; box-shadow: 0 6px 20px rgba(102, 126, 234, 0.3), inset 0 1px 0 rgba(255, 255, 255, 0.2); text-transform: uppercase; letter-spacing: 1px; margin-bottom: 10px;">Restart</button>
+        <button id="pauseMainMenuBtn" class="game-button pause-btn" style="background: linear-gradient(135deg, #434343 0%, #000000 100%); color: white; border: 2px solid rgba(255, 255, 255, 0.2); padding: 14px 30px; border-radius: 10px; cursor: pointer; font-size: 16px; font-weight: 600; transition: all 0.3s ease; box-shadow: 0 6px 20px rgba(67, 67, 67, 0.3), inset 0 1px 0 rgba(255, 255, 255, 0.2); text-transform: uppercase; letter-spacing: 1px; margin-bottom: 10px;">Main Menu</button>
+        <button id="pauseSettingsBtn" class="game-button pause-btn" style="background: linear-gradient(135deg, #a8edea 0%, #fed6e3 100%); color: #333; border: 2px solid rgba(255, 255, 255, 0.2); padding: 14px 30px; border-radius: 10px; cursor: pointer; font-size: 16px; font-weight: 600; transition: all 0.3s ease; box-shadow: 0 6px 20px rgba(168, 237, 234, 0.3), inset 0 1px 0 rgba(255, 255, 255, 0.2); text-transform: uppercase; letter-spacing: 1px; margin-bottom: 10px;">Settings</button>
     </div>
 </div>
 
     <!-- Settings Menu Tabs -->
     <div id="modalOverlay"></div>
-<div id="settingsScreen">
-    <h2>Settings</h2>
+<div id="settingsScreen" style="background: linear-gradient(135deg, rgba(12, 12, 12, 0.95) 0%, rgba(26, 26, 26, 0.95) 25%, rgba(45, 27, 27, 0.95) 50%, rgba(26, 26, 26, 0.95) 75%, rgba(12, 12, 12, 0.95) 100%); backdrop-filter: blur(15px); border: 2px solid rgba(255, 255, 255, 0.1); border-radius: 20px;">
+    <div class="menu-bg-animation">
+        <div class="bg-orb bg-orb-1"></div>
+        <div class="bg-orb bg-orb-2"></div>
+        <div class="bg-orb bg-orb-3"></div>
+        <div class="bg-grid"></div>
+    </div>
+    
+    <h2 style="color: white; font-size: 32px; margin-bottom: 25px; text-shadow: 0 0 15px rgba(255, 33, 49, 0.8); font-weight: 700; letter-spacing: 2px; text-transform: uppercase; text-align: center;">⚙️ Settings</h2>
     
     <div class="tab-buttons">
-        <button class="tab-button active" data-tab="settings-tab">⚙️ Game Settings</button>
-        <button class="tab-button" data-tab="leaderboard-tab">🏆 Leaderboard</button>
-        <button class="tab-button" data-tab="global-leaderboard-tab">🌍 Global</button>
+        <button class="tab-button active in-game-tab" data-tab="settings-tab" style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: white; border: 2px solid rgba(255, 255, 255, 0.2); padding: 12px 18px; border-radius: 10px 0 0 10px; cursor: pointer; font-size: 14px; font-weight: 600; transition: all 0.3s ease; box-shadow: 0 4px 15px rgba(102, 126, 234, 0.3), inset 0 1px 0 rgba(255, 255, 255, 0.2); text-transform: uppercase; letter-spacing: 1px;">⚙️ Game Settings</button>
+        <button class="tab-button in-game-tab" data-tab="leaderboard-tab" style="background: linear-gradient(135deg, #434343 0%, #000000 100%); color: white; border: 2px solid rgba(255, 255, 255, 0.2); padding: 12px 18px; cursor: pointer; font-size: 14px; font-weight: 600; transition: all 0.3s ease; box-shadow: 0 4px 15px rgba(67, 67, 67, 0.3), inset 0 1px 0 rgba(255, 255, 255, 0.2); text-transform: uppercase; letter-spacing: 1px;">🏆 Leaderboard</button>
+        <button class="tab-button in-game-tab" data-tab="global-leaderboard-tab" style="background: linear-gradient(135deg, #434343 0%, #000000 100%); color: white; border: 2px solid rgba(255, 255, 255, 0.2); padding: 12px 18px; border-radius: 0 10px 10px 0; cursor: pointer; font-size: 14px; font-weight: 600; transition: all 0.3s ease; box-shadow: 0 4px 15px rgba(67, 67, 67, 0.3), inset 0 1px 0 rgba(255, 255, 255, 0.2); text-transform: uppercase; letter-spacing: 1px;">🌍 Global</button>
     </div>
         
         <div id="settings-tab" class="tab-content active">
-    <div class="settings-section">
-    <h3>Audio Settings</h3>
+    <div class="settings-section" style="margin-bottom: 25px; padding: 20px; background: linear-gradient(135deg, rgba(255, 255, 255, 0.08) 0%, rgba(255, 255, 255, 0.03) 100%); border-radius: 15px; border: 2px solid rgba(255, 255, 255, 0.15); box-shadow: 0 8px 25px rgba(0, 0, 0, 0.2), inset 0 1px 0 rgba(255, 255, 255, 0.1);">
+    <h3 style="color: white; margin: 0 0 15px 0; font-size: 20px; font-weight: 600; text-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);">🔊 Audio Settings</h3>
     <div class="audio-setting-row">
         <span class="audio-label">Sound Effects</span>
         <label class="audio-checkbox">
@@ -1840,12 +2540,12 @@ setTimeout(() => {
 </div>
 
 <div class="settings-section">
-    <h3>🎵 Jukebox</h3>
+    <h3 style="color: white; margin: 0 0 15px 0; font-size: 20px; font-weight: 600; text-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);">🎵 Jukebox</h3>
     <p style="color: white; font-size: 14px; margin-bottom: 15px; opacity: 0.8;">Choose your soundtrack for the ultimate running experience!</p>
     
     <!-- Shuffle Mode Toggle -->
     <div style="margin-bottom: 15px;">
-        <button id="shuffleToggleBtn" class="game-button" style="padding: 8px 16px; font-size: 16px; width: 100%;">🔀 Shuffle: OFF</button>
+        <button id="shuffleToggleBtn" class="game-button jukebox-btn" style="padding: 12px 16px; font-size: 16px; width: 100%; background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%); color: white; border: 2px solid rgba(255, 255, 255, 0.2); border-radius: 10px; cursor: pointer; font-weight: 600; transition: all 0.3s ease; box-shadow: 0 4px 15px rgba(240, 147, 251, 0.3), inset 0 1px 0 rgba(255, 255, 255, 0.2); text-transform: uppercase; letter-spacing: 1px;">🔀 Shuffle: OFF</button>
     </div>
     
     <!-- Track Selection (only shown when shuffle is off) -->
@@ -1854,19 +2554,19 @@ setTimeout(() => {
         <select id="trackSelector" class="game-button" style="width: 100%; padding: 10px; font-size: 16px; margin-bottom: 15px;">
             <!-- Options will be populated by JavaScript -->
         </select>
-        <button id="applyTrackBtn" class="game-button" style="padding: 8px 16px; font-size: 16px; width: 100%;">✅ Apply Track</button>
+        <button id="applyTrackBtn" class="game-button jukebox-btn" style="padding: 12px 16px; font-size: 16px; width: 100%; background: linear-gradient(135deg, #34C759 0%, #28A745 100%); color: white; border: 2px solid rgba(255, 255, 255, 0.2); border-radius: 10px; cursor: pointer; font-weight: 600; transition: all 0.3s ease; box-shadow: 0 4px 15px rgba(52, 199, 89, 0.3), inset 0 1px 0 rgba(255, 255, 255, 0.2); text-transform: uppercase; letter-spacing: 1px;">✅ Apply Track</button>
     </div>
 </div>
     
     <div class="settings-section">
-        <h3>Mod Options</h3>
+        <h3 style="color: white; margin: 0 0 15px 0; font-size: 20px; font-weight: 600; text-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);">🔧 Mod Options</h3>
         <div class="mod-option" id="mod-mode-option">
             <div class="mod-info">
                 <h4>Mod Mode</h4>
                 <p>Unlock all content</p>
             <input type="password" class="mod-password" id="modPassword" placeholder="Enter password">
         </div>
-        <button class="mod-action" id="modModeButton">Enable</button>
+        <button class="mod-action" id="modModeButton" style="background: linear-gradient(135deg, #ff2131 0%, #ff4757 100%); color: white; border: 2px solid rgba(255, 255, 255, 0.2); padding: 10px 20px; border-radius: 8px; cursor: pointer; font-weight: 600; transition: all 0.3s ease; box-shadow: 0 4px 15px rgba(255, 33, 49, 0.3), inset 0 1px 0 rgba(255, 255, 255, 0.2); text-transform: uppercase; letter-spacing: 1px;">Enable</button>
     </div>
     <div class="mod-option" id="difficulty-override-option" style="display: none;">
         <div class="mod-info">
@@ -1881,14 +2581,14 @@ setTimeout(() => {
                 <option value="4">Level 5 - Maximum Chaos</option>
             </select>
         </div>
-        <button class="mod-action" id="applyDifficultyButton">Apply</button>
+        <button class="mod-action" id="applyDifficultyButton" style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: white; border: 2px solid rgba(255, 255, 255, 0.2); padding: 10px 20px; border-radius: 8px; cursor: pointer; font-weight: 600; transition: all 0.3s ease; box-shadow: 0 4px 15px rgba(102, 126, 234, 0.3), inset 0 1px 0 rgba(255, 255, 255, 0.2); text-transform: uppercase; letter-spacing: 1px;">Apply</button>
     </div>
     <div class="mod-option" id="reset-data-option">
         <div class="mod-info">
             <h4>Reset Game Data</h4>
             <p>Clear all saved progress</p>
         </div>
-        <button class="mod-action" id="resetDataButton">Reset</button>
+        <button class="mod-action" id="resetDataButton" style="background: linear-gradient(135deg, #FF6B6B 0%, #FF5252 100%); color: white; border: 2px solid rgba(255, 255, 255, 0.2); padding: 10px 20px; border-radius: 8px; cursor: pointer; font-weight: 600; transition: all 0.3s ease; box-shadow: 0 4px 15px rgba(255, 107, 107, 0.3), inset 0 1px 0 rgba(255, 255, 255, 0.2); text-transform: uppercase; letter-spacing: 1px;">Reset</button>
     </div>
 </div>
         </div>
@@ -1934,8 +2634,8 @@ setTimeout(() => {
         
         <div style="text-align: center; margin-top: 15px;">
             <p id="globalPlayerRank" style="color: #FFD700; font-size: 14px; margin: 10px 0;"></p>
-            <button onclick="updateGlobalLeaderboardDisplay()" class="game-button" 
-                style="padding: 8px 16px; font-size: 14px; background: #4CAF50;">
+            <button onclick="updateGlobalLeaderboardDisplay()" class="game-button refresh-btn" 
+                style="padding: 12px 20px; font-size: 14px; background: linear-gradient(135deg, #4CAF50 0%, #45a049 100%); color: white; border: 2px solid rgba(255, 255, 255, 0.2); border-radius: 10px; cursor: pointer; font-weight: 600; transition: all 0.3s ease; box-shadow: 0 6px 20px rgba(76, 175, 80, 0.3), inset 0 1px 0 rgba(255, 255, 255, 0.2); text-transform: uppercase; letter-spacing: 1px;">
                 🔄 Refresh Global Scores
             </button>
         </div>
@@ -4138,221 +4838,16 @@ function initSettingsGlobalLeaderboard() {
 // Dependencies: Character System for orbiting characters
 // Functions: initTitleScreen(), updateTitleScreen(), startTitleAnimations(), etc.
 
-// Create particles for title screen
-function createTitleScreenParticles() {
-    if (!characterTitleScene) return; // Changed from window.titleScene
-    
-    // Create particles
-    const particlesGeometry = new THREE.BufferGeometry();
-    const particleCount = 150;
-    
-    const positions = new Float32Array(particleCount * 3);
-    const colors = new Float32Array(particleCount * 3);
-    
-    for (let i = 0; i < particleCount; i++) {
-        // Position - spread wider for title screen
-        positions[i * 3] = (Math.random() - 0.5) * 30;      // x
-        positions[i * 3 + 1] = (Math.random() - 0.5) * 20;  // y
-        positions[i * 3 + 2] = (Math.random() - 0.5) * 15;  // z (behind characters)
-        
-        // Color (blue/cyan matching your theme)
-        colors[i * 3] = 0.1 + Math.random() * 0.3;          // r
-        colors[i * 3 + 1] = 0.4 + Math.random() * 0.4;      // g
-        colors[i * 3 + 2] = 0.7 + Math.random() * 0.3;      // b
-    }
-    
-    particlesGeometry.setAttribute('position', new THREE.BufferAttribute(positions, 3));
-    particlesGeometry.setAttribute('color', new THREE.BufferAttribute(colors, 3));
-    
-    const particlesMaterial = new THREE.PointsMaterial({
-        size: 0.08,
-        transparent: true,
-        opacity: 0.6,
-        vertexColors: true,
-        blending: THREE.AdditiveBlending
-    });
-    
-    const particles = new THREE.Points(particlesGeometry, particlesMaterial);
-    particles.userData = {
-        originalPositions: positions.slice()
-    };
-    
-    characterTitleScene.add(particles); // Changed from window.titleScene
-    characterTitleScene.userData.particles = particles; // Changed from window.titleScene
-    
-    debug('✨ Title screen particles created!'); // Debug log
-}
 
-// Animate title screen particles
-function animateTitleParticles() {
-    if (!characterTitleScene || !characterTitleScene.userData.particles) return; // Changed scene names
-    
-    const particles = characterTitleScene.userData.particles; // Changed scene name
-    const positions = particles.geometry.attributes.position.array;
-    const originalPositions = particles.userData.originalPositions;
-    
-    for (let i = 0; i < positions.length; i += 3) {
-        // Gentle floating motion
-        positions[i] = originalPositions[i] + Math.sin(frameCount * 0.008 + i * 0.1) * 0.15;
-        positions[i + 1] = originalPositions[i + 1] + Math.cos(frameCount * 0.006 + i * 0.05) * 0.1;
-        positions[i + 2] = originalPositions[i + 2] + Math.sin(frameCount * 0.004 + i * 0.02) * 0.05;
-    }
-    
-    particles.geometry.attributes.position.needsUpdate = true;
-}
 
-// Animate title screen particles (time-based)
-function animateTitleParticles() {
-    if (!characterTitleScene || !characterTitleScene.userData.particles) return;
-    
-    const particles = characterTitleScene.userData.particles;
-    const positions = particles.geometry.attributes.position.array;
-    const originalPositions = particles.userData.originalPositions;
-    
-    // Use Date.now() for time-based animation instead of frameCount
-    const time = Date.now() * 0.001; // Convert to seconds
-    
-    for (let i = 0; i < positions.length; i += 3) {
-        // Gentle floating motion using time
-        positions[i] = originalPositions[i] + Math.sin(time * 0.8 + i * 0.1) * 0.15;
-        positions[i + 1] = originalPositions[i + 1] + Math.cos(time * 0.6 + i * 0.05) * 0.1;
-        positions[i + 2] = originalPositions[i + 2] + Math.sin(time * 0.4 + i * 0.02) * 0.05;
-    }
-    
-    particles.geometry.attributes.position.needsUpdate = true;
-}
+
+
 
 // Function to initialize the title screen with orbiting characters
 function initTitleScreen() {
 
-    // Create a new scene for the character orbits
-    characterTitleScene = new THREE.Scene();
-    characterTitleScene.background = null; // Transparent background
     
-    // Create a camera for this scene
-    characterTitleCamera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 1000);
-    characterTitleCamera.position.set(0, 0, 5);
-    
-    // Create a renderer for the title canvas
-    const titleCanvas = document.getElementById('titleCanvas');
-    titleRenderer = new THREE.WebGLRenderer({ alpha: true, antialias: true });
-    titleRenderer.setSize(window.innerWidth, window.innerHeight);
-    titleRenderer.setClearColor(0x000000, 0); // Transparent background
-    titleRenderer.domElement.style.position = 'absolute';
-    titleRenderer.domElement.style.top = '0';
-    titleRenderer.domElement.style.left = '0';
-    titleRenderer.domElement.style.width = '100%';
-    titleRenderer.domElement.style.height = '100%';
-    titleRenderer.domElement.style.zIndex = '1';
-    titleRenderer.domElement.style.pointerEvents = 'none'; // Allow clicks to pass through
-    titleCanvas.appendChild(titleRenderer.domElement);
-    debug('Title renderer canvas added to DOM'); // Debug log
-    
-    // Add lights to the title scene
-    const ambientLight = new THREE.AmbientLight(0xffffff, 0.6);
-    characterTitleScene.add(ambientLight);
-    
-    const directionalLight = new THREE.DirectionalLight(0xffffff, 0.8);
-    directionalLight.position.set(10, 20, 10);
-    characterTitleScene.add(directionalLight);
-    
-    // Create a center sphere for characters to orbit
-    const centerGeometry = new THREE.SphereGeometry(0.5, 32, 32);
-    const centerMaterial = new THREE.MeshStandardMaterial({
-        color: 0x004e92,
-        metalness: 0.8,
-        roughness: 0.2,
-        emissive: 0x004e92,
-        emissiveIntensity: 0.5
-    });
-    orbitCenter = new THREE.Mesh(centerGeometry, centerMaterial);
-    characterTitleScene.add(orbitCenter);
-    
-    // Add glow effect to center sphere
-    const glowGeometry = new THREE.SphereGeometry(0.65, 32, 32);
-    const glowMaterial = new THREE.MeshBasicMaterial({
-        color: 0x00a2ff,
-        transparent: true,
-        opacity: 0.3,
-        side: THREE.BackSide
-    });
-    const glow = new THREE.Mesh(glowGeometry, glowMaterial);
-    orbitCenter.add(glow);
-    
-    // Create orbit ring viewed from top
-    const ringGeometry = new THREE.TorusGeometry(3.2, 0.04, 16, 100);
-    const ringMaterial = new THREE.MeshBasicMaterial({
-        color: 0x00a2ff,
-        transparent: true,
-        opacity: 0.4
-    });
-    const ring = new THREE.Mesh(ringGeometry, ringMaterial);
-    characterTitleScene.add(ring);
-    
-    // Create character models and place them in orbit
-    createTitleCharacters();
-    
-    // Setup title screen animation
-    function animateTitleScreen() {
-        requestAnimationFrame(animateTitleScreen);
-        
-        if (gameState === "title" && titleRenderer && characterTitleScene && characterTitleCamera) {
-            // ADD THIS LINE - increment frameCount for animations
-            frameCount++;
 
-            // Rotate the center sphere
-            if (orbitCenter) {
-                orbitCenter.rotation.y += 0.003;
-                orbitCenter.rotation.x += 0.001;
-            }
-            
-            // Rotate ring clockwise when viewed from top
-            characterTitleScene.children.forEach(child => {
-                if (child.geometry && child.geometry.parameters && child.geometry.parameters.tube !== undefined) {
-                    child.rotation.z -= 0.001;
-                }
-            });
-            
-            // Orbit and rotate each character
-            titleCharacterModels.forEach((charObj, index) => {
-                if (charObj && charObj.model) {
-                    // Calculate perfect equal spacing angle
-                    const baseAngle = (frameCount * 0.003) + (index * (Math.PI * 2 / characterNames.length));
-                    const radius = charObj.radius;
-                    
-                    // Move in circular path with perfect equal spacing
-                    charObj.model.position.x = Math.cos(baseAngle) * radius;
-                    charObj.model.position.y = Math.sin(baseAngle) * radius;
-                    charObj.model.position.z = 0;
-                    
-                    // Update stored angle for other calculations
-                    charObj.angle = baseAngle;
-                    
-                    // Make character face outward toward viewer
-                    if (charObj && charObj.model) {
-                        try {
-                            charObj.model.lookAt(charObj.model.position.x, charObj.model.position.y, 5);
-                        } catch (error) {
-                            debugWarn('Error making character face outward:', error);
-                            charObj.model.rotation.z = 0;
-                        }
-                    }
-                }
-            });
-            
-            // ADD PARTICLE ANIMATION HERE
-animateTitleParticles();
-
-// Render the scene
-titleRenderer.render(characterTitleScene, characterTitleCamera);
-        }
-    }
-
-    // Create particles for title screen
-createTitleScreenParticles();
-    
-    // Start the animation once
-    animateTitleScreen();
     
    // Create floating particles (keeping the CSS particles too!)
 if (typeof createTitleParticles === 'function') {
@@ -4372,10 +4867,7 @@ setTimeout(() => {
         newStartButton.addEventListener('click', function() {
             debug('Start button clicked!');
             
-            // Stop particles when leaving title screen (if function exists)
-            if (typeof clearTitleParticles === 'function') {
-                clearTitleParticles();
-            }
+
             
             // Hide title screen, show main menu
             document.getElementById('titleScreen').style.display = 'none';
@@ -4399,33 +4891,14 @@ setTimeout(() => {
 
 // Initialize Main Menu
 function initMainMenu() {
-    // Create floating particles for main menu background
-    createMainMenuParticles();
+    // Particles removed - using CSS background animation instead
+    // createMainMenuParticles(); // ← Comment out instead of delete
     
     // Setup main menu button event listeners
     setupMainMenuButtons();
 }
 
-// Create particles for main menu (similar to title screen)
-function createMainMenuParticles() {
-    const particleContainer = document.querySelector('#mainMenuScreen .particle-container');
-    if (!particleContainer) return;
-    
-    // Clear existing particles
-    particleContainer.innerHTML = '';
-    
-    // Create CSS particles
-    for (let i = 0; i < 50; i++) {
-        const particle = document.createElement('div');
-        particle.className = 'particle';
-        particle.style.width = Math.random() * 8 + 4 + 'px';
-        particle.style.height = particle.style.width;
-        particle.style.left = Math.random() * 100 + '%';
-        particle.style.animationDelay = Math.random() * 8 + 's';
-        particle.style.animationDuration = (Math.random() * 6 + 8) + 's';
-        particleContainer.appendChild(particle);
-    }
-}
+
 
 // Setup main menu button event listeners
 function setupMainMenuButtons() {
@@ -4808,26 +5281,40 @@ function populateShopCharacters() {
         `;
         
         characterItem.innerHTML = `
+            <div class="shop-preview-container">
+                <div class="shop-3d-preview" id="shop-preview-char-${charName}"></div>
+                <div class="preview-overlay" onclick="openShopCharacterPreview('${charName}')">
+                    <div class="preview-icon">👁️</div>
+                </div>
+            </div>
             <h4 style="color: white; margin: 0 0 10px 0; text-transform: capitalize;">${charName}</h4>
             <div style="color: ${isUnlocked ? '#4CAF50' : '#FFD700'}; font-size: 14px; margin-bottom: 10px;">
                 ${isUnlocked ? '✅ Unlocked' : `💰 ${cost} coins`}
             </div>
-            ${!isUnlocked ? `
-                <button onclick="purchaseCharacter('${charName}')" 
-                    style="background: #4CAF50; color: white; border: none; padding: 8px 16px; border-radius: 6px; cursor: pointer; font-size: 14px;">
-                    Purchase
+            <div class="shop-actions">
+                <button onclick="openShopCharacterPreview('${charName}')" class="preview-btn">
+                    PREVIEW
                 </button>
-            ` : `
-                <button onclick="selectCharacterFromShop('${charName}')" 
-                    style="background: #2196F3; color: white; border: none; padding: 8px 16px; border-radius: 6px; cursor: pointer; font-size: 14px;">
-                    Select
-                </button>
-            `}
+                ${!isUnlocked ? `
+                    <button onclick="purchaseCharacter('${charName}')" class="buy-btn">
+                        BUY - ${cost} 🪙
+                    </button>
+                ` : `
+                    <button onclick="selectCharacterFromShop('${charName}')" class="buy-btn" 
+                        style="background: linear-gradient(135deg, #4CAF50 0%, #45a049 100%);">
+                        SELECT
+                    </button>
+                `}
+            </div>
         `;
         
         charactersList.appendChild(characterItem);
+        
+        // Create mini 3D preview after adding to DOM
+        setTimeout(() => createShopCharacterPreview(`shop-preview-char-${charName}`, charName), 100);
     });
 }
+
 
 // Populate shop worlds
 function populateShopWorlds() {
@@ -4847,32 +5334,332 @@ function populateShopWorlds() {
         `;
         
         worldItem.innerHTML = `
+            <div class="shop-preview-container">
+                <div class="shop-3d-preview" id="shop-preview-world-${world.id}"></div>
+            </div>
             <h4 style="color: white; margin: 0 0 10px 0;">${world.name}</h4>
             <p style="color: #ccc; font-size: 12px; margin: 0 0 10px 0;">${world.description}</p>
             <div style="color: ${isUnlocked ? '#4CAF50' : '#FFD700'}; font-size: 14px; margin-bottom: 10px;">
                 ${isUnlocked ? '✅ Unlocked' : `💰 ${world.cost} coins`}
             </div>
             ${!isUnlocked ? `
-                <button onclick="purchaseWorld('${world.id}')" 
-                    style="background: #FF9800; color: white; border: none; padding: 8px 16px; border-radius: 6px; cursor: pointer; font-size: 14px;">
-                    Purchase
+                <button onclick="purchaseWorld('${world.id}')" class="buy-btn" style="width: 100%;">
+                    BUY - ${world.cost} 🪙
                 </button>
             ` : `
-                <button onclick="selectWorldFromShop('${world.id}')" 
-                    style="background: #2196F3; color: white; border: none; padding: 8px 16px; border-radius: 6px; cursor: pointer; font-size: 14px;">
-                    Select
+                <button onclick="selectWorldFromShop('${world.id}')" class="buy-btn" style="width: 100%; background: linear-gradient(135deg, #4CAF50 0%, #45a049 100%);">
+                    SELECT
                 </button>
             `}
         `;
         
         worldsList.appendChild(worldItem);
+        
+        // Create sophisticated 2D preview
+        setTimeout(() => createShopWorldPreview(`shop-preview-world-${world.id}`, world.id), 100);
     });
+}
+
+// Shop 3D Preview Functions
+function createShopCharacterPreview(containerId, charName) {
+    const container = document.getElementById(containerId);
+    if (!container) return;
+    
+    // Create mini Three.js scene
+const scene = new THREE.Scene();
+const camera = new THREE.PerspectiveCamera(75, 1, 0.1, 1000); // Force 1:1 aspect ratio
+const renderer = new THREE.WebGLRenderer({ alpha: true, antialias: true });
+
+// Force square rendering to prevent stretching
+const containerWidth = container.offsetWidth;
+const containerHeight = container.offsetHeight;
+const size = Math.min(containerWidth, containerHeight);
+
+renderer.setSize(containerWidth, containerHeight);
+renderer.setViewport(
+    (containerWidth - size) / 2, // Center horizontally
+    (containerHeight - size) / 2, // Center vertically
+    size, 
+    size
+);
+renderer.setClearColor(0x000000, 0);
+container.appendChild(renderer.domElement);
+    
+    // Add lighting
+    const ambientLight = new THREE.AmbientLight(0xffffff, 0.6);
+    scene.add(ambientLight);
+    const directionalLight = new THREE.DirectionalLight(0xffffff, 0.8);
+    directionalLight.position.set(2, 2, 5);
+    scene.add(directionalLight);
+    
+    // Create character model (reuse your existing character creation functions)
+    let characterModel;
+    switch (charName) {
+    case "apple": characterModel = createAppleCharacter(); break;
+    case "carrot": characterModel = createCarrotCharacter(); break;
+    case "pumpkin": characterModel = createPumpkinCharacter(); break;
+    case "happyface": characterModel = createHappyFaceCharacter(); break;
+    case "monster": characterModel = createMonsterCharacter(); break;
+    case "atom": characterModel = createAtomCharacter(); break;
+    case "slime": characterModel = createSlimeCharacter(); break;
+    case "ufo": characterModel = createUFOCharacter(); break;
+    case "robot": characterModel = createRobotCharacter(); break;
+    case "dragon": characterModel = createDragonCharacter(); break;
+    case "ghost": characterModel = createGhostCharacter(); break;
+    case "creature": characterModel = createCreatureCharacter(); break;
+    default: 
+        console.warn(`Unknown character: ${charName}, using apple instead`);
+        characterModel = createAppleCharacter(); 
+        break;
+}
+    
+    if (characterModel) {
+        characterModel.scale.set(0.8, 0.8, 0.8);
+        scene.add(characterModel);
+        camera.position.set(0, 0, 3);
+        
+        // Auto-rotation animation
+        function animate() {
+            requestAnimationFrame(animate);
+            if (characterModel) {
+                characterModel.rotation.y += 0.01;
+            }
+            renderer.render(scene, camera);
+        }
+        animate();
+    }
+}
+
+// ADD this temporary debug function to test world previews
+function debugWorldPreviews() {
+    console.log('=== DEBUGGING WORLD PREVIEWS ===');
+    console.log('availableWorlds:', availableWorlds);
+    
+    availableWorlds.forEach((world, index) => {
+        console.log(`World ${index}:`, world);
+        console.log(`  - ID: ${world.id}`);
+        console.log(`  - Name: ${world.name}`);
+        console.log(`  - Colors:`, world.colors);
+        
+        // Test if container exists
+        const containerId = `shop-preview-world-${world.id}`;
+        const container = document.getElementById(containerId);
+        console.log(`  - Container ${containerId} exists:`, !!container);
+    });
+}
+
+// Call this after the shop loads
+setTimeout(debugWorldPreviews, 2000);
+
+function createShopWorldPreview(containerId, worldId) {
+    const container = document.getElementById(containerId);
+    if (!container) return;
+    
+    container.innerHTML = '';
+    
+    // Create image element
+    const img = document.createElement('img');
+    img.src = `assets/world-previews/${worldId}.png`;
+    img.style.cssText = `
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+        border-radius: 10px;
+        transition: all 0.3s ease;
+        background: linear-gradient(135deg, rgba(0, 0, 0, 0.3) 0%, rgba(0, 0, 0, 0.1) 100%);
+    `;
+    
+    // Success handler
+    img.onload = () => {
+        console.log(`✅ World preview image loaded: ${worldId}`);
+        
+        // Add hover effect
+        img.onmouseenter = () => {
+            img.style.transform = 'scale(1.05)';
+            img.style.boxShadow = '0 0 20px rgba(255, 33, 49, 0.4)';
+        };
+        img.onmouseleave = () => {
+            img.style.transform = 'scale(1)';
+            img.style.boxShadow = 'none';
+        };
+    };
+    
+    // Error handler - fallback to 2D generation
+    img.onerror = () => {
+        console.warn(`❌ Image not found: assets/world-previews/${worldId}.png`);
+        console.log(`Falling back to 2D generation for: ${worldId}`);
+        
+        // Remove the broken image
+        container.innerHTML = '';
+        
+        // Use your existing 2D generation as fallback
+        createShop2DWorldPreview(containerId, worldId);
+    };
+    
+    container.appendChild(img);
+}
+
+// Rename your existing function to avoid conflicts
+function createShop2DWorldPreview(containerId, worldId) {
+    // Your existing 2D canvas code goes here (just rename the function)
+    // This becomes the fallback when images don't load
+}
+
+function openShopCharacterPreview(charName) {
+    console.log('Opening character preview for:', charName);
+    
+    const modal = document.getElementById('shop-character-modal');
+    if (!modal) {
+        console.error('Shop character modal not found!');
+        return;
+    }
+    
+    modal.style.display = 'flex';
+    document.getElementById('shop-character-name').textContent = charName.charAt(0).toUpperCase() + charName.slice(1);
+    
+    // Create 3D preview
+    const previewContainer = document.getElementById('shop-character-preview');
+    previewContainer.innerHTML = '';
+    createShopCharacterModalPreview(previewContainer, charName);
+}
+
+function createShopCharacterModalPreview(container, charName) {
+    const scene = new THREE.Scene();
+    const camera = new THREE.PerspectiveCamera(75, 1, 0.1, 1000);
+    const renderer = new THREE.WebGLRenderer({ alpha: true, antialias: true });
+    
+    renderer.setSize(400, 400); // Much larger!
+    renderer.setClearColor(0x000000, 0);
+    container.appendChild(renderer.domElement);
+    
+    // Add lighting
+    const ambientLight = new THREE.AmbientLight(0xffffff, 0.8);
+    scene.add(ambientLight);
+    const directionalLight = new THREE.DirectionalLight(0xffffff, 1);
+    directionalLight.position.set(2, 2, 5);
+    scene.add(directionalLight);
+    
+    // Create character
+    let characterModel;
+    switch (charName) {
+        case "apple": characterModel = createAppleCharacter(); break;
+        case "carrot": characterModel = createCarrotCharacter(); break;
+        case "pumpkin": characterModel = createPumpkinCharacter(); break;
+        case "happyface": characterModel = createHappyFaceCharacter(); break;
+        case "monster": characterModel = createMonsterCharacter(); break;
+        case "atom": characterModel = createAtomCharacter(); break;
+        case "slime": characterModel = createSlimeCharacter(); break;
+        case "ufo": characterModel = createUFOCharacter(); break;
+        case "robot": characterModel = createRobotCharacter(); break;
+        case "dragon": characterModel = createDragonCharacter(); break;
+        case "ghost": characterModel = createGhostCharacter(); break;
+        case "creature": characterModel = createCreatureCharacter(); break;
+        default: characterModel = createAppleCharacter(); break;
+    }
+    
+    if (characterModel) {
+        characterModel.scale.set(1.5, 1.5, 1.5); // Make character bigger in modal
+        scene.add(characterModel);
+        camera.position.set(0, 0, 3);
+        
+        function animate() {
+            requestAnimationFrame(animate);
+            characterModel.rotation.y += 0.01;
+            renderer.render(scene, camera);
+        }
+        animate();
+    }
+}
+
+function closeShopCharacterModal() {
+    const modal = document.getElementById('shop-character-modal');
+    const previewContainer = document.getElementById('shop-character-preview');
+    
+    // CRITICAL: Properly dispose of WebGL context
+    if (previewContainer) {
+        const canvas = previewContainer.querySelector('canvas');
+        if (canvas) {
+            const gl = canvas.getContext('webgl') || canvas.getContext('experimental-webgl');
+            if (gl) {
+                const ext = gl.getExtension('WEBGL_lose_context');
+                if (ext) {
+                    ext.loseContext();
+                }
+            }
+        }
+        previewContainer.innerHTML = '';
+    }
+    
+    modal.style.display = 'none';
+}
+
+function createCharacterPreviewInModal(container, charName) {
+    // Create full-size character preview
+    const scene = new THREE.Scene();
+    const camera = new THREE.PerspectiveCamera(75, container.offsetWidth / container.offsetHeight, 0.1, 1000);
+    const renderer = new THREE.WebGLRenderer({ alpha: true, antialias: true });
+    
+    renderer.setSize(container.offsetWidth, container.offsetHeight);
+    renderer.setClearColor(0x000000, 0);
+    container.appendChild(renderer.domElement);
+    
+    // Add lighting
+    const ambientLight = new THREE.AmbientLight(0xffffff, 0.8);
+    scene.add(ambientLight);
+    const directionalLight = new THREE.DirectionalLight(0xffffff, 1);
+    directionalLight.position.set(2, 2, 5);
+    scene.add(directionalLight);
+    
+    // Create character (same switch as before)
+    let characterModel;
+    switch (charName) {
+        case "apple": characterModel = createAppleCharacter(); break;
+        case "carrot": characterModel = createCarrotCharacter(); break;
+        case "pumpkin": characterModel = createPumpkinCharacter(); break;
+        case "happyface": characterModel = createHappyFaceCharacter(); break;
+        case "monster": characterModel = createMonsterCharacter(); break;
+        case "atom": characterModel = createAtomCharacter(); break;
+        case "slime": characterModel = createSlimeCharacter(); break;
+        case "ufo": characterModel = createUFOCharacter(); break;
+        case "robot": characterModel = createRobotCharacter(); break;
+        case "dragon": characterModel = createDragonCharacter(); break;
+        case "ghost": characterModel = createGhostCharacter(); break;
+        case "creature": characterModel = createCreatureCharacter(); break;
+        default: characterModel = createAppleCharacter(); break;
+    }
+    
+    if (characterModel) {
+        scene.add(characterModel);
+        camera.position.set(0, 0, 3);
+        
+        // Animation loop
+        function animate() {
+            requestAnimationFrame(animate);
+            if (characterModel) {
+                characterModel.rotation.y += 0.01;
+            }
+            renderer.render(scene, camera);
+        }
+        animate();
+    }
+}
+
+function openShopWorldPreview(worldId) {
+    // Similar to character preview but for worlds
+    const world = availableWorlds.find(w => w.id === worldId);
+    if (world) {
+        console.log('Opening world preview for:', world.name);
+        // You can create a world preview modal or reuse existing ones
+    }
 }
 
 // Setup shop event listeners
 function setupShopListeners() {
     // Back button
     document.getElementById('backToMainMenuFromShop').addEventListener('click', function() {
+        // CLEANUP: Dispose of all shop WebGL contexts before leaving
+        cleanupShopPreviews();
+        
         document.getElementById('shopScreen').style.display = 'none';
         document.getElementById('mainMenuScreen').style.display = 'flex';
         gameState = "mainMenu";
@@ -4907,6 +5694,30 @@ function setupShopListeners() {
             }
         });
     });
+}
+
+// Cleanup function for shop WebGL contexts
+function cleanupShopPreviews() {
+    console.log('🧹 Cleaning up shop WebGL contexts...');
+    
+    // Clean up ALL shop WebGL contexts
+    const allShopPreviews = document.querySelectorAll('.shop-3d-preview canvas');
+    allShopPreviews.forEach(canvas => {
+        const gl = canvas.getContext('webgl') || canvas.getContext('experimental-webgl');
+        if (gl) {
+            const ext = gl.getExtension('WEBGL_lose_context');
+            if (ext) {
+                ext.loseContext();
+            }
+        }
+    });
+    
+    // Clear all preview containers
+    document.querySelectorAll('.shop-3d-preview').forEach(container => {
+        container.innerHTML = '';
+    });
+    
+    console.log('✅ Shop cleanup complete');
 }
 
 // Purchase character from shop
@@ -5113,71 +5924,6 @@ function setupProfileListeners() {
     });
 }
 
-// Create character models for the title screen
-function createTitleCharacters() {
-    // Clear existing models
-    titleCharacterModels.forEach(charObj => {
-        characterTitleScene.remove(charObj.model);
-    });
-    titleCharacterModels = [];
-    
-    // Create each character
-    characterNames.forEach((charType, index) => {
-        // Create the character model
-        let charModel;
-        switch (charType) {
-            // CHARACTER SELECTION SWITCH INJECTION POINT - Package manager will add cases here
-    case "apple": charModel = createAppleCharacter(); break;
-    case "carrot": charModel = createCarrotCharacter(); break;
-    case "pumpkin": charModel = createPumpkinCharacter(); break;
-    case "happyface": charModel = createHappyFaceCharacter(); break;
-    case "monster": charModel = createMonsterCharacter(); break;
-    case "atom": charModel = createAtomCharacter(); break;
-    case "slime": charModel = createSlimeCharacter(); break;
-    case "ufo": charModel = createUFOCharacter(); break;
-    case "robot": charModel = createRobotCharacter(); break;
-    case "dragon": charModel = createDragonCharacter(); break;
-    case "ghost": charModel = createGhostCharacter(); break;
-    case "creature": charModel = createCreatureCharacter(); break;
-    // END CHARACTER SELECTION SWITCH INJECTION POINT
-            default:
-                debugWarn(`Unknown character type: ${charType}, using happyface instead`);
-                charModel = createHappyFaceCharacter();
-                break;
-        }
-        
-        // Safety check
-        if (!charModel) {
-            console.error(`Failed to create character: ${charType}, using happyface instead`);
-            charModel = createHappyFaceCharacter();
-        }
-        
-        // Calculate position in circular orbit
-        const startAngle = (index / characterNames.length) * Math.PI * 2;
-        const orbitRadius = 3.2;
-        const orbitSpeed = 0.003;
-
-        // Position character in top-down circular orbit
-        charModel.position.x = Math.cos(startAngle) * orbitRadius;
-        charModel.position.y = Math.sin(startAngle) * orbitRadius;
-        charModel.position.z = 0;
-
-        // Scale characters smaller for cleaner look
-        charModel.scale.set(0.7, 0.7, 0.7);
-        
-        // Add to scene
-        characterTitleScene.add(charModel);
-        
-        // Store model and orbit parameters
-        titleCharacterModels.push({
-            model: charModel,
-            type: charType,
-            angle: startAngle,
-            radius: orbitRadius,
-            speed: orbitSpeed
-        });
-    });
-}
 
         // ==================== CHARACTER SELECTION SYSTEM ====================
 // Character selection screen and character preview functionality
@@ -5217,8 +5963,7 @@ window.characterSelectRenderer = characterSelectRenderer;
             directionalLight.position.set(10, 20, 10);
             characterSelectScene.add(directionalLight);
             
-            // Create background effects
-            createBackgroundEffects(characterSelectScene);
+
             
             // Clear existing character models if they exist
 if (characterSelectModels && characterSelectModels.length > 0) {
@@ -5333,10 +6078,7 @@ function animateCharacterSelect() {
             }
         }
         
-        // Animate background elements
-        if (window.characterSelectScene && window.characterSelectScene.userData.particles) {
-            animateBackgroundEffects();
-        }
+
         
         // Render
 if (window.characterSelectRenderer && window.characterSelectScene && window.selectCamera) {
@@ -6252,68 +6994,7 @@ switch (selectedChar) {
             }
         }
 
-        // Create and animate background effects
-        function createBackgroundEffects(scene) {
-            // Add particles, grid lines, etc. here
-            // This is just a simple implementation - you can expand it
-            
-            // Create particles
-            const particlesGeometry = new THREE.BufferGeometry();
-            const particleCount = 200;
-            
-            const positions = new Float32Array(particleCount * 3);
-            const colors = new Float32Array(particleCount * 3);
-            
-            for (let i = 0; i < particleCount; i++) {
-                // Position
-                positions[i * 3] = (Math.random() - 0.5) * 20;      // x
-                positions[i * 3 + 1] = (Math.random() - 0.5) * 20;  // y
-                positions[i * 3 + 2] = (Math.random() - 0.5) * 20;  // z
-                
-                // Color (blue/cyan)
-                colors[i * 3] = 0.1 + Math.random() * 0.3;          // r
-                colors[i * 3 + 1] = 0.4 + Math.random() * 0.4;      // g
-                colors[i * 3 + 2] = 0.7 + Math.random() * 0.3;      // b
-            }
-            
-            particlesGeometry.setAttribute('position', new THREE.BufferAttribute(positions, 3));
-            particlesGeometry.setAttribute('color', new THREE.BufferAttribute(colors, 3));
-            
-            const particlesMaterial = new THREE.PointsMaterial({
-                size: 0.1,
-                transparent: true,
-                opacity: 0.7,
-                vertexColors: true
-            });
-            
-            const particles = new THREE.Points(particlesGeometry, particlesMaterial);
-            particles.userData = {
-                originalPositions: positions.slice() // Store original positions
-            };
-            
-            scene.add(particles);
-            scene.userData.particles = particles;
-        }
 
-        function animateBackgroundEffects() {
-            const scene = characterSelectModels[0].model.parent;
-            const particles = scene.userData.particles;
-            
-            if (particles) {
-                // Animate particles
-                const positions = particles.geometry.attributes.position.array;
-                const originalPositions = particles.userData.originalPositions;
-                
-                for (let i = 0; i < positions.length; i += 3) {
-                    // Move particles in a wave pattern
-                    positions[i] = originalPositions[i] + Math.sin(frameCount * 0.01 + i * 0.1) * 0.1;
-                    positions[i + 1] = originalPositions[i + 1] + Math.cos(frameCount * 0.01 + i * 0.05) * 0.1;
-                    positions[i + 2] = originalPositions[i + 2];
-                }
-                
-                particles.geometry.attributes.position.needsUpdate = true;
-            }
-        }
 
         // Helper function to animate specific characters
         function animateCharacterModel(model, type, frame) {
@@ -13093,5 +13774,14 @@ if ('serviceWorker' in navigator) {
   });
 }
 </script>
+
+<!-- Shop Character Preview Modal -->
+<div id="shop-character-modal" style="display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0, 0, 0, 0.8); z-index: 2000; justify-content: center; align-items: center;">
+    <div style="background: linear-gradient(135deg, rgba(12, 12, 12, 0.95) 0%, rgba(26, 26, 26, 0.95) 100%); border: 2px solid rgba(255, 33, 49, 0.4); border-radius: 20px; padding: 30px; max-width: 600px; width: 90%; text-align: center;">
+        <h3 id="shop-character-name" style="color: white; margin-bottom: 20px; font-size: 28px;">Character Name</h3>
+        <div id="shop-character-preview" style="width: 400px; height: 400px; margin: 0 auto 20px auto; background: rgba(0, 0, 0, 0.3); border-radius: 15px; position: relative; box-shadow: 0 0 20px rgba(255, 33, 49, 0.3);"></div>
+        <button onclick="closeShopCharacterModal()" style="background: linear-gradient(135deg, #ff2131 0%, #ff4757 100%); color: white; border: 2px solid rgba(255, 255, 255, 0.2); padding: 12px 24px; border-radius: 10px; cursor: pointer; font-weight: 600;">Close</button>
+    </div>
+</div>
 </body>
 </html>
