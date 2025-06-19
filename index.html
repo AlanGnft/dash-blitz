@@ -1705,6 +1705,20 @@ setTimeout(() => {
     box-shadow: 0 6px 20px rgba(255, 33, 49, 0.4);
 }
 
+/* Mobile-responsive title logo - keeps desktop unchanged */
+@media screen and (max-width: 768px) {
+    .game-logo {
+        max-width: 85vw !important;
+    }
+}
+
+/* Extra small mobile screens */
+@media screen and (max-width: 480px) {
+    .game-logo {
+        max-width: 90vw !important;
+    }
+}
+
     </style>
 </head>
 <body>
@@ -1721,7 +1735,7 @@ setTimeout(() => {
     <div style="position: absolute; top: 0; left: 0; width: 100%; height: 100%;" id="titleCanvas"></div>
     
     <!-- Logo with pulsing animation -->
-<div class="logo-container" style="position: relative; z-index: 10; margin-bottom: 30px;">
+<div style="position: relative; z-index: 10; margin-bottom: 30px;">
 <img src="dash-blitz-logo.svg"
          alt="Dash Blitz Logo" 
          class="game-logo"
@@ -5365,69 +5379,57 @@ function createShopCharacterPreview(containerId, charName) {
     const container = document.getElementById(containerId);
     if (!container) return;
     
-    // Create mini Three.js scene
-const scene = new THREE.Scene();
-const camera = new THREE.PerspectiveCamera(75, 1, 0.1, 1000); // Force 1:1 aspect ratio
-const renderer = new THREE.WebGLRenderer({ alpha: true, antialias: true });
-
-// Force square rendering to prevent stretching
-const containerWidth = container.offsetWidth;
-const containerHeight = container.offsetHeight;
-const size = Math.min(containerWidth, containerHeight);
-
-renderer.setSize(containerWidth, containerHeight);
-renderer.setViewport(
-    (containerWidth - size) / 2, // Center horizontally
-    (containerHeight - size) / 2, // Center vertically
-    size, 
-    size
-);
-renderer.setClearColor(0x000000, 0);
-container.appendChild(renderer.domElement);
+    container.innerHTML = '';
     
-    // Add lighting
-    const ambientLight = new THREE.AmbientLight(0xffffff, 0.6);
-    scene.add(ambientLight);
-    const directionalLight = new THREE.DirectionalLight(0xffffff, 0.8);
-    directionalLight.position.set(2, 2, 5);
-    scene.add(directionalLight);
+    const img = document.createElement('img');
+    img.src = `assets/character-previews/small/${charName}.png`;
+    img.style.cssText = `
+        width: 100%;
+        height: 100%;
+        object-fit: contain;
+        border-radius: 10px;
+        transition: all 0.3s ease;
+        background: rgba(0, 0, 0, 0.1);
+    `;
     
-    // Create character model (reuse your existing character creation functions)
-    let characterModel;
-    switch (charName) {
-    case "apple": characterModel = createAppleCharacter(); break;
-    case "carrot": characterModel = createCarrotCharacter(); break;
-    case "pumpkin": characterModel = createPumpkinCharacter(); break;
-    case "happyface": characterModel = createHappyFaceCharacter(); break;
-    case "monster": characterModel = createMonsterCharacter(); break;
-    case "atom": characterModel = createAtomCharacter(); break;
-    case "slime": characterModel = createSlimeCharacter(); break;
-    case "ufo": characterModel = createUFOCharacter(); break;
-    case "robot": characterModel = createRobotCharacter(); break;
-    case "dragon": characterModel = createDragonCharacter(); break;
-    case "ghost": characterModel = createGhostCharacter(); break;
-    case "creature": characterModel = createCreatureCharacter(); break;
-    default: 
-        console.warn(`Unknown character: ${charName}, using apple instead`);
-        characterModel = createAppleCharacter(); 
-        break;
-}
-    
-    if (characterModel) {
-        characterModel.scale.set(0.8, 0.8, 0.8);
-        scene.add(characterModel);
-        camera.position.set(0, 0, 3);
+    // Add hover effect
+    img.onload = () => {
+        console.log(`✅ Character preview loaded: ${charName}`);
         
-        // Auto-rotation animation
-        function animate() {
-            requestAnimationFrame(animate);
-            if (characterModel) {
-                characterModel.rotation.y += 0.01;
-            }
-            renderer.render(scene, camera);
-        }
-        animate();
-    }
+        img.onmouseenter = () => {
+            img.style.transform = 'scale(1.05)';
+            img.style.boxShadow = '0 0 15px rgba(255, 33, 49, 0.4)';
+        };
+        img.onmouseleave = () => {
+            img.style.transform = 'scale(1)';
+            img.style.boxShadow = 'none';
+        };
+    };
+    
+    // Fallback for missing images
+    img.onerror = () => {
+        console.warn(`❌ Character image not found: ${charName}`);
+        container.innerHTML = `
+            <div style="
+                width: 100%; 
+                height: 100%; 
+                background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); 
+                border-radius: 10px; 
+                display: flex; 
+                align-items: center; 
+                justify-content: center; 
+                color: white; 
+                font-weight: bold; 
+                text-transform: capitalize;
+                font-size: 14px;
+                text-align: center;
+            ">
+                ${charName}
+            </div>
+        `;
+    };
+    
+    container.appendChild(img);
 }
 
 // ADD this temporary debug function to test world previews
@@ -5524,125 +5526,67 @@ function openShopCharacterPreview(charName) {
 }
 
 function createShopCharacterModalPreview(container, charName) {
-    const scene = new THREE.Scene();
-    const camera = new THREE.PerspectiveCamera(75, 1, 0.1, 1000);
-    const renderer = new THREE.WebGLRenderer({ alpha: true, antialias: true });
+    container.innerHTML = '';
     
-    renderer.setSize(400, 400); // Much larger!
-    renderer.setClearColor(0x000000, 0);
-    container.appendChild(renderer.domElement);
+    const img = document.createElement('img');
+    img.src = `assets/character-previews/large/${charName}.png`;
+    img.style.cssText = `
+        width: 100%;
+        height: 100%;
+        object-fit: contain;
+        border-radius: 15px;
+        background: rgba(0, 0, 0, 0.1);
+    `;
     
-    // Add lighting
-    const ambientLight = new THREE.AmbientLight(0xffffff, 0.8);
-    scene.add(ambientLight);
-    const directionalLight = new THREE.DirectionalLight(0xffffff, 1);
-    directionalLight.position.set(2, 2, 5);
-    scene.add(directionalLight);
+    img.onload = () => {
+        console.log(`✅ Large character preview loaded: ${charName}`);
+    };
     
-    // Create character
-    let characterModel;
-    switch (charName) {
-        case "apple": characterModel = createAppleCharacter(); break;
-        case "carrot": characterModel = createCarrotCharacter(); break;
-        case "pumpkin": characterModel = createPumpkinCharacter(); break;
-        case "happyface": characterModel = createHappyFaceCharacter(); break;
-        case "monster": characterModel = createMonsterCharacter(); break;
-        case "atom": characterModel = createAtomCharacter(); break;
-        case "slime": characterModel = createSlimeCharacter(); break;
-        case "ufo": characterModel = createUFOCharacter(); break;
-        case "robot": characterModel = createRobotCharacter(); break;
-        case "dragon": characterModel = createDragonCharacter(); break;
-        case "ghost": characterModel = createGhostCharacter(); break;
-        case "creature": characterModel = createCreatureCharacter(); break;
-        default: characterModel = createAppleCharacter(); break;
-    }
-    
-    if (characterModel) {
-        characterModel.scale.set(1.5, 1.5, 1.5); // Make character bigger in modal
-        scene.add(characterModel);
-        camera.position.set(0, 0, 3);
+    // Fallback for missing large images - try small version
+    img.onerror = () => {
+        console.warn(`❌ Large image not found, trying small: ${charName}`);
+        img.src = `assets/character-previews/small/${charName}.png`;
         
-        function animate() {
-            requestAnimationFrame(animate);
-            characterModel.rotation.y += 0.01;
-            renderer.render(scene, camera);
-        }
-        animate();
-    }
+        img.onerror = () => {
+            console.warn(`❌ No character images found: ${charName}`);
+            container.innerHTML = `
+                <div style="
+                    width: 100%; 
+                    height: 100%; 
+                    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); 
+                    border-radius: 15px; 
+                    display: flex; 
+                    flex-direction: column;
+                    align-items: center; 
+                    justify-content: center; 
+                    color: white; 
+                    font-weight: bold; 
+                    text-transform: capitalize;
+                    gap: 10px;
+                ">
+                    <div style="font-size: 24px;">${charName}</div>
+                    <div style="font-size: 12px; opacity: 0.7;">Preview Image Missing</div>
+                </div>
+            `;
+        };
+    };
+    
+    container.appendChild(img);
 }
 
 function closeShopCharacterModal() {
     const modal = document.getElementById('shop-character-modal');
     const previewContainer = document.getElementById('shop-character-preview');
     
-    // CRITICAL: Properly dispose of WebGL context
+    // Simple cleanup - no WebGL contexts to dispose of!
     if (previewContainer) {
-        const canvas = previewContainer.querySelector('canvas');
-        if (canvas) {
-            const gl = canvas.getContext('webgl') || canvas.getContext('experimental-webgl');
-            if (gl) {
-                const ext = gl.getExtension('WEBGL_lose_context');
-                if (ext) {
-                    ext.loseContext();
-                }
-            }
-        }
         previewContainer.innerHTML = '';
     }
     
     modal.style.display = 'none';
 }
 
-function createCharacterPreviewInModal(container, charName) {
-    // Create full-size character preview
-    const scene = new THREE.Scene();
-    const camera = new THREE.PerspectiveCamera(75, container.offsetWidth / container.offsetHeight, 0.1, 1000);
-    const renderer = new THREE.WebGLRenderer({ alpha: true, antialias: true });
-    
-    renderer.setSize(container.offsetWidth, container.offsetHeight);
-    renderer.setClearColor(0x000000, 0);
-    container.appendChild(renderer.domElement);
-    
-    // Add lighting
-    const ambientLight = new THREE.AmbientLight(0xffffff, 0.8);
-    scene.add(ambientLight);
-    const directionalLight = new THREE.DirectionalLight(0xffffff, 1);
-    directionalLight.position.set(2, 2, 5);
-    scene.add(directionalLight);
-    
-    // Create character (same switch as before)
-    let characterModel;
-    switch (charName) {
-        case "apple": characterModel = createAppleCharacter(); break;
-        case "carrot": characterModel = createCarrotCharacter(); break;
-        case "pumpkin": characterModel = createPumpkinCharacter(); break;
-        case "happyface": characterModel = createHappyFaceCharacter(); break;
-        case "monster": characterModel = createMonsterCharacter(); break;
-        case "atom": characterModel = createAtomCharacter(); break;
-        case "slime": characterModel = createSlimeCharacter(); break;
-        case "ufo": characterModel = createUFOCharacter(); break;
-        case "robot": characterModel = createRobotCharacter(); break;
-        case "dragon": characterModel = createDragonCharacter(); break;
-        case "ghost": characterModel = createGhostCharacter(); break;
-        case "creature": characterModel = createCreatureCharacter(); break;
-        default: characterModel = createAppleCharacter(); break;
-    }
-    
-    if (characterModel) {
-        scene.add(characterModel);
-        camera.position.set(0, 0, 3);
-        
-        // Animation loop
-        function animate() {
-            requestAnimationFrame(animate);
-            if (characterModel) {
-                characterModel.rotation.y += 0.01;
-            }
-            renderer.render(scene, camera);
-        }
-        animate();
-    }
-}
+
 
 function openShopWorldPreview(worldId) {
     // Similar to character preview but for worlds
@@ -5698,11 +5642,17 @@ function setupShopListeners() {
 
 // Cleanup function for shop WebGL contexts
 function cleanupShopPreviews() {
-    console.log('🧹 Cleaning up shop WebGL contexts...');
+    console.log('🧹 Cleaning up shop (Image-based - minimal cleanup needed)...');
     
-    // Clean up ALL shop WebGL contexts
-    const allShopPreviews = document.querySelectorAll('.shop-3d-preview canvas');
-    allShopPreviews.forEach(canvas => {
+    // Only clean up any remaining WebGL contexts (should be none now)
+    const allCanvases = document.querySelectorAll('canvas');
+    allCanvases.forEach(canvas => {
+        // Skip main game canvas
+        if (canvas.id === 'gameCanvas' || canvas.closest('#gameArea')) {
+            return;
+        }
+        
+        // Clean up any stray WebGL contexts
         const gl = canvas.getContext('webgl') || canvas.getContext('experimental-webgl');
         if (gl) {
             const ext = gl.getExtension('WEBGL_lose_context');
@@ -5710,14 +5660,13 @@ function cleanupShopPreviews() {
                 ext.loseContext();
             }
         }
+        
+        if (canvas.parentNode) {
+            canvas.parentNode.removeChild(canvas);
+        }
     });
     
-    // Clear all preview containers
-    document.querySelectorAll('.shop-3d-preview').forEach(container => {
-        container.innerHTML = '';
-    });
-    
-    console.log('✅ Shop cleanup complete');
+    console.log('✅ Shop cleanup complete (image-based system)');
 }
 
 // Purchase character from shop
@@ -13776,10 +13725,10 @@ if ('serviceWorker' in navigator) {
 </script>
 
 <!-- Shop Character Preview Modal -->
-<div id="shop-character-modal" style="display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0, 0, 0, 0.8); z-index: 2000; justify-content: center; align-items: center;">
-    <div style="background: linear-gradient(135deg, rgba(12, 12, 12, 0.95) 0%, rgba(26, 26, 26, 0.95) 100%); border: 2px solid rgba(255, 33, 49, 0.4); border-radius: 20px; padding: 30px; max-width: 600px; width: 90%; text-align: center;">
-        <h3 id="shop-character-name" style="color: white; margin-bottom: 20px; font-size: 28px;">Character Name</h3>
-        <div id="shop-character-preview" style="width: 400px; height: 400px; margin: 0 auto 20px auto; background: rgba(0, 0, 0, 0.3); border-radius: 15px; position: relative; box-shadow: 0 0 20px rgba(255, 33, 49, 0.3);"></div>
+<div id="shop-character-modal" style="display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0, 0, 0, 0.8); z-index: 2000; justify-content: center; align-items: center; padding: 20px; box-sizing: border-box;">
+    <div style="background: linear-gradient(135deg, rgba(12, 12, 12, 0.95) 0%, rgba(26, 26, 26, 0.95) 100%); border: 2px solid rgba(255, 33, 49, 0.4); border-radius: 20px; padding: 20px; max-width: 90vw; max-height: 90vh; width: 100%; text-align: center; overflow: hidden;">
+        <h3 id="shop-character-name" style="color: white; margin-bottom: 15px; font-size: clamp(18px, 4vw, 24px);">Character Name</h3>
+        <div id="shop-character-preview" style="width: min(300px, 80vw); height: min(300px, 80vw); margin: 0 auto 15px auto; background: rgba(0, 0, 0, 0.3); border-radius: 15px; position: relative; box-shadow: 0 0 20px rgba(255, 33, 49, 0.3);"></div>
         <button onclick="closeShopCharacterModal()" style="background: linear-gradient(135deg, #ff2131 0%, #ff4757 100%); color: white; border: 2px solid rgba(255, 255, 255, 0.2); padding: 12px 24px; border-radius: 10px; cursor: pointer; font-weight: 600;">Close</button>
     </div>
 </div>
