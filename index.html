@@ -5625,15 +5625,21 @@ function openShopCharacterPreview(charName) {
 function createShopCharacterModalPreview(container, charName) {
     container.innerHTML = '';
     
-    // Create Three.js scene for modal GLB
-    const scene = new THREE.Scene();
-    const camera = new THREE.PerspectiveCamera(75, 1, 0.1, 1000);
-    const renderer = new THREE.WebGLRenderer({ alpha: true, antialias: true });
-    
-    // Set up renderer for modal (larger size)
-    renderer.setSize(400, 400);
-    renderer.setClearColor(0x000000, 0);
-    container.appendChild(renderer.domElement);
+    // Wait for container to be properly sized
+    setTimeout(() => {
+        const scene = new THREE.Scene();
+        const camera = new THREE.PerspectiveCamera(75, 1, 0.1, 1000);
+        const renderer = new THREE.WebGLRenderer({ alpha: true, antialias: true });
+        
+        // Match renderer size to actual container size
+        const containerWidth = container.offsetWidth;
+        const containerHeight = container.offsetHeight;
+        
+        console.log('Modal container size:', containerWidth, 'x', containerHeight);
+        
+        renderer.setSize(containerWidth, containerHeight);
+        renderer.setClearColor(0x000000, 0);
+        container.appendChild(renderer.domElement);
     
     // Add enhanced lighting for modal
     const ambientLight = new THREE.AmbientLight(0xffffff, 0.8);
@@ -5643,36 +5649,38 @@ function createShopCharacterModalPreview(container, charName) {
     scene.add(directionalLight);
     
     // Load GLB character for modal
-    const loader = new THREE.GLTFLoader();
-    loader.load(
-        `assets/character-models/${charName}.glb`,
-        // Success callback
-        (gltf) => {
+const loader = new THREE.GLTFLoader();
+loader.load(
+    `assets/character-models/${charName}.glb`,
+    // Success callback
+    (gltf) => {
 
-            // Add this at the start of the success callback to test
-            console.log('GLB structure:', gltf);
-            console.log('GLB scene children:', gltf.scene.children);
-
-            console.log(`✅ Modal GLB character loaded: ${charName}`);
-            
-            const characterModel = gltf.scene;
-            characterModel.scale.set(1.5, 1.5, 1.5); // Larger for modal
-            scene.add(characterModel);
-            
-            // Position camera
-            camera.position.set(0, 0, 3);
-            camera.lookAt(0, 0, 0);
-            
-            // Auto-rotation animation
-            function animate() {
-                requestAnimationFrame(animate);
-                if (characterModel) {
-                    characterModel.rotation.y += 0.01;
-                }
-                renderer.render(scene, camera);
+        // Add this at the start of the success callback to test
+        console.log('GLB structure:', gltf);
+        console.log('GLB scene children:', gltf.scene.children);
+        console.log(`✅ Modal GLB character loaded: ${charName}`);
+        
+        const characterModel = gltf.scene;
+        
+        // Better scaling for modal view
+        characterModel.scale.set(1.0, 1.0, 1.0); // Reduced from 1.5 to 1.0
+        scene.add(characterModel);
+        
+        // Better camera position for modal - further back
+        camera.position.set(0, 0, 5); // Increased from 3 to 5
+        camera.lookAt(0, 0, 0);
+        
+        // Auto-rotation animation
+        function animate() {
+            requestAnimationFrame(animate);
+            if (characterModel) {
+                characterModel.rotation.y += 0.01;
             }
-            animate();
-        },
+            renderer.render(scene, camera);
+        }
+        animate();
+    },
+
         // Progress callback
         undefined,
         // Error callback
@@ -13856,10 +13864,10 @@ if ('serviceWorker' in navigator) {
 
 <!-- Shop Character Preview Modal -->
 <div id="shop-character-modal" style="display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0, 0, 0, 0.8); z-index: 2000; justify-content: center; align-items: center; padding: 20px; box-sizing: border-box;">
-    <div style="background: linear-gradient(135deg, rgba(12, 12, 12, 0.95) 0%, rgba(26, 26, 26, 0.95) 100%); border: 2px solid rgba(255, 33, 49, 0.4); border-radius: 20px; padding: 20px; max-width: 90vw; max-height: 90vh; width: 100%; text-align: center; overflow: hidden;">
-        <h3 id="shop-character-name" style="color: white; margin-bottom: 15px; font-size: clamp(18px, 4vw, 24px);">Character Name</h3>
-        <div id="shop-character-preview" style="width: min(300px, 80vw); height: min(300px, 80vw); margin: 0 auto 15px auto; background: rgba(0, 0, 0, 0.3); border-radius: 15px; position: relative; box-shadow: 0 0 20px rgba(255, 33, 49, 0.3);"></div>
-        <button onclick="closeShopCharacterModal()" style="background: linear-gradient(135deg, #ff2131 0%, #ff4757 100%); color: white; border: 2px solid rgba(255, 255, 255, 0.2); padding: 12px 24px; border-radius: 10px; cursor: pointer; font-weight: 600;">Close</button>
+    <div style="background: linear-gradient(135deg, rgba(12, 12, 12, 0.95) 0%, rgba(26, 26, 26, 0.95) 100%); border: 2px solid rgba(255, 33, 49, 0.4); border-radius: 20px; padding: 20px; max-width: 90vw; max-height: 90vh; width: auto; text-align: center; overflow: hidden; display: flex; flex-direction: column;">
+        <h3 id="shop-character-name" style="color: white; margin-bottom: 15px; font-size: clamp(18px, 4vw, 24px); flex-shrink: 0;">Character Name</h3>
+        <div id="shop-character-preview" style="width: min(350px, 70vw); height: min(350px, 70vw); margin: 0 auto 15px auto; background: rgba(0, 0, 0, 0.3); border-radius: 15px; position: relative; box-shadow: 0 0 20px rgba(255, 33, 49, 0.3); flex-shrink: 0;"></div>
+        <button onclick="closeShopCharacterModal()" style="background: linear-gradient(135deg, #ff2131 0%, #ff4757 100%); color: white; border: 2px solid rgba(255, 255, 255, 0.2); padding: 12px 24px; border-radius: 10px; cursor: pointer; font-weight: 600; flex-shrink: 0;">Close</button>
     </div>
 </div>
 </body>
