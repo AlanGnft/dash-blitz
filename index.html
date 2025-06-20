@@ -5497,26 +5497,34 @@ function createShopWorldPreview(containerId, worldId) {
         };
     };
     
-    // Error handler - fallback to 2D generation
+    // Error handler - simple fallback without WebGL
     img.onerror = () => {
         console.warn(`❌ Image not found: assets/world-previews/${worldId}.png`);
-        console.log(`Falling back to 2D generation for: ${worldId}`);
         
-        // Remove the broken image
-        container.innerHTML = '';
-        
-        // Use your existing 2D generation as fallback
-        createShop2DWorldPreview(containerId, worldId);
+        // Simple fallback - just show world name
+        container.innerHTML = `
+            <div style="
+                width: 100%; 
+                height: 100%; 
+                background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); 
+                border-radius: 10px; 
+                display: flex; 
+                align-items: center; 
+                justify-content: center; 
+                color: white; 
+                font-weight: bold; 
+                text-align: center;
+                font-size: 14px;
+            ">
+                ${worldId}<br>
+                <small style="opacity: 0.7;">Preview Missing</small>
+            </div>
+        `;
     };
     
     container.appendChild(img);
 }
 
-// Rename your existing function to avoid conflicts
-function createShop2DWorldPreview(containerId, worldId) {
-    // Your existing 2D canvas code goes here (just rename the function)
-    // This becomes the fallback when images don't load
-}
 
 function openShopCharacterPreview(charName) {
     console.log('Opening character preview for:', charName);
