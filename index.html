@@ -2733,6 +2733,48 @@ setTimeout(() => {
 
     <script>
 
+// Add this at the top of your JavaScript to track ALL WebGL context creation
+const originalGetContext = HTMLCanvasElement.prototype.getContext;
+let webglContextCount = 0;
+
+HTMLCanvasElement.prototype.getContext = function(contextType, ...args) {
+    const context = originalGetContext.call(this, contextType, ...args);
+    
+    if (contextType === 'webgl' || contextType === 'experimental-webgl') {
+        webglContextCount++;
+        console.log(`🔍 WebGL Context #${webglContextCount} created!`, {
+            element: this,
+            id: this.id,
+            parent: this.parentElement?.className || this.parentElement?.id,
+            stackTrace: new Error().stack.split('\n').slice(0, 5)
+        });
+    }
+    
+    return context;
+};
+
+// Function to check current state
+function debugCurrentContexts() {
+    console.log('=== CURRENT WEBGL STATE ===');
+    console.log(`Total WebGL contexts created: ${webglContextCount}`);
+    
+    const allCanvases = document.querySelectorAll('canvas');
+    console.log(`Total canvases in DOM: ${allCanvases.length}`);
+    
+    allCanvases.forEach((canvas, index) => {
+        console.log(`Canvas ${index}:`, {
+            id: canvas.id,
+            size: `${canvas.width}x${canvas.height}`,
+            parent: canvas.parentElement?.className || canvas.parentElement?.id,
+            hasWebGL: !!(canvas.getContext('webgl') || canvas.getContext('experimental-webgl'))
+        });
+    });
+    console.log('=== END DEBUG ===');
+}
+
+// Call this at different points
+window.debugContexts = debugCurrentContexts;
+
 // Game variables
         let scene, camera, renderer, player, obstacles = [], coins = [], ground;
         let waterStreams = [];
