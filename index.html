@@ -5703,31 +5703,31 @@ function setupShopListeners() {
 
 // Cleanup function for shop WebGL contexts
 function cleanupShopPreviews() {
-    console.log('🧹 Cleaning up shop (Image-based - minimal cleanup needed)...');
+    console.log('🧹 Safe shop cleanup starting...');
     
-    // Only clean up any remaining WebGL contexts (should be none now)
+    // Just remove canvases without touching WebGL contexts
     const allCanvases = document.querySelectorAll('canvas');
+    let removedCount = 0;
+    
     allCanvases.forEach(canvas => {
         // Skip main game canvas
         if (canvas.id === 'gameCanvas' || canvas.closest('#gameArea')) {
             return;
         }
         
-        // Clean up any stray WebGL contexts
-        const gl = canvas.getContext('webgl') || canvas.getContext('experimental-webgl');
-        if (gl) {
-            const ext = gl.getExtension('WEBGL_lose_context');
-            if (ext) {
-                ext.loseContext();
-            }
-        }
-        
+        // Just remove the canvas - don't try to get context
         if (canvas.parentNode) {
             canvas.parentNode.removeChild(canvas);
+            removedCount++;
         }
     });
     
-    console.log('✅ Shop cleanup complete (image-based system)');
+    // Clear all preview containers
+    document.querySelectorAll('.shop-3d-preview, .shop-preview-container').forEach(container => {
+        container.innerHTML = '';
+    });
+    
+    console.log(`✅ Safe cleanup complete - removed ${removedCount} canvases`);
 }
 
 // Purchase character from shop
