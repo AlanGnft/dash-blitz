@@ -3262,17 +3262,26 @@ let backgroundMusicEnabled = true;
 // TRACK INJECTION POINT: Add new tracks here in this format:
 // { id: 'filename-without-extension', name: 'Display Name', description: 'Short description', artist: 'Artist Name (optional)' }
 let availableTracks = [
-    { id: 'lofi', name: 'Coffee Shop', description: 'Chill lofi beats', artist: 'Alan G.' },
-    { id: 'electronic', name: 'Cybershock', description: 'Futuristic electronic beats', artist: 'Alan G.' },
-    { id: 'ambient', name: 'Field of Memories', description: 'Dreamy ethereal lofi vibes', artist: 'Alan G.' },
+    { id: 'lofi', name: 'Coffee Shop', description: 'Chill lofi beats', artist: 'DirtyHippie' },
+    { id: 'electronic', name: 'Cybershock', description: 'Futuristic electronic beats', artist: 'G-Vibez' },
+    { id: 'ambient', name: 'Field of Memories', description: 'Dreamy ethereal lofi vibes', artist: 'ZenMaster' },
     { id: 'BitCrushed', name: 'Bit Crushed', description: 'Retro arcade vibes', artist: 'ArtForFartSake' },
     { id: 'SolandianVibes', name: 'Solandian Vibes', description: 'Lofi goodness', artist: 'ArtForFartSake' },
-    { id: 'ACruelAngelsThesis', name: 'A Cruel Angels Thesis', description: 'Dø-Fi Vibes', artist: 'Dúo Dø' },
+    { id: 'ACruelAngelsThesis', name: "A Cruel Angel's Thesis", description: 'Dø-Fi Vibes', artist: 'Dúo Dø' },
     { id: 'SpiritedAway', name: 'Spirited Away', description: 'Dø-Fi Vibes', artist: 'Dúo Dø' },
-    { id: 'Spike', name: 'Spike', description: 'Dø-Fi Vibes', artist: 'Dúo Dø' }
-  //  { id: 'slot9', name: 'Field of Memories', description: 'Dreamy ethereal lofi vibes', artist: 'Alan G.' }
-  //  { id: 'slot10', name: 'Field of Memories', description: 'Dreamy ethereal lofi vibes', artist: 'Alan G.' }
-  //  { id: 'slot11', name: 'Field of Memories', description: 'Dreamy ethereal lofi vibes', artist: 'Alan G.' }
+    { id: 'Spike', name: 'Spike', description: 'Dø-Fi Vibes', artist: 'Dúo Dø' },
+    { id: 'FRCTR', name: 'FRCTR', description: 'April Four vibes', artist: 'April Four' },
+    { id: 'DontRun', name: "Don't Run", description: 'Glass Vibes', artist: 'Glass Meadow' }
+  //  { id: 'slot11', name: 'name', description: 'vibes', artist: 'artist' }
+  //  { id: 'slot12', name: 'name', description: 'vibes', artist: 'artist' }
+  //  { id: 'slot13', name: 'name', description: 'vibes', artist: 'artist' }
+  //  { id: 'slot14', name: 'name', description: 'vibes', artist: 'artist' }
+  //  { id: 'slot15', name: 'name', description: 'vibes', artist: 'artist' }
+  //  { id: 'slot16', name: 'name', description: 'vibes', artist: 'artist' }
+  //  { id: 'slot17', name: 'name', description: 'vibes', artist: 'artist' }
+  //  { id: 'slot18', name: 'name', description: 'vibes', artist: 'artist' }
+  //  { id: 'slot19', name: 'name', description: 'vibes', artist: 'artist' }
+  //  { id: 'slot120', name: 'name', description: 'vibes', artist: 'artist' }
 ];
 
 // Make availableTracks accessible to audio system
@@ -5427,62 +5436,89 @@ function populateShopWorlds() {
     });
 }
 
-// Shop 3D Preview Functions
+// Shop Preview Functions
 function createShopCharacterPreview(containerId, charName) {
     const container = document.getElementById(containerId);
     if (!container) return;
     
     container.innerHTML = '';
     
-    const img = document.createElement('img');
-    img.src = `assets/character-previews/small/${charName}.png`;
-    img.style.cssText = `
-        width: 100%;
-        height: 100%;
-        object-fit: contain;
-        border-radius: 10px;
-        transition: all 0.3s ease;
-        background: rgba(0, 0, 0, 0.1);
-    `;
+    // Create Three.js scene for GLB
+    const scene = new THREE.Scene();
+    const camera = new THREE.PerspectiveCamera(75, 1, 0.1, 1000);
+    const renderer = new THREE.WebGLRenderer({ alpha: true, antialias: true });
     
-    // Add hover effect
-    img.onload = () => {
-        console.log(`✅ Character preview loaded: ${charName}`);
-        
-        img.onmouseenter = () => {
-            img.style.transform = 'scale(1.05)';
-            img.style.boxShadow = '0 0 15px rgba(255, 33, 49, 0.4)';
-        };
-        img.onmouseleave = () => {
-            img.style.transform = 'scale(1)';
-            img.style.boxShadow = 'none';
-        };
-    };
+    // Set up renderer
+    const containerWidth = container.offsetWidth;
+    const containerHeight = container.offsetHeight;
+    renderer.setSize(containerWidth, containerHeight);
+    renderer.setClearColor(0x000000, 0);
+    container.appendChild(renderer.domElement);
     
-    // Fallback for missing images
-    img.onerror = () => {
-        console.warn(`❌ Character image not found: ${charName}`);
-        container.innerHTML = `
-            <div style="
-                width: 100%; 
-                height: 100%; 
-                background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); 
-                border-radius: 10px; 
-                display: flex; 
-                align-items: center; 
-                justify-content: center; 
-                color: white; 
-                font-weight: bold; 
-                text-transform: capitalize;
-                font-size: 14px;
-                text-align: center;
-            ">
-                ${charName}
-            </div>
-        `;
-    };
+    // Add lighting
+    const ambientLight = new THREE.AmbientLight(0xffffff, 0.6);
+    scene.add(ambientLight);
+    const directionalLight = new THREE.DirectionalLight(0xffffff, 0.8);
+    directionalLight.position.set(2, 2, 5);
+    scene.add(directionalLight);
     
-    container.appendChild(img);
+    // Load GLB character
+    const loader = new THREE.GLTFLoader();
+    loader.load(
+        `assets/character-models/${charName}.glb`,
+        // Success callback
+        (gltf) => {
+            console.log(`✅ GLB character loaded: ${charName}`);
+            
+            const characterModel = gltf.scene;
+            characterModel.scale.set(0.8, 0.8, 0.8);
+            scene.add(characterModel);
+            
+            // Position camera
+            camera.position.set(0, 0, 3);
+            camera.lookAt(0, 0, 0);
+            
+            // Auto-rotation animation
+            function animate() {
+                requestAnimationFrame(animate);
+                if (characterModel) {
+                    characterModel.rotation.y += 0.01;
+                }
+                renderer.render(scene, camera);
+            }
+            animate();
+        },
+        // Progress callback
+        (progress) => {
+            console.log(`Loading ${charName}: ${(progress.loaded / progress.total * 100)}%`);
+        },
+        // Error callback
+        (error) => {
+            console.warn(`❌ Failed to load GLB for ${charName}:`, error);
+            
+            // Fallback to simple colored div
+            container.innerHTML = '';
+            container.innerHTML = `
+                <div style="
+                    width: 100%; 
+                    height: 100%; 
+                    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); 
+                    border-radius: 10px; 
+                    display: flex; 
+                    align-items: center; 
+                    justify-content: center; 
+                    color: white; 
+                    font-weight: bold; 
+                    text-transform: capitalize;
+                    font-size: 14px;
+                    text-align: center;
+                ">
+                    ${charName}<br>
+                    <small style="opacity: 0.7;">GLB Missing</small>
+                </div>
+            `;
+        }
+    );
 }
 
 // ADD this temporary debug function to test world previews
@@ -5589,27 +5625,61 @@ function openShopCharacterPreview(charName) {
 function createShopCharacterModalPreview(container, charName) {
     container.innerHTML = '';
     
-    const img = document.createElement('img');
-    img.src = `assets/character-previews/large/${charName}.png`;
-    img.style.cssText = `
-        width: 100%;
-        height: 100%;
-        object-fit: contain;
-        border-radius: 15px;
-        background: rgba(0, 0, 0, 0.1);
-    `;
+    // Create Three.js scene for modal GLB
+    const scene = new THREE.Scene();
+    const camera = new THREE.PerspectiveCamera(75, 1, 0.1, 1000);
+    const renderer = new THREE.WebGLRenderer({ alpha: true, antialias: true });
     
-    img.onload = () => {
-        console.log(`✅ Large character preview loaded: ${charName}`);
-    };
+    // Set up renderer for modal (larger size)
+    renderer.setSize(400, 400);
+    renderer.setClearColor(0x000000, 0);
+    container.appendChild(renderer.domElement);
     
-    // Fallback for missing large images - try small version
-    img.onerror = () => {
-        console.warn(`❌ Large image not found, trying small: ${charName}`);
-        img.src = `assets/character-previews/small/${charName}.png`;
-        
-        img.onerror = () => {
-            console.warn(`❌ No character images found: ${charName}`);
+    // Add enhanced lighting for modal
+    const ambientLight = new THREE.AmbientLight(0xffffff, 0.8);
+    scene.add(ambientLight);
+    const directionalLight = new THREE.DirectionalLight(0xffffff, 1);
+    directionalLight.position.set(2, 2, 5);
+    scene.add(directionalLight);
+    
+    // Load GLB character for modal
+    const loader = new THREE.GLTFLoader();
+    loader.load(
+        `assets/character-models/${charName}.glb`,
+        // Success callback
+        (gltf) => {
+
+            // Add this at the start of the success callback to test
+            console.log('GLB structure:', gltf);
+            console.log('GLB scene children:', gltf.scene.children);
+
+            console.log(`✅ Modal GLB character loaded: ${charName}`);
+            
+            const characterModel = gltf.scene;
+            characterModel.scale.set(1.5, 1.5, 1.5); // Larger for modal
+            scene.add(characterModel);
+            
+            // Position camera
+            camera.position.set(0, 0, 3);
+            camera.lookAt(0, 0, 0);
+            
+            // Auto-rotation animation
+            function animate() {
+                requestAnimationFrame(animate);
+                if (characterModel) {
+                    characterModel.rotation.y += 0.01;
+                }
+                renderer.render(scene, camera);
+            }
+            animate();
+        },
+        // Progress callback
+        undefined,
+        // Error callback
+        (error) => {
+            console.warn(`❌ Failed to load modal GLB for ${charName}:`, error);
+            
+            // Fallback for modal
             container.innerHTML = `
                 <div style="
                     width: 100%; 
@@ -5626,27 +5696,34 @@ function createShopCharacterModalPreview(container, charName) {
                     gap: 10px;
                 ">
                     <div style="font-size: 24px;">${charName}</div>
-                    <div style="font-size: 12px; opacity: 0.7;">Preview Image Missing</div>
+                    <div style="font-size: 12px; opacity: 0.7;">GLB Model Missing</div>
                 </div>
             `;
-        };
-    };
-    
-    container.appendChild(img);
+        }
+    );
 }
 
 function closeShopCharacterModal() {
     const modal = document.getElementById('shop-character-modal');
     const previewContainer = document.getElementById('shop-character-preview');
     
-    // Simple cleanup - no WebGL contexts to dispose of!
+    // Proper GLB cleanup
     if (previewContainer) {
+        const canvas = previewContainer.querySelector('canvas');
+        if (canvas) {
+            const gl = canvas.getContext('webgl') || canvas.getContext('experimental-webgl');
+            if (gl) {
+                const ext = gl.getExtension('WEBGL_lose_context');
+                if (ext) {
+                    ext.loseContext();
+                }
+            }
+        }
         previewContainer.innerHTML = '';
     }
     
     modal.style.display = 'none';
 }
-
 
 
 function openShopWorldPreview(worldId) {
