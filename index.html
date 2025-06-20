@@ -12257,12 +12257,12 @@ function endGame() {
         
         // Check if it's a high score and show input form if needed
         debug('🏆 Checking if score is high score:', score);
-        const isHighScore = checkHighScore(score);
+        const isHighScore = autoSaveHighScore(score);
         debug('🏆 Is high score result:', isHighScore);
 
         if (isHighScore) {
             debug('🏆 High score achieved and auto-saved!');
-            // Score was automatically saved in checkHighScore()
+            // Score was automatically saved in autoSaveHighScore()
         } else {
             debug('🏆 Not a high score - no save needed');
         }
