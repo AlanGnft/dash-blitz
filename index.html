@@ -5448,10 +5448,18 @@ function createShopCharacterPreview(containerId, charName) {
     const camera = new THREE.PerspectiveCamera(75, 1, 0.1, 1000);
     const renderer = new THREE.WebGLRenderer({ alpha: true, antialias: true });
     
-    // Set up renderer
+    // Set up renderer with square aspect ratio to prevent stretching
     const containerWidth = container.offsetWidth;
     const containerHeight = container.offsetHeight;
+    const size = Math.min(containerWidth, containerHeight);
+
     renderer.setSize(containerWidth, containerHeight);
+    renderer.setViewport(
+        (containerWidth - size) / 2, // Center horizontally
+        (containerHeight - size) / 2, // Center vertically
+        size, 
+        size
+    );
     renderer.setClearColor(0x000000, 0);
     container.appendChild(renderer.domElement);
     
