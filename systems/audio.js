@@ -46,11 +46,11 @@ function initializeAudio() {
     // Create audio pools for sound effects (3 instances each for overlap)
     // Note: ../assets because we're in the systems folder
     for (let i = 0; i < 3; i++) {
-        soundPool.coin.push(new Audio('assets/audio/coin.mp3'));
-        soundPool.jump.push(new Audio('assets/audio/jump.mp3'));
-        soundPool.crash.push(new Audio('assets/audio/crash.mp3'));
-        soundPool.powerup.push(new Audio('assets/audio/powerup.mp3'));
-        soundPool.rareCoin.push(new Audio('assets/audio/rare-coin.mp3'));
+        soundPool.coin.push(new Audio('assets/audio/sounds/coin.mp3'));
+        soundPool.jump.push(new Audio('assets/audio/sounds/jump.mp3'));
+        soundPool.crash.push(new Audio('assets/audio/sounds/crash.mp3'));
+        soundPool.powerup.push(new Audio('assets/audio/sounds/powerup.mp3'));
+        soundPool.rareCoin.push(new Audio('assets/audio/sounds/rare-coin.mp3'));
     }
     
     // Set volumes for sound effects
@@ -124,7 +124,7 @@ function startBackgroundMusic() {
     }
     
     // Create new audio element for the current track
-    backgroundMusic = new Audio(`assets/audio/${trackToPlay}-track.mp3`);
+    backgroundMusic = new Audio(`assets/audio/tracks/${trackToPlay}-track.mp3`);
     
     // Set loop based on shuffle mode
     backgroundMusic.loop = !shuffleMode;
@@ -425,7 +425,7 @@ function skipToNextTrack() {
         const nextTrack = shuffleQueue[currentShuffleIndex];
         
         // Reuse existing audio element instead of creating new one
-        backgroundMusic.src = `assets/audio/${nextTrack}-track.mp3`;
+        backgroundMusic.src = `assets/audio/tracks/${nextTrack}-track.mp3`;
         backgroundMusic.currentTime = 0;
         
         // Update tracking
