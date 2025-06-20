@@ -15,7 +15,7 @@
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
 <meta name="apple-mobile-web-app-title" content="Running Blitz">
-<link rel="apple-touch-icon" href="icon-192.png">
+<link rel="apple-touch-icon" href="assets/pwa/icon-192.png">
 <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
 <meta http-equiv="Pragma" content="no-cache">
 <meta http-equiv="Expires" content="0">
@@ -66,10 +66,10 @@ setTimeout(() => {
 </script>
 
     <!-- Favicon -->
-    <link rel="icon" type="image/png" sizes="32x32" href="favicon-32x32.png">
-    <link rel="icon" type="image/png" sizes="16x16" href="favicon-16x16.png">
-    <link rel="apple-touch-icon" sizes="180x180" href="apple-touch-icon.png">
-    <link rel="shortcut icon" href="favicon.ico">
+    <link rel="icon" type="image/png" sizes="32x32" href="assets/favicon/favicon-32x32.png">
+    <link rel="icon" type="image/png" sizes="16x16" href="assets/favicon/favicon-16x16.png">
+    <link rel="apple-touch-icon" sizes="180x180" href="assets/favicon/apple-touch-icon.png">
+    <link rel="shortcut icon" href="assets/favicon/favicon.ico">
     
     <!-- Optional: For better mobile support -->
     <meta name="theme-color" content="#ff2131">
@@ -1745,7 +1745,7 @@ setTimeout(() => {
     
     <!-- Logo with pulsing animation -->
 <div style="position: relative; z-index: 10; margin-bottom: 30px;">
-<img src="dash-blitz-logo.svg"
+<img src="assets/dash-blitz-logo.svg"
          alt="Dash Blitz Logo" 
          class="game-logo"
          style="
@@ -2056,14 +2056,14 @@ setTimeout(() => {
         <button id="backToMainMenuFromSettings" style="position: absolute; top: 15px; left: 15px; background: linear-gradient(135deg, #434343 0%, #000000 100%); color: white; border: 2px solid rgba(255, 255, 255, 0.2); padding: 10px 15px; border-radius: 10px; cursor: pointer; font-size: 14px; font-weight: 600; transition: all 0.3s ease; box-shadow: 0 4px 15px rgba(67, 67, 67, 0.3), inset 0 1px 0 rgba(255, 255, 255, 0.2);">← Back</button>
         
         <!-- Settings Title -->
-        <h2 style="color: white; margin: 0; text-shadow: 0 0 15px rgba(255, 33, 49, 0.8); font-size: 28px; font-weight: 700; letter-spacing: 2px;">⚙️ SETTINGS</h2>
+        <h2 style="color: white; margin: 0; text-shadow: 0 0 15px rgba(255, 33, 49, 0.8); font-size: 28px; font-weight: 700; letter-spacing: 2px;">SETTINGS</h2>
     </div>
     
     <!-- Settings Tabs -->
     <div style="display: flex; justify-content: center; margin: 0 20px 15px 20px; flex-shrink: 0;">
-        <button class="settings-tab active" data-tab="general" style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: white; border: 2px solid rgba(255, 255, 255, 0.2); padding: 12px 15px; border-radius: 10px 0 0 10px; cursor: pointer; font-size: 13px; font-weight: 600; flex: 1; max-width: 120px; transition: all 0.3s ease; box-shadow: 0 4px 15px rgba(102, 126, 234, 0.3), inset 0 1px 0 rgba(255, 255, 255, 0.2); text-transform: uppercase;">🔊 General</button>
-        <button class="settings-tab" data-tab="leaderboard" style="background: linear-gradient(135deg, #434343 0%, #000000 100%); color: white; border: 2px solid rgba(255, 255, 255, 0.2); padding: 12px 15px; cursor: pointer; font-size: 13px; font-weight: 600; flex: 1; max-width: 120px; transition: all 0.3s ease; box-shadow: 0 4px 15px rgba(67, 67, 67, 0.3), inset 0 1px 0 rgba(255, 255, 255, 0.2); text-transform: uppercase;">🏆 Global</button>
-        <button class="settings-tab" data-tab="mods" style="background: linear-gradient(135deg, #434343 0%, #000000 100%); color: white; border: 2px solid rgba(255, 255, 255, 0.2); padding: 12px 15px; border-radius: 0 10px 10px 0; cursor: pointer; font-size: 13px; font-weight: 600; flex: 1; max-width: 120px; transition: all 0.3s ease; box-shadow: 0 4px 15px rgba(67, 67, 67, 0.3), inset 0 1px 0 rgba(255, 255, 255, 0.2); text-transform: uppercase;">🔧 Mods</button>
+        <button class="settings-tab active" data-tab="general" style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: white; border: 2px solid rgba(255, 255, 255, 0.2); padding: 12px 15px; border-radius: 10px 0 0 10px; cursor: pointer; font-size: 13px; font-weight: 600; flex: 1; max-width: 120px; transition: all 0.3s ease; box-shadow: 0 4px 15px rgba(102, 126, 234, 0.3), inset 0 1px 0 rgba(255, 255, 255, 0.2); text-transform: uppercase;">General</button>
+        <button class="settings-tab" data-tab="leaderboard" style="background: linear-gradient(135deg, #434343 0%, #000000 100%); color: white; border: 2px solid rgba(255, 255, 255, 0.2); padding: 12px 15px; cursor: pointer; font-size: 13px; font-weight: 600; flex: 1; max-width: 120px; transition: all 0.3s ease; box-shadow: 0 4px 15px rgba(67, 67, 67, 0.3), inset 0 1px 0 rgba(255, 255, 255, 0.2); text-transform: uppercase;">Global</button>
+        <button class="settings-tab" data-tab="mods" style="background: linear-gradient(135deg, #434343 0%, #000000 100%); color: white; border: 2px solid rgba(255, 255, 255, 0.2); padding: 12px 15px; border-radius: 0 10px 10px 0; cursor: pointer; font-size: 13px; font-weight: 600; flex: 1; max-width: 120px; transition: all 0.3s ease; box-shadow: 0 4px 15px rgba(67, 67, 67, 0.3), inset 0 1px 0 rgba(255, 255, 255, 0.2); text-transform: uppercase;">Mods</button>
     </div>
     
         <!-- Settings Content Area -->
@@ -2192,19 +2192,19 @@ setTimeout(() => {
         <button id="backToMainMenuFromShop" style="position: absolute; top: 20px; left: 20px; background: linear-gradient(135deg, #434343 0%, #000000 100%); color: white; border: 2px solid rgba(255, 255, 255, 0.2); padding: 12px 18px; border-radius: 10px; cursor: pointer; font-size: 16px; font-weight: 600; transition: all 0.3s ease; box-shadow: 0 4px 15px rgba(67, 67, 67, 0.3), inset 0 1px 0 rgba(255, 255, 255, 0.2);">← Back</button>
         
         <!-- Shop Title -->
-        <h2 style="color: white; margin: 0; text-shadow: 0 0 15px rgba(255, 33, 49, 0.8); font-size: 32px; font-weight: 700; letter-spacing: 2px;">🛒 SHOP</h2>
+        <h2 style="color: white; margin: 0; text-shadow: 0 0 15px rgba(255, 33, 49, 0.8); font-size: 32px; font-weight: 700; letter-spacing: 2px;">SHOP</h2>
         
         <!-- Current Coins Display -->
         <div style="margin-top: 15px; padding: 12px 24px; background: linear-gradient(135deg, rgba(255, 215, 0, 0.15) 0%, rgba(255, 193, 7, 0.1) 100%); border-radius: 15px; border: 2px solid rgba(255, 215, 0, 0.4); display: inline-block; box-shadow: 0 4px 15px rgba(255, 215, 0, 0.2), inset 0 1px 0 rgba(255, 255, 255, 0.1);">
-            <span style="color: #FFD700; font-size: 22px; font-weight: 700; text-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);">💰 <span id="shopCoinsDisplay">0</span> Coins</span>
+            <span style="color: #FFD700; font-size: 22px; font-weight: 700; text-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);">🪙 <span id="shopCoinsDisplay">0</span> Coins</span>
         </div>
     </div>
     
     <!-- Shop Tabs -->
     <div style="display: flex; justify-content: center; margin: 0 20px 20px 20px;">
-        <button class="shop-tab active" data-tab="characters" style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: white; border: 2px solid rgba(255, 255, 255, 0.2); padding: 14px 24px; border-radius: 12px 0 0 12px; cursor: pointer; font-size: 16px; font-weight: 600; transition: all 0.3s ease; box-shadow: 0 4px 15px rgba(102, 126, 234, 0.3), inset 0 1px 0 rgba(255, 255, 255, 0.2); text-transform: uppercase; letter-spacing: 1px;">👤 Characters</button>
-        <button class="shop-tab" data-tab="worlds" style="background: linear-gradient(135deg, #434343 0%, #000000 100%); color: white; border: 2px solid rgba(255, 255, 255, 0.2); padding: 14px 24px; cursor: pointer; font-size: 16px; font-weight: 600; transition: all 0.3s ease; box-shadow: 0 4px 15px rgba(67, 67, 67, 0.3), inset 0 1px 0 rgba(255, 255, 255, 0.2); text-transform: uppercase; letter-spacing: 1px;">🌍 Worlds</button>
-        <button class="shop-tab" data-tab="drip" style="background: linear-gradient(135deg, #434343 0%, #000000 100%); color: white; border: 2px solid rgba(255, 255, 255, 0.2); padding: 14px 24px; border-radius: 0 12px 12px 0; cursor: pointer; font-size: 16px; font-weight: 600; transition: all 0.3s ease; box-shadow: 0 4px 15px rgba(67, 67, 67, 0.3), inset 0 1px 0 rgba(255, 255, 255, 0.2); text-transform: uppercase; letter-spacing: 1px;">🎁 DRiP</button>
+        <button class="shop-tab active" data-tab="characters" style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: white; border: 2px solid rgba(255, 255, 255, 0.2); padding: 14px 24px; border-radius: 12px 0 0 12px; cursor: pointer; font-size: 16px; font-weight: 600; transition: all 0.3s ease; box-shadow: 0 4px 15px rgba(102, 126, 234, 0.3), inset 0 1px 0 rgba(255, 255, 255, 0.2); text-transform: uppercase; letter-spacing: 1px;">Characters</button>
+        <button class="shop-tab" data-tab="worlds" style="background: linear-gradient(135deg, #434343 0%, #000000 100%); color: white; border: 2px solid rgba(255, 255, 255, 0.2); padding: 14px 24px; cursor: pointer; font-size: 16px; font-weight: 600; transition: all 0.3s ease; box-shadow: 0 4px 15px rgba(67, 67, 67, 0.3), inset 0 1px 0 rgba(255, 255, 255, 0.2); text-transform: uppercase; letter-spacing: 1px;">Worlds</button>
+        <button class="shop-tab" data-tab="drip" style="background: linear-gradient(135deg, #434343 0%, #000000 100%); color: white; border: 2px solid rgba(255, 255, 255, 0.2); padding: 14px 24px; border-radius: 0 12px 12px 0; cursor: pointer; font-size: 16px; font-weight: 600; transition: all 0.3s ease; box-shadow: 0 4px 15px rgba(67, 67, 67, 0.3), inset 0 1px 0 rgba(255, 255, 255, 0.2); text-transform: uppercase; letter-spacing: 1px;">DRiP</button>
     </div>
     
         <!-- Shop Content Area -->
@@ -2348,7 +2348,7 @@ setTimeout(() => {
         <button id="backToMainMenuFromProfile" style="position: absolute; top: 15px; left: 15px; background: linear-gradient(135deg, #434343 0%, #000000 100%); color: white; border: 2px solid rgba(255, 255, 255, 0.2); padding: 10px 15px; border-radius: 10px; cursor: pointer; font-size: 14px; font-weight: 600; transition: all 0.3s ease; box-shadow: 0 4px 15px rgba(67, 67, 67, 0.3), inset 0 1px 0 rgba(255, 255, 255, 0.2);">← Back</button>
         
         <!-- Profile Title -->
-        <h2 style="color: white; margin: 0; text-shadow: 0 0 15px rgba(255, 33, 49, 0.8); font-size: 28px; font-weight: 700; letter-spacing: 2px;">📊 PROFILE</h2>
+        <h2 style="color: white; margin: 0; text-shadow: 0 0 15px rgba(255, 33, 49, 0.8); font-size: 28px; font-weight: 700; letter-spacing: 2px;">PROFILE</h2>
     </div>
     
     <!-- Profile Content -->
@@ -2434,7 +2434,7 @@ setTimeout(() => {
     </div>
     
     <div style="position: absolute; top: 0; left: 0; width: 100%; height: 100%;" id="characterSelectCanvas"></div>
-<h2 style="color: white; font-size: 42px; margin-bottom: 30px; text-shadow: 0 0 15px rgba(255, 33, 49, 0.8); position: relative; z-index: 10; text-align: center; font-weight: 700; letter-spacing: 2px;">SELECT YOUR CHARACTER</h2>
+<h2 style="color: white; font-size: 42px; margin-bottom: 30px; text-shadow: 0 0 15px rgba(255, 33, 49, 0.8); position: relative; z-index: 10; text-align: center; font-weight: 700; letter-spacing: 2px;">CHARACTER SELECT</h2>
     <div style="display: flex; align-items: center; margin-bottom: 30px; position: relative; z-index: 10;">
         <button id="prevCharacterBtn" class="game-button char-nav-btn" style="font-size: 24px; font-weight: 700; padding: 15px 25px; margin-right: 20px; background: linear-gradient(135deg, #434343 0%, #000000 100%); color: white; border: 2px solid rgba(255, 255, 255, 0.2); border-radius: 12px; cursor: pointer; transition: all 0.3s ease; box-shadow: 0 6px 20px rgba(67, 67, 67, 0.3), inset 0 1px 0 rgba(255, 255, 255, 0.2);">←</button>
 <div id="characterDisplay" style="width: 180px; height: 180px;"></div>
@@ -2460,7 +2460,7 @@ setTimeout(() => {
     </div>
    
     <div style="position: absolute; top: 0; left: 0; width: 100%; height: 100%;" id="worldSelectCanvas"></div>
-        <h2 id="worldSelectTitle" style="color: white; font-size: 42px; margin-bottom: 30px; text-shadow: 0 0 15px rgba(255, 33, 49, 0.8); position: relative; z-index: 10; text-align: center; font-weight: 700; letter-spacing: 2px;">SELECT YOUR WORLD</h2>
+        <h2 id="worldSelectTitle" style="color: white; font-size: 42px; margin-bottom: 30px; text-shadow: 0 0 15px rgba(255, 33, 49, 0.8); position: relative; z-index: 10; text-align: center; font-weight: 700; letter-spacing: 2px;">CHOOSE A WORLD</h2>
     <div id="worldNavigation" style="display: flex; align-items: center; margin-bottom: 30px; position: relative; z-index: 10; width: 100%; max-width: 500px; justify-content: center;">
         <button id="prevWorldBtn" class="game-button world-nav-btn" style="font-size: 24px; font-weight: 700; padding: 15px 25px; margin-right: 20px; flex-shrink: 0; background: linear-gradient(135deg, #434343 0%, #000000 100%); color: white; border: 2px solid rgba(255, 255, 255, 0.2); border-radius: 12px; cursor: pointer; transition: all 0.3s ease; box-shadow: 0 6px 20px rgba(67, 67, 67, 0.3), inset 0 1px 0 rgba(255, 255, 255, 0.2);">←</button>
         <div id="worldDisplay" style="width: 300px; height: 200px; max-width: calc(100vw - 140px); background-color: rgba(0, 0, 0, 0.3); border-radius: 15px; display: flex; justify-content: center; align-items: center; box-shadow: 0 0 20px rgba(255, 33, 49, 0.4), 0 0 40px rgba(255, 33, 49, 0.2); position: relative; overflow: hidden;">
@@ -3224,10 +3224,10 @@ let availableTracks = [
     { id: 'electronic', name: 'Cybershock', description: 'Futuristic electronic beats', artist: 'Alan G.' },
     { id: 'ambient', name: 'Field of Memories', description: 'Dreamy ethereal lofi vibes', artist: 'Alan G.' },
     { id: 'BitCrushed', name: 'Bit Crushed', description: 'Retro arcade vibes', artist: 'ArtForFartSake' },
-    { id: 'SolandianVibes', name: 'Solandian Vibes', description: 'Lofi goodness', artist: 'ArtForFartSake' }
-  //  { id: 'slot6', name: 'Field of Memories', description: 'Dreamy ethereal lofi vibes', artist: 'Alan G.' }
-  //  { id: 'slot7', name: 'Field of Memories', description: 'Dreamy ethereal lofi vibes', artist: 'Alan G.' }
-  //  { id: 'slot8', name: 'Field of Memories', description: 'Dreamy ethereal lofi vibes', artist: 'Alan G.' }
+    { id: 'SolandianVibes', name: 'Solandian Vibes', description: 'Lofi goodness', artist: 'ArtForFartSake' },
+    { id: 'ACruelAngelsThesis', name: 'A Cruel Angels Thesis', description: 'Dø-Fi Vibes', artist: 'Dúo Dø' },
+    { id: 'SpiritedAway', name: 'Spirited Away', description: 'Dø-Fi Vibes', artist: 'Dúo Dø' },
+    { id: 'Spike', name: 'Spike', description: 'Dø-Fi Vibes', artist: 'Dúo Dø' }
   //  { id: 'slot9', name: 'Field of Memories', description: 'Dreamy ethereal lofi vibes', artist: 'Alan G.' }
   //  { id: 'slot10', name: 'Field of Memories', description: 'Dreamy ethereal lofi vibes', artist: 'Alan G.' }
   //  { id: 'slot11', name: 'Field of Memories', description: 'Dreamy ethereal lofi vibes', artist: 'Alan G.' }
@@ -5322,7 +5322,7 @@ function populateShopCharacters() {
                 </button>
                 ${!isUnlocked ? `
                     <button onclick="purchaseCharacter('${charName}')" class="buy-btn">
-                        BUY - ${cost} 🪙
+                        BUY
                     </button>
                 ` : `
                     <button onclick="selectCharacterFromShop('${charName}')" class="buy-btn" 
@@ -5369,7 +5369,7 @@ function populateShopWorlds() {
             </div>
             ${!isUnlocked ? `
                 <button onclick="purchaseWorld('${world.id}')" class="buy-btn" style="width: 100%;">
-                    BUY - ${world.cost} 🪙
+                    BUY
                 </button>
             ` : `
                 <button onclick="selectWorldFromShop('${world.id}')" class="buy-btn" style="width: 100%; background: linear-gradient(135deg, #4CAF50 0%, #45a049 100%);">
@@ -12275,43 +12275,17 @@ function endGame() {
     }, 1500);
 }
 
-        // Add this function anywhere with your other game functions
-function checkHighScore(currentScore) {
-    let leaderboard = JSON.parse(localStorage.getItem('runningBlitzLeaderboard') || '[]');
-    
-    // It's a high score if leaderboard has less than 10 entries OR current score beats the lowest score
-    const isHighScore = leaderboard.length < 10 || currentScore > (leaderboard[leaderboard.length - 1]?.score || 0);
-
-    // Debug the high score update
-    debug('🏆 High score check:', {
-        currentScore: currentScore,
-        profileHighScore: currentProfile.highScore || 0,
-        willUpdate: currentScore > (currentProfile.highScore || 0)
-    });
-
-    // Update profile high score regardless of leaderboard position
-    if (currentScore > (currentProfile.highScore || 0)) {
-        const oldScore = currentProfile.highScore || 0;
-        currentProfile.highScore = currentScore;
-        currentProfile.lastPlayed = new Date().toISOString();
-        saveGameData('high_score');
-        
-        debug('🏆 Profile high score updated!', {
-            oldScore: oldScore,
-            newScore: currentScore
-        });
+        // Add keyboard support for username editing
+document.addEventListener('keydown', function(e) {
+    const modal = document.getElementById('usernameEditModal');
+    if (modal && modal.style.display === 'flex') {
+        if (e.key === 'Enter') {
+            saveUsername();
+        } else if (e.key === 'Escape') {
+            closeUsernameModal();
+        }
     }
-    
-    // AUTO-SAVE: If it's a high score, automatically save it to leaderboard
-    if (isHighScore) {
-        debug('🏆 Auto-saving high score to leaderboard...');
-        autoSaveHighScore(currentScore);
-    }
-    
-    debug(`Checking high score: ${currentScore}, is high score: ${isHighScore}`);
-    debug(`Need to beat: ${leaderboard[leaderboard.length - 1]?.score || 0}`);
-    return isHighScore;
-}
+});
 
 
         // ==================== CHARACTER ABILITIES ====================
