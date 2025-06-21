@@ -6352,419 +6352,87 @@ function initWorldSelectScreen() {
     const selectCanvas = document.getElementById('worldSelectCanvas');
     selectCanvas.innerHTML = '';
     
-    // Create a new scene for world preview
-    worldSelectScene = new THREE.Scene();
-    worldSelectScene.background = null; // Transparent background
-    
-    // Create a camera
-worldSelectCamera = new THREE.PerspectiveCamera(75, 300 / 200, 0.1, 1000);
-worldSelectCamera.position.set(0, 2.5, 3); // Higher camera position to see more of the top
-worldSelectCamera.lookAt(0, 0, 0); // Make sure camera looks at center
-    
-    // Create a renderer
-worldSelectRenderer = new THREE.WebGLRenderer({ alpha: true, antialias: true });
-worldSelectRenderer.setSize(300, 200); // Match the preview box size
-worldSelectRenderer.setClearColor(0x000000, 0); // Transparent background
-
-// Style the renderer to fit inside the preview box
-worldSelectRenderer.domElement.style.position = 'absolute';
-worldSelectRenderer.domElement.style.top = '0';
-worldSelectRenderer.domElement.style.left = '0';
-worldSelectRenderer.domElement.style.width = '100%';
-worldSelectRenderer.domElement.style.height = '100%';
-worldSelectRenderer.domElement.style.borderRadius = '15px';
-
-// Add to the preview container instead of the main canvas
-const previewContainer = document.getElementById('worldPreview');
-previewContainer.appendChild(worldSelectRenderer.domElement);
-    
-    // Add lights
-    const ambientLight = new THREE.AmbientLight(0xffffff, 0.6);
-    worldSelectScene.add(ambientLight);
-    
-    const directionalLight = new THREE.DirectionalLight(0xffffff, 0.8);
-    directionalLight.position.set(10, 20, 10);
-    worldSelectScene.add(directionalLight);
-    
-    // Create world preview models
-    createWorldPreviews();
-    
-    // Show the correct initial world
-    updateWorldDisplay();
-    
     // Clear any existing animation loop
-    if (window.worldSelectAnimationId) {
-        cancelAnimationFrame(window.worldSelectAnimationId);
-    }
+if (window.worldSelectAnimationId) {
+    cancelAnimationFrame(window.worldSelectAnimationId);
+}
 
-    // Animation for world selection screen
-    function animateWorldSelect() {
-        window.worldSelectAnimationId = requestAnimationFrame(animateWorldSelect);
-        
-        if (gameState === "worldSelect") {
-            // Rotate the displayed world preview
-            if (worldSelectModels && worldSelectModels[selectedWorldIndex]) {
-                const currentModel = worldSelectModels[selectedWorldIndex];
-                
-                if (currentModel && currentModel.visible) {
-                    currentModel.rotation.y += 0.005; // Slow, elegant rotation
-                    
-                    // Add gentle floating motion around the centered position
-const baseY = currentModel.userData.baseY || 0;
-currentModel.position.y = baseY + Math.sin(frameCount * 0.02) * 0.08; // Smaller floating range
-                }
-            }
-            
-            // Render
-            if (worldSelectRenderer && worldSelectScene && worldSelectCamera) {
-                worldSelectRenderer.render(worldSelectScene, worldSelectCamera);
-            }
-        }
-    }
+// Initialize world preview images
+createWorldImagePreviews();
 
-    // Start animation
-    animateWorldSelect();
+// Show the correct initial world
+updateWorldDisplay();
+    
+
+// No animation needed for image-based previews
+
     
     // Setup navigation buttons
     setupWorldSelectButtons();
 }
 
-// Create world preview models
-function createWorldPreviews() {
-    // Clear existing models
-    worldSelectModels.forEach(model => {
-        if (model && model.parent) {
-            model.parent.remove(model);
-        }
-    });
-    worldSelectModels = [];
+// Create world preview images
+function createWorldImagePreviews() {
+    const previewContainer = document.getElementById('worldPreview');
+    if (!previewContainer) return;
     
-    availableWorlds.forEach(world => {
-        const worldPreview = createWorldPreviewModel(world);
-        worldPreview.visible = false; // Hide all initially
-        worldSelectScene.add(worldPreview);
-        worldSelectModels.push(worldPreview);
-    });
+    // Clear existing content
+    previewContainer.innerHTML = '';
     
-    // Show the first world
-    if (worldSelectModels.length > 0) {
-        worldSelectModels[selectedWorldIndex].visible = true;
-    }
+    // Create image element for world preview
+    const img = document.createElement('img');
+    img.id = 'worldPreviewImage';
+    img.style.cssText = `
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+        border-radius: 15px;
+        transition: all 0.3s ease;
+    `;
+    
+    previewContainer.appendChild(img);
+    
+    // Load the initial world image
+    updateWorldImagePreview();
 }
 
-// Create a 3D preview model for a world
-function createWorldPreviewModel(world) {
-    const previewGroup = new THREE.Group();
+// Update world image preview
+function updateWorldImagePreview() {
+    const img = document.getElementById('worldPreviewImage');
+    if (!img) return;
     
-    if (world.id === 'classic') {
-    // Create classic plains preview
+    const selectedWorld = availableWorlds[selectedWorldIndex];
+    img.src = `assets/world-previews/${selectedWorld.id}.png`;
     
-    // Ground platform
-    const groundGeometry = new THREE.BoxGeometry(4, 0.2, 4);
-    const groundMaterial = new THREE.MeshStandardMaterial({
-        color: world.colors.ground,
-        roughness: 0.8
-    });
-    const ground = new THREE.Mesh(groundGeometry, groundMaterial);
-    ground.position.y = -0.1;
-    previewGroup.add(ground);
+    img.onload = () => {
+        console.log(`✅ World image loaded: ${selectedWorld.id}`);
+    };
     
-    // Add some grass
-    for (let i = 0; i < 8; i++) {
-        const grassGeometry = new THREE.ConeGeometry(0.05, 0.3, 4);
-        const grassMaterial = new THREE.MeshStandardMaterial({
-            color: 0x228B22
-        });
-        const grass = new THREE.Mesh(grassGeometry, grassMaterial);
-        grass.position.set(
-            (Math.random() - 0.5) * 3,
-            0.05,
-            (Math.random() - 0.5) * 3
-        );
-        previewGroup.add(grass);
-    }
-    
-    // Add a small tree
-    const trunkGeometry = new THREE.CylinderGeometry(0.1, 0.1, 0.6, 8);
-    const trunkMaterial = new THREE.MeshStandardMaterial({ color: 0x8B4513 });
-    const trunk = new THREE.Mesh(trunkGeometry, trunkMaterial);
-    trunk.position.set(1, 0.3, 1);
-    previewGroup.add(trunk);
-    
-    const leavesGeometry = new THREE.SphereGeometry(0.4, 8, 8);
-    const leavesMaterial = new THREE.MeshStandardMaterial({ color: 0x228B22 });
-    const leaves = new THREE.Mesh(leavesGeometry, leavesMaterial);
-    leaves.position.set(1, 0.8, 1);
-    previewGroup.add(leaves);
-    
-    // Add some flowers
-    for (let i = 0; i < 5; i++) {
-        const flowerGeometry = new THREE.SphereGeometry(0.03, 6, 6);
-        const flowerColors = [0xFF0000, 0xFFFF00, 0xFF00FF, 0xFFFFFF];
-        const flowerMaterial = new THREE.MeshStandardMaterial({
-            color: flowerColors[Math.floor(Math.random() * flowerColors.length)]
-        });
-        const flower = new THREE.Mesh(flowerGeometry, flowerMaterial);
-        flower.position.set(
-            (Math.random() - 0.5) * 2,
-            0.1,
-            (Math.random() - 0.5) * 2
-        );
-        previewGroup.add(flower);
-    }
-} else if (world.id === 'forest') {
-    // Create forest preview
-    
-    // Dark forest ground
-    const groundGeometry = new THREE.BoxGeometry(4, 0.2, 4);
-    const groundMaterial = new THREE.MeshStandardMaterial({
-        color: world.colors.ground,
-        roughness: 0.9
-    });
-    const ground = new THREE.Mesh(groundGeometry, groundMaterial);
-    ground.position.y = -0.1;
-    previewGroup.add(ground);
-    
-    // Add tall pine trees
-    for (let i = 0; i < 4; i++) {
-        const trunkGeometry = new THREE.CylinderGeometry(0.08, 0.12, 1.2, 8);
-        const trunkMaterial = new THREE.MeshStandardMaterial({ color: 0x654321 });
-        const trunk = new THREE.Mesh(trunkGeometry, trunkMaterial);
-        trunk.position.set(
-            (Math.random() - 0.5) * 3,
-            0.6,
-            (Math.random() - 0.5) * 3
-        );
-        previewGroup.add(trunk);
+    img.onerror = () => {
+        console.warn(`❌ World image not found: ${selectedWorld.id}`);
         
-        // Pine cone shape leaves
-        const leavesGeometry = new THREE.ConeGeometry(0.5, 1.0, 8);
-        const leavesMaterial = new THREE.MeshStandardMaterial({ color: 0x1F4F2F });
-        const leaves = new THREE.Mesh(leavesGeometry, leavesMaterial);
-        leaves.position.copy(trunk.position);
-        leaves.position.y += 0.8;
-        previewGroup.add(leaves);
-    }
-    
-    // Add mushrooms
-    for (let i = 0; i < 6; i++) {
-        const stemGeometry = new THREE.CylinderGeometry(0.03, 0.04, 0.15, 6);
-        const stemMaterial = new THREE.MeshStandardMaterial({ color: 0xF5DEB3 });
-        const stem = new THREE.Mesh(stemGeometry, stemMaterial);
-        stem.position.set(
-            (Math.random() - 0.5) * 2,
-            0.075,
-            (Math.random() - 0.5) * 2
-        );
-        previewGroup.add(stem);
-        
-        const capGeometry = new THREE.SphereGeometry(0.06, 8, 8, 0, Math.PI * 2, 0, Math.PI / 2);
-        const capMaterial = new THREE.MeshStandardMaterial({ 
-            color: i % 2 === 0 ? 0xFF4500 : 0x8B4513 
-        });
-        const cap = new THREE.Mesh(capGeometry, capMaterial);
-        cap.position.copy(stem.position);
-        cap.position.y += 0.12;
-        previewGroup.add(cap);
-    }
-    
-    // Add ferns
-    for (let i = 0; i < 8; i++) {
-        const fernGeometry = new THREE.PlaneGeometry(0.2, 0.3);
-        const fernMaterial = new THREE.MeshStandardMaterial({ 
-            color: 0x228B22,
-            side: THREE.DoubleSide,
-            transparent: true,
-            opacity: 0.8
-        });
-        const fern = new THREE.Mesh(fernGeometry, fernMaterial);
-        fern.position.set(
-            (Math.random() - 0.5) * 3,
-            0.15,
-            (Math.random() - 0.5) * 3
-        );
-        fern.rotation.y = Math.random() * Math.PI * 2;
-        previewGroup.add(fern);
-    }
-} else if (world.id === 'desert') {
-    // Create desert preview
-    
-    // Sandy ground
-    const groundGeometry = new THREE.BoxGeometry(4, 0.2, 4);
-    const groundMaterial = new THREE.MeshStandardMaterial({
-        color: world.colors.ground,
-        roughness: 0.9
-    });
-    const ground = new THREE.Mesh(groundGeometry, groundMaterial);
-    ground.position.y = -0.1;
-    previewGroup.add(ground);
-    
-    // Add sand dunes
-    for (let i = 0; i < 3; i++) {
-        const duneGeometry = new THREE.SphereGeometry(0.8, 8, 8, 0, Math.PI * 2, 0, Math.PI / 2);
-        const duneMaterial = new THREE.MeshStandardMaterial({
-            color: 0xF4A460,
-            roughness: 0.9
-        });
-        const dune = new THREE.Mesh(duneGeometry, duneMaterial);
-        dune.position.set(
-            (Math.random() - 0.5) * 3,
-            0,
-            (Math.random() - 0.5) * 3
-        );
-        dune.scale.set(1, 0.5, 1);
-        previewGroup.add(dune);
-    }
-    
-    // Add a small cactus
-    const cactusGeometry = new THREE.CylinderGeometry(0.1, 0.12, 0.8, 8);
-    const cactusMaterial = new THREE.MeshStandardMaterial({ color: 0x228B22 });
-    const cactus = new THREE.Mesh(cactusGeometry, cactusMaterial);
-    cactus.position.set(1.2, 0.4, 0.8);
-    previewGroup.add(cactus);
-    
-    // Add cactus flower
-    const flowerGeometry = new THREE.SphereGeometry(0.05, 6, 6);
-    const flowerMaterial = new THREE.MeshStandardMaterial({ 
-        color: 0xFF69B4,
-        emissive: 0xFF1493,
-        emissiveIntensity: 0.3
-    });
-    const flower = new THREE.Mesh(flowerGeometry, flowerMaterial);
-    flower.position.set(1.2, 0.85, 0.8);
-    previewGroup.add(flower);
-    
-    // Add some rocks
-    for (let i = 0; i < 4; i++) {
-        const rockGeometry = new THREE.DodecahedronGeometry(0.08, 1);
-        const rockMaterial = new THREE.MeshStandardMaterial({ color: 0x8B7355 });
-        const rock = new THREE.Mesh(rockGeometry, rockMaterial);
-        rock.position.set(
-            (Math.random() - 0.5) * 2.5,
-            0.05,
-            (Math.random() - 0.5) * 2.5
-        );
-        rock.rotation.set(
-            Math.random() * Math.PI,
-            Math.random() * Math.PI,
-            Math.random() * Math.PI
-        );
-        previewGroup.add(rock);
-    }
-    
-    // Add heat shimmer effect
-    const shimmerGeometry = new THREE.PlaneGeometry(4, 0.5);
-    const shimmerMaterial = new THREE.MeshBasicMaterial({
-        color: 0xFFFFFF,
-        transparent: true,
-        opacity: 0.1,
-        side: THREE.DoubleSide
-    });
-    const shimmer = new THREE.Mesh(shimmerGeometry, shimmerMaterial);
-    shimmer.rotation.x = -Math.PI / 2;
-    shimmer.position.y = 0.01;
-    previewGroup.add(shimmer);
-} else if (world.id === 'underwater') {
-    // Create underwater preview
-    
-    // Ocean floor
-    const groundGeometry = new THREE.BoxGeometry(4, 0.2, 4);
-    const groundMaterial = new THREE.MeshStandardMaterial({
-        color: world.colors.ground,
-        roughness: 0.9
-    });
-    const ground = new THREE.Mesh(groundGeometry, groundMaterial);
-    ground.position.y = -0.1;
-    previewGroup.add(ground);
-    
-    // Add coral pieces
-    for (let i = 0; i < 5; i++) {
-        const coralGeometry = new THREE.SphereGeometry(0.15, 8, 6);
-        const coralColors = [0xFF6B9D, 0xFFA500, 0x00CED1, 0xFFD700];
-        const coralMaterial = new THREE.MeshStandardMaterial({
-            color: coralColors[Math.floor(Math.random() * coralColors.length)],
-            roughness: 0.7
-        });
-        const coral = new THREE.Mesh(coralGeometry, coralMaterial);
-        coral.position.set(
-            (Math.random() - 0.5) * 3,
-            0.1,
-            (Math.random() - 0.5) * 3
-        );
-        coral.scale.set(1, 0.6, 1);
-        previewGroup.add(coral);
-    }
-    
-    // Add seaweed
-    for (let i = 0; i < 6; i++) {
-        const seaweedGeometry = new THREE.CylinderGeometry(0.02, 0.04, 0.6, 6);
-        const seaweedMaterial = new THREE.MeshStandardMaterial({
-            color: 0x2F4F2F,
-            roughness: 0.8
-        });
-        const seaweed = new THREE.Mesh(seaweedGeometry, seaweedMaterial);
-        seaweed.position.set(
-            (Math.random() - 0.5) * 3,
-            0.3,
-            (Math.random() - 0.5) * 3
-        );
-        seaweed.rotation.x = (Math.random() - 0.5) * 0.3;
-        seaweed.rotation.z = (Math.random() - 0.5) * 0.3;
-        previewGroup.add(seaweed);
-    }
-    
-    // Add a fish
-    const fishGeometry = new THREE.SphereGeometry(0.1, 8, 6);
-    const fishMaterial = new THREE.MeshStandardMaterial({
-        color: 0x1E90FF,
-        metalness: 0.3,
-        roughness: 0.5
-    });
-    const fish = new THREE.Mesh(fishGeometry, fishMaterial);
-    fish.scale.set(1.5, 0.7, 0.5);
-    fish.position.set(0.5, 0.8, 0);
-    fish.rotation.y = Math.PI / 4;
-    previewGroup.add(fish);
-    
-    // Fish tail
-    const tailGeometry = new THREE.ConeGeometry(0.06, 0.15, 4);
-    const tail = new THREE.Mesh(tailGeometry, fishMaterial);
-    tail.position.set(0.35, 0.8, -0.1);
-    tail.rotation.z = -Math.PI / 2;
-    tail.scale.set(0.5, 1.2, 1);
-    previewGroup.add(tail);
-    
-    // Add bubbles
-    for (let i = 0; i < 8; i++) {
-        const bubbleGeometry = new THREE.SphereGeometry(0.03, 6, 6);
-        const bubbleMaterial = new THREE.MeshStandardMaterial({
-            color: 0xE0FFFF,
-            transparent: true,
-            opacity: 0.4,
-            metalness: 0.8,
-            roughness: 0.1
-        });
-        const bubble = new THREE.Mesh(bubbleGeometry, bubbleMaterial);
-        bubble.position.set(
-            (Math.random() - 0.5) * 2,
-            0.2 + Math.random() * 1.5,
-            (Math.random() - 0.5) * 2
-        );
-        previewGroup.add(bubble);
-    }
-}
-
-
-
-    
-    // Scale up the preview to fill the rectangle better
-previewGroup.scale.set(1.5, 1.5, 1.5);
-
-// Center the preview perfectly in the rectangle  
-previewGroup.position.set(0, 0.3, 0); // Raise it up slightly
-previewGroup.userData.baseY = 0.3; // Store base position for floating animation
-
-return previewGroup;
+        // Fallback to simple gradient
+        img.style.display = 'none';
+        const previewContainer = document.getElementById('worldPreview');
+        previewContainer.innerHTML = `
+            <div style="
+                width: 100%;
+                height: 100%;
+                background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+                border-radius: 15px;
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                color: white;
+                font-weight: bold;
+                text-align: center;
+                font-size: 16px;
+            ">
+                ${selectedWorld.name}<br>
+                <small style="opacity: 0.7; font-size: 12px;">Preview Missing</small>
+            </div>
+        `;
+    };
 }
 
         // Setup world select navigation buttons
@@ -6788,38 +6456,20 @@ updateWorldArrowVisibility();
 
 // Add fresh event listeners
 document.getElementById('prevWorldBtn').addEventListener('click', function() {
-    // Hide current model
-    if (worldSelectModels[selectedWorldIndex]) {
-        worldSelectModels[selectedWorldIndex].visible = false;
-    }
-    
     // Update index (with wrap-around)
     selectedWorldIndex = (selectedWorldIndex - 1 + availableWorlds.length) % availableWorlds.length;
     
-    // Show new model
-    if (worldSelectModels[selectedWorldIndex]) {
-        worldSelectModels[selectedWorldIndex].visible = true;
-    }
-    
-    // Update info display
+    // Update image and info display
+    updateWorldImagePreview();
     updateWorldDisplay();
 });
 
 document.getElementById('nextWorldBtn').addEventListener('click', function() {
-    // Hide current model
-    if (worldSelectModels[selectedWorldIndex]) {
-        worldSelectModels[selectedWorldIndex].visible = false;
-    }
-    
     // Update index (with wrap-around)
     selectedWorldIndex = (selectedWorldIndex + 1) % availableWorlds.length;
     
-    // Show new model
-    if (worldSelectModels[selectedWorldIndex]) {
-        worldSelectModels[selectedWorldIndex].visible = true;
-    }
-    
-    // Update info display
+    // Update image and info display
+    updateWorldImagePreview();
     updateWorldDisplay();
 });
     
