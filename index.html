@@ -5485,7 +5485,7 @@ function createShopCharacterPreview(containerId, charName) {
             console.log(`✅ GLB character loaded: ${charName}`);
             
             const characterModel = gltf.scene;
-            characterModel.scale.set(0.8, 0.8, 0.8);
+            characterModel.scale.set(1.5, 1.5, 1.5); // Increased from 0.8 to 1.5
             scene.add(characterModel);
             
             // Position camera
@@ -5671,7 +5671,7 @@ function createShopCharacterModalPreview(container, charName) {
                 console.log(`✅ Modal GLB character loaded: ${charName}`);
                 
                 const characterModel = gltf.scene;
-                characterModel.scale.set(1.0, 1.0, 1.0); // Better scaling
+                characterModel.scale.set(2.0, 2.0, 2.0); // Much larger for modal
                 scene.add(characterModel);
                 
                 // Better camera position - further back
@@ -6100,8 +6100,8 @@ visibleCharacters.forEach((charType, index) => {
             
             const charModel = gltf.scene;
             
-            // Scale and position - much smaller for proper display
-            charModel.scale.set(0.5, 0.5, 0.5); // Reduced from 1.5 to 0.5
+            // Scale and position - larger for better visibility
+            charModel.scale.set(1.2, 1.2, 1.2); // Increased from 0.5 to 1.2
             charModel.position.set(0, 0, 0);
             charModel.visible = false; // Hide all initially
             
