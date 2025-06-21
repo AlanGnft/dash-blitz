@@ -6203,8 +6203,8 @@ function animateCharacterSelect() {
             if (currentModel && currentModel.visible) {
                 currentModel.rotation.y += 0.01;
                 
-                // Apply specific character animations
-                animateCharacterModel(currentModel, currentType, frameCount);
+                // With this simple rotation:
+                // (GLB models only need basic rotation, no special animations)
             }
         }
         
