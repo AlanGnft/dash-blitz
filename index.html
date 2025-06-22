@@ -8569,27 +8569,32 @@ if (currentWorld === 'desert') {
         
         // Create player based on selected character
 function createPlayer() {
-    // Remove existing player if it exists
+    // Remove existing player if it exists (thorough cleanup)
     if (player) {
         scene.remove(player);
+        
+        // Extra cleanup for GLB models
+        if (player.traverse) {
+            player.traverse((child) => {
+                if (child.geometry) child.geometry.dispose();
+                if (child.material) {
+                    if (Array.isArray(child.material)) {
+                        child.material.forEach(mat => mat.dispose());
+                    } else {
+                        child.material.dispose();
+                    }
+                }
+            });
+        }
+        
+        player = null;
     }
 
-    // Check if this character should use GLB
-    if (shouldUseGLB(currentCharacter)) {
-        createGLBPlayer(currentCharacter);
-    } else {
-        createProceduralPlayer(currentCharacter);
-    }
+    // All characters now use GLB
+    createGLBPlayer(currentCharacter);
 }
 
-// Helper function to determine which characters use GLB
-function shouldUseGLB(characterType) {
-    const glbCharacters = [
-    'apple', 'carrot', 'pumpkin', 'happyface', 'monster', 
-    'atom', 'slime', 'ufo', 'robot', 'dragon', 'ghost', 'creature'
-]; // All characters now use GLB
-    return glbCharacters.includes(characterType);
-}
+
 
 // New GLB player creation
 function createGLBPlayer(characterType) {
@@ -12599,277 +12604,17 @@ function isInCameraView(object) {
                 // ADD THIS ONE LINE BEFORE THE MONSTER ANIMATION:
 if (player.isGLB) {
     animateGLBCharacter(player, currentCharacter, frameCount);
-} else {
-                
-                // Update monster character's special animations if selected
-if (currentCharacter === 'monster' && player.userData) {
-    // Make the dark orb rotate (but don't override jump position)
-    player.rotation.y += player.userData.rotateSpeed;
-    
-    // Only apply bobbing animation when NOT jumping
-    if (!jumping) {
-        player.position.y = playerY + Math.sin(frameCount * player.userData.bobSpeed) * 0.1;
-    }
-    
-    // Animate the smoky particles
-    if (player.children) {
-        // Start from index 5 to skip the main body, eyes, mouth and teeth
-        for (let i = 5; i < player.children.length; i++) {
-            const particle = player.children[i];
-            if (particle.userData && particle.userData.initialPosition) {
-                // Update angle for orbital motion
-                particle.userData.angle += particle.userData.rotationSpeed;
-                
-                // Orbit around the monster with some oscillation
-                const orbitRadius = particle.userData.initialPosition.length() + 
-                    Math.sin(frameCount * particle.userData.oscillationSpeed) * 
-                    particle.userData.oscillationDistance;
-                
-                // Calculate new position based on original angle but varying distance
-                const newX = orbitRadius * Math.sin(particle.userData.angle);
-                const newY = particle.userData.initialPosition.y + 
-                    Math.sin(frameCount * 0.1 + i) * 0.05;
-                const newZ = orbitRadius * Math.cos(particle.userData.angle);
-                
-                particle.position.set(newX, newY, newZ);
-            }
-        }
-    }
 } 
-
-else if (currentCharacter === 'atom') {
-    // Batch atom animations - update every other frame for performance
-    if (frameCount % 2 === 0) {
-        // Update Atom character animations
-        // Rotate all orbitals
-        for (let i = 0; i < player.children.length; i++) {
-            const child = player.children[i];
-            
-            // Orbit rotation for the atom's orbital rings
-            if (i >= 2 && i <= 4) { // These are the orbital rings
-                child.rotation.z += 0.02; // Slightly faster since updating every other frame
-            }
-            
-            // Update electrons
-            if (child.userData && child.userData.orbitalIndex !== undefined) {
-                const electron = child;
-                const orbitalIndex = electron.userData.orbitalIndex;
-                const orbitalRadius = electron.userData.orbitalRadius;
-                const speed = electron.userData.speed * 2; // Double speed since updating every other frame
-                
-                // Update electron angle
-                electron.userData.angle += speed;
-                
-                // Position based on orbital orientation
-                if (orbitalIndex === 0) {
-                    electron.position.x = Math.cos(electron.userData.angle) * orbitalRadius;
-                    electron.position.z = Math.sin(electron.userData.angle) * orbitalRadius;
-                } else if (orbitalIndex === 1) {
-                    electron.position.y = Math.cos(electron.userData.angle) * orbitalRadius;
-                    electron.position.z = Math.sin(electron.userData.angle) * orbitalRadius;
-                } else {
-                    electron.position.x = Math.cos(electron.userData.angle) * orbitalRadius * 0.7;
-                    electron.position.y = Math.cos(electron.userData.angle) * orbitalRadius * 0.7;
-                    electron.position.z = Math.sin(electron.userData.angle) * orbitalRadius;
-                }
-            }
-            
-            // Pulse nucleus sparkles
-            if (i === 0) { // Nucleus
-                // Update sparkles inside the nucleus
-                if (child.children) {
-                    child.children.forEach(sparkle => {
-                        if (sparkle.userData) {
-                            // Pulse size of sparkle
-                            const pulseScale = 0.8 + Math.sin(frameCount * sparkle.userData.pulseSpeed + sparkle.userData.pulsePhase) * 0.3;
-                            sparkle.scale.set(pulseScale, pulseScale, pulseScale);
-                        }
-                    });
-                }
-            }
-            
-            // Pulse the glow
-            if (i === 1) { // Glow sphere
-                // Pulse size and opacity
-                const pulseScale = 1.0 + Math.sin(frameCount * 0.05) * 0.1;
-                child.scale.set(pulseScale, pulseScale, pulseScale);
-                child.material.opacity = 0.3 + Math.sin(frameCount * 0.08) * 0.15;
-            }
-        }
-        
-        // Add gentle rotation if not jumping
-        if (!jumping) {
-            player.rotation.y += 0.04; // Double speed since updating every other frame
-        }
-    }
-} else if (currentCharacter === 'ufo' && player.userData) {
-    // Rotate the outer ring
-    if (player.userData.ring) {
-        player.userData.ring.rotation.y += 0.03;
-    }
-    
-    // Pulse the lights
-    if (player.userData.lights) {
-        player.userData.lights.children.forEach((light, index) => {
-            if (light.userData) {
-                const pulse = Math.sin(frameCount * light.userData.pulseSpeed + light.userData.pulsePhase);
-                light.material.emissiveIntensity = light.userData.originalIntensity + pulse * 0.5;
-                
-                // Occasional color flash
-                if (Math.random() < 0.01) {
-                    light.material.color.setHex(0xFFFFFF);
-                    light.material.emissive.setHex(0xFFFFFF);
-                    setTimeout(() => {
-                        light.material.color.setHex(light.userData.originalColor);
-                        light.material.emissive.setHex(light.userData.originalColor);
-                    }, 100);
-                }
-            }
-        });
-    }
-    
-    // Pulse the dome
-    if (player.userData.dome) {
-        const domePulse = Math.sin(frameCount * 0.03) * 0.2 + 0.5;
-        player.userData.dome.material.emissiveIntensity = domePulse;
-    }
-    
-    // Animate tractor beam
-    if (player.userData.beam) {
-        const beamPulse = Math.sin(frameCount * 0.05) * 0.1 + 0.2;
-        player.userData.beam.material.opacity = beamPulse;
-        player.userData.beam.rotation.y += 0.02;
-    }
-    
-    // Float energy particles
-    if (player.userData.particles) {
-        player.userData.particles.forEach(particle => {
-            if (particle.userData) {
-                // Orbit motion
-                particle.userData.orbitAngle += particle.userData.orbitSpeed;
-                const x = Math.cos(particle.userData.orbitAngle) * particle.userData.orbitRadius;
-                const z = Math.sin(particle.userData.orbitAngle) * particle.userData.orbitRadius;
-                
-                // Floating motion
-                const floatY = Math.sin(frameCount * particle.userData.floatSpeed + particle.userData.floatOffset) * 0.3;
-                
-                particle.position.set(x, floatY, z);
-                
-                // Particle glow pulse
-                const glowPulse = Math.sin(frameCount * 0.08 + particle.userData.floatOffset) * 0.3 + 0.7;
-                particle.material.opacity = glowPulse;
-            }
-        });
-    }
-    
-    // Gentle hovering motion when not jumping
-    if (!jumping) {
-        player.position.y = playerY + Math.sin(frameCount * 0.04) * 0.08;
-    }
-} else if (currentCharacter === 'dragon' && player.userData) {
-    // Animate dragon wings during gameplay
-    if (player.userData.wings) {
-        const wingFlap = Math.sin(frameCount * 0.15) * 0.3;
-        player.userData.wings[0].rotation.z = Math.PI / 3 + wingFlap; // Left wing
-        player.userData.wings[1].rotation.z = -Math.PI / 3 - wingFlap; // Right wing
-    }
-    
-    // Animate fire particles when fire breath is active
-    if (player.userData.fireParticles) {
-        player.userData.fireParticles.forEach((particle, index) => {
-            if (dragonFireActive) {
-                // Show particle and animate it
-                particle.visible = true;
-                
-                // Keep particles close to dragon mouth with flickering
-                const flicker = Math.sin(frameCount * 0.2 + index) * 0.3 + 0.7;
-                particle.material.opacity = particle.userData.originalOpacity * flicker;
-                particle.scale.setScalar(0.8 + flicker * 0.4);
-            } else {
-                // Fire is not active - hide particle
-                particle.visible = false;
-            }
-        });
-    }
-} else if (currentCharacter === 'robot') {
-    // Robot running animation - only during gameplay
-    if (gameStarted && !gameOver && !gamePaused) {
-        // Running body bob - up and down motion
-        if (!jumping) {
-            const runBob = Math.sin(frameCount * 0.3) * 0.08; // Faster, smaller bob
-            player.position.y = playerY + runBob;
-        }
-        
-        // Animate robot arms for running motion
-        if (player.children.length >= 6) { // Make sure arms exist
-            const leftArm = player.children[4];  // Left arm
-            const rightArm = player.children[5]; // Right arm
-            
-            if (leftArm && rightArm) {
-                // Alternating arm swing - opposite arms move opposite directions
-                const armSwing = Math.sin(frameCount * 0.3) * 0.4; // Running pace
-                
-                leftArm.rotation.x = armSwing;        // Left arm forward/back
-                rightArm.rotation.x = -armSwing;      // Right arm opposite direction
-                
-                // Add slight side-to-side motion for more natural running
-                leftArm.rotation.z = Math.sin(frameCount * 0.15) * 0.1;
-                rightArm.rotation.z = -Math.sin(frameCount * 0.15) * 0.1;
-            }
-        }
-        
-        // Slight forward lean while running
-        if (!jumping) {
-            player.rotation.x = Math.sin(frameCount * 0.3) * 0.05; // Subtle forward/back lean
-        }
-        
-        // Add slight head bob for realism
-        if (player.children.length >= 2) {
-            const head = player.children[1]; // Head
-            if (head) {
-                head.rotation.x = Math.sin(frameCount * 0.3 + Math.PI/4) * 0.08; // Slight head bob
-            }
-        }
-
-// Animate robot legs for running motion
-        if (player.children.length >= 8) { // Make sure legs exist
-            const leftLeg = player.children[6];  // Left leg
-            const rightLeg = player.children[7]; // Right leg
-            
-            if (leftLeg && rightLeg) {
-                // Create the same armSwing calculation for legs
-                const armSwing = Math.sin(frameCount * 0.3) * 0.4; // Same as arms
-                
-                // Forward/back leg swing (opposite to arms for natural running)
-                leftLeg.rotation.x = -armSwing * 0.8;   // Left leg opposite to left arm
-                rightLeg.rotation.x = armSwing * 0.8;   // Right leg opposite to right arm
-                
-                // Slight up/down leg movement for realistic stride
-                const legLift = Math.abs(Math.sin(frameCount * 0.3)) * 0.05;
-                leftLeg.position.y = -0.5 + (armSwing > 0 ? legLift : 0);  // Lift when swinging forward
-                rightLeg.position.y = -0.5 + (-armSwing > 0 ? legLift : 0); // Lift when swinging forward
-                
-                // Add slight side-to-side leg motion for natural gait
-                leftLeg.rotation.z = Math.sin(frameCount * 0.15) * 0.05;
-                rightLeg.rotation.z = -Math.sin(frameCount * 0.15) * 0.05;
-            }
-        }
-
-    }
-} else if (!jumping && currentCharacter !== 'dragon' && currentCharacter !== 'ghost') {
-    // Standard rotation for other characters when not jumping (except robot, dragon, and ghost)
-    player.rotation.y += 0.02;
-}
-
-// ADD THIS CLOSING BRACE:
-}
 
 // GLB character animation function
 function animateGLBCharacter(model, characterType, frameCount) {
     if (!model || !model.visible) return;
     
-    // Basic rotation for all GLB characters (when not jumping)
-    if (!jumping) {
+    // Characters that should NOT rotate
+    const noRotationCharacters = ['dragon', 'robot', 'ghost'];
+    
+    // Basic rotation for characters that should rotate (when not jumping)
+    if (!jumping && !noRotationCharacters.includes(characterType)) {
         model.rotation.y += 0.02;
     }
     
@@ -12895,7 +12640,7 @@ function animateGLBCharacter(model, characterType, frameCount) {
             break;
         // Add other characters as needed
         default:
-            // Default animation - just basic rotation
+            // Default animation - just basic rotation (already handled above)
             break;
     }
 }
