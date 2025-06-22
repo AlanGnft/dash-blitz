@@ -8634,13 +8634,13 @@ function createGLBPlayer(characterType) {
             // Set proper facing direction - each character needs different rotation
             switch (characterType) {
                 case 'dragon':
-                    player.rotation.y = Math.PI/4; // 45 degrees (was 0, now +45°)
+                    player.rotation.y = -Math.PI/4; // -45 degrees (45° - 90° = -45°)
                     break;
                 case 'robot':
-                    player.rotation.y = Math.PI/4; // 45 degrees (was 90°, now -45° = 45°)
+                    player.rotation.y = Math.PI/2 + Math.PI/4; // 135 degrees (45° + 90° = 135°)
                     break;
                 case 'ghost':
-                    player.rotation.y = Math.PI + Math.PI/4; // 225 degrees (was 180°, now +45° = 225°)
+                    player.rotation.y = Math.PI/2 + Math.PI/4; // 135 degrees (225° - 90° = 135°)
                     break;
                 default:
                     player.rotation.y = 0; // Default for rotating characters
