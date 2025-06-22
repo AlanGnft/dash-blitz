@@ -8593,11 +8593,19 @@ function shouldUseGLB(characterType) {
 
 // New GLB player creation
 function createGLBPlayer(characterType) {
+    // Prevent multiple loading attempts
+    if (window.glbLoading) {
+        console.log('⏳ GLB already loading, skipping duplicate request');
+        return;
+    }
+    
+    window.glbLoading = true;
     const loader = new THREE.GLTFLoader();
     
     loader.load(
         `assets/character-models/${characterType}.glb`,
         (gltf) => {
+            window.glbLoading = false; // Reset loading flag
             player = gltf.scene;
             
             // Mark as GLB for animation system
@@ -8610,8 +8618,8 @@ function createGLBPlayer(characterType) {
             console.log('GLB has', gltf.scene.children.length, 'children');
             
             // Adjust GLB character scale as needed
-            player.scale.set(0.8, 0.8, 0.8); // Make smaller if too big
-            // or player.scale.set(1.0, 1.0, 1.0); // Normal size
+            // or player.scale.set(0.8, 0.8, 0.8); // Make smaller if too big
+            player.scale.set(1.0, 1.0, 1.0); // Normal size
             // or player.scale.set(1.5, 1.5, 1.5); // Larger if too small
             
             // Set player position
@@ -8630,6 +8638,7 @@ function createGLBPlayer(characterType) {
         },
         undefined,
         (error) => {
+            window.glbLoading = false; // Reset loading flag
             console.warn(`❌ Failed to load GLB player, falling back to procedural: ${characterType}`);
             createProceduralPlayer(characterType);
         }
