@@ -8568,68 +8568,122 @@ if (currentWorld === 'desert') {
         
         
         // Create player based on selected character
-        function createPlayer() {
-            // Remove existing player if it exists
-            if (player) {
-                scene.remove(player);
-            }
+function createPlayer() {
+    // Remove existing player if it exists
+    if (player) {
+        scene.remove(player);
+    }
 
-            // Create character based on selection
-            switch (currentCharacter) {
-    // CREATE PLAYER SWITCH INJECTION POINT - Package manager will add cases here
-    case "apple": player = createAppleCharacter(); break;
-    case "carrot": player = createCarrotCharacter(); break;
-    case "pumpkin": player = createPumpkinCharacter(); break;
-    case "happyface": player = createHappyFaceCharacter(); break;
-    case "monster": player = createMonsterCharacter(); break;
-    case "atom": player = createAtomCharacter(); break;
-    case "slime": player = createSlimeCharacter(); break;
-    case "ufo": player = createUFOCharacter(); break;
-    case "robot": player = createRobotCharacter(); break;
-    case "dragon": player = createDragonCharacter(); break;
-    case "ghost": player = createGhostCharacter(); break;
-    case "creature": player = createCreatureCharacter(); break;
-    // END CREATE PLAYER SWITCH INJECTION POINT
-    default:
-        debugWarn(`Character ${currentCharacter} not yet extracted - using Happy Face`);
-        currentCharacter = "happyface";
-        player = createHappyFaceCharacter();
-        break;
+    // Check if this character should use GLB
+    if (shouldUseGLB(currentCharacter)) {
+        createGLBPlayer(currentCharacter);
+    } else {
+        createProceduralPlayer(currentCharacter);
+    }
 }
 
-// After the switch statement, add this:
-if (!player) {
-    console.error('Failed to create player character! Falling back to Happy Face');
-    player = createHappyFaceCharacter();
+// Helper function to determine which characters use GLB
+function shouldUseGLB(characterType) {
+    const glbCharacters = ['apple']; // Start with just apple for testing
+    return glbCharacters.includes(characterType);
 }
 
-// Add null check before accessing player properties
-if (player && player.position) {
-    // Your existing code that uses player.position
-} else {
-    console.error('Player object is invalid:', player);
-}
+// New GLB player creation
+function createGLBPlayer(characterType) {
+    const loader = new THREE.GLTFLoader();
+    
+    loader.load(
+        `assets/character-models/${characterType}.glb`,
+        (gltf) => {
+            player = gltf.scene;
+            player.scale.set(1.0, 1.0, 1.0); // Adjust as needed
+            
+            // Mark as GLB for animation system
+            player.isGLB = true;
+            player.characterType = characterType;
             
             // Set player position
-player.position.y = playerY;
-player.position.z = 0;
-player.rotation.x = 0; // Reset rotation
-
-// Make robot, dragon, and ghost face forward down the track
-if (currentCharacter === 'robot' || currentCharacter === 'dragon' || currentCharacter === 'ghost') {
-    player.rotation.y = Math.PI; // Face forward down the track
-} else {
-    player.rotation.y = 0; // Default orientation for other characters
-}
-
-scene.add(player);
-
-// Initialize ability status bar for new character
-if (typeof initializeAbilityStatusBar === 'function') {
-    initializeAbilityStatusBar();
-}
+            player.position.y = playerY;
+            player.position.z = 0;
+            player.rotation.x = 0; // Reset rotation
+            player.rotation.y = 0; // Default orientation for GLB characters
+            
+            scene.add(player);
+            console.log(`✅ GLB player created: ${characterType}`);
+            
+            // Initialize ability status bar for new character
+            if (typeof initializeAbilityStatusBar === 'function') {
+                initializeAbilityStatusBar();
+            }
+        },
+        undefined,
+        (error) => {
+            console.warn(`❌ Failed to load GLB player, falling back to procedural: ${characterType}`);
+            createProceduralPlayer(characterType);
         }
+    );
+}
+
+// Existing procedural player creation (your current logic)
+function createProceduralPlayer(characterType) {
+    // Create character based on selection
+    switch (characterType) {
+        // CREATE PLAYER SWITCH INJECTION POINT - Package manager will add cases here
+        case "apple": player = createAppleCharacter(); break;
+        case "carrot": player = createCarrotCharacter(); break;
+        case "pumpkin": player = createPumpkinCharacter(); break;
+        case "happyface": player = createHappyFaceCharacter(); break;
+        case "monster": player = createMonsterCharacter(); break;
+        case "atom": player = createAtomCharacter(); break;
+        case "slime": player = createSlimeCharacter(); break;
+        case "ufo": player = createUFOCharacter(); break;
+        case "robot": player = createRobotCharacter(); break;
+        case "dragon": player = createDragonCharacter(); break;
+        case "ghost": player = createGhostCharacter(); break;
+        case "creature": player = createCreatureCharacter(); break;
+        // END CREATE PLAYER SWITCH INJECTION POINT
+        default:
+            debugWarn(`Character ${characterType} not yet extracted - using Happy Face`);
+            currentCharacter = "happyface";
+            player = createHappyFaceCharacter();
+            break;
+    }
+
+    // After the switch statement, add this:
+    if (!player) {
+        console.error('Failed to create player character! Falling back to Happy Face');
+        player = createHappyFaceCharacter();
+    }
+
+    if (player && player.position) {
+        // Mark as procedural
+        player.isGLB = false;
+        player.characterType = characterType;
         
+        // Set player position
+        player.position.y = playerY;
+        player.position.z = 0;
+        player.rotation.x = 0; // Reset rotation
+
+        // Make robot, dragon, and ghost face forward down the track
+        if (currentCharacter === 'robot' || currentCharacter === 'dragon' || currentCharacter === 'ghost') {
+            player.rotation.y = Math.PI; // Face forward down the track
+        } else {
+            player.rotation.y = 0; // Default orientation for other characters
+        }
+
+        scene.add(player);
+        console.log(`✅ Procedural player created: ${characterType}`);
+
+        // Initialize ability status bar for new character
+        if (typeof initializeAbilityStatusBar === 'function') {
+            initializeAbilityStatusBar();
+        }
+    } else {
+        console.error('Player object is invalid:', player);
+    }
+}
+
         // Try to unlock a character
         function tryUnlockCharacter(character) {
             if (unlockedCharacters[character]) {
