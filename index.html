@@ -8596,11 +8596,18 @@ function createGLBPlayer(characterType) {
         `assets/character-models/${characterType}.glb`,
         (gltf) => {
             player = gltf.scene;
-            player.scale.set(1.0, 1.0, 1.0); // Adjust as needed
             
             // Mark as GLB for animation system
             player.isGLB = true;
             player.characterType = characterType;
+            
+            // ADD THIS DEBUG INFO:
+            console.log(`🎮 USING GLB MODEL FOR GAMEPLAY: ${characterType}`);
+            console.log('GLB Scene structure:', gltf.scene);
+            console.log('GLB has', gltf.scene.children.length, 'children');
+            
+            // Visual indicator - make GLB characters slightly larger for testing
+            player.scale.set(1.2, 1.2, 1.2); // Slightly bigger so you can tell
             
             // Set player position
             player.position.y = playerY;
@@ -8609,7 +8616,7 @@ function createGLBPlayer(characterType) {
             player.rotation.y = 0; // Default orientation for GLB characters
             
             scene.add(player);
-            console.log(`✅ GLB player created: ${characterType}`);
+            console.log(`✅ GLB player created and added to scene: ${characterType}`);
             
             // Initialize ability status bar for new character
             if (typeof initializeAbilityStatusBar === 'function') {
