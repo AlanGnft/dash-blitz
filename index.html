@@ -8584,7 +8584,10 @@ function createPlayer() {
 
 // Helper function to determine which characters use GLB
 function shouldUseGLB(characterType) {
-    const glbCharacters = ['apple']; // Start with just apple for testing
+    const glbCharacters = [
+    'apple', 'carrot', 'pumpkin', 'happyface', 'monster', 
+    'atom', 'slime', 'ufo', 'robot', 'dragon', 'ghost', 'creature'
+]; // All characters now use GLB
     return glbCharacters.includes(characterType);
 }
 
@@ -8606,8 +8609,10 @@ function createGLBPlayer(characterType) {
             console.log('GLB Scene structure:', gltf.scene);
             console.log('GLB has', gltf.scene.children.length, 'children');
             
-            // Visual indicator - make GLB characters slightly larger for testing
-            player.scale.set(1.2, 1.2, 1.2); // Slightly bigger so you can tell
+            // Adjust GLB character scale as needed
+            player.scale.set(0.8, 0.8, 0.8); // Make smaller if too big
+            // or player.scale.set(1.0, 1.0, 1.0); // Normal size
+            // or player.scale.set(1.5, 1.5, 1.5); // Larger if too small
             
             // Set player position
             player.position.y = playerY;
@@ -12581,6 +12586,11 @@ function isInCameraView(object) {
     if (gameState === "playing" && !gameOver && !gamePaused) {
                 // Update dynamic difficulty based on time
                 updateDynamicDifficulty();
+
+                // ADD THIS ONE LINE BEFORE THE MONSTER ANIMATION:
+if (player.isGLB) {
+    animateGLBCharacter(player, currentCharacter, frameCount);
+} else {
                 
                 // Update monster character's special animations if selected
 if (currentCharacter === 'monster' && player.userData) {
@@ -12840,6 +12850,110 @@ else if (currentCharacter === 'atom') {
 } else if (!jumping && currentCharacter !== 'dragon' && currentCharacter !== 'ghost') {
     // Standard rotation for other characters when not jumping (except robot, dragon, and ghost)
     player.rotation.y += 0.02;
+}
+
+// ADD THIS CLOSING BRACE:
+}
+
+// GLB character animation function
+function animateGLBCharacter(model, characterType, frameCount) {
+    if (!model || !model.visible) return;
+    
+    // Basic rotation for all GLB characters (when not jumping)
+    if (!jumping) {
+        model.rotation.y += 0.02;
+    }
+    
+    // Character-specific GLB animations
+    switch (characterType) {
+        case 'apple':
+            animateAppleGLB(model, frameCount);
+            break;
+        case 'robot':
+            animateRobotGLB(model, frameCount);
+            break;
+        case 'dragon':
+            animateDragonGLB(model, frameCount);
+            break;
+        case 'atom':
+            animateAtomGLB(model, frameCount);
+            break;
+        case 'monster':
+            animateMonsterGLB(model, frameCount);
+            break;
+        case 'ufo':
+            animateUFOGLB(model, frameCount);
+            break;
+        // Add other characters as needed
+        default:
+            // Default animation - just basic rotation
+            break;
+    }
+}
+
+// Simple GLB animation examples
+function animateAppleGLB(model, frameCount) {
+    // Simple stem wiggle
+    const stem = model.getObjectByName('Stem');
+    if (stem) {
+        stem.rotation.z = Math.sin(frameCount * 0.1) * 0.2;
+    }
+}
+
+function animateRobotGLB(model, frameCount) {
+    // Basic running bob
+    if (!jumping) {
+        const runBob = Math.sin(frameCount * 0.3) * 0.08;
+        model.position.y = playerY + runBob;
+    }
+    
+    // Try to find and animate arms
+    const leftArm = model.getObjectByName('LeftArm');
+    const rightArm = model.getObjectByName('RightArm');
+    
+    if (leftArm && rightArm) {
+        const armSwing = Math.sin(frameCount * 0.3) * 0.4;
+        leftArm.rotation.x = armSwing;
+        rightArm.rotation.x = -armSwing;
+    }
+}
+
+function animateDragonGLB(model, frameCount) {
+    // Try to find and animate wings
+    const leftWing = model.getObjectByName('LeftWing');
+    const rightWing = model.getObjectByName('RightWing');
+    
+    if (leftWing && rightWing) {
+        const wingFlap = Math.sin(frameCount * 0.15) * 0.3;
+        leftWing.rotation.z = Math.PI / 3 + wingFlap;
+        rightWing.rotation.z = -Math.PI / 3 - wingFlap;
+    }
+}
+
+function animateAtomGLB(model, frameCount) {
+    // Simple rotation for now - much simpler than procedural version
+    model.rotation.y += 0.04;
+    
+    // Try to find orbital elements
+    const orbitals = model.getObjectByName('Orbitals');
+    if (orbitals) {
+        orbitals.rotation.x += 0.02;
+        orbitals.rotation.z += 0.03;
+    }
+}
+
+function animateMonsterGLB(model, frameCount) {
+    // Basic floating motion
+    if (!jumping) {
+        model.position.y = playerY + Math.sin(frameCount * 0.05) * 0.1;
+    }
+}
+
+function animateUFOGLB(model, frameCount) {
+    // Hovering motion
+    if (!jumping) {
+        model.position.y = playerY + Math.sin(frameCount * 0.04) * 0.08;
+    }
 }
 
 // Handle character-specific abilities
