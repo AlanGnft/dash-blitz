@@ -8632,24 +8632,20 @@ function createGLBPlayer(characterType) {
             player.position.z = 0;
             player.rotation.x = 0; // Reset rotation
             // Set proper facing direction - each character needs different rotation
-// Temporary debug - try all rotations quickly
-switch (characterType) {
-    case 'dragon':
-        player.rotation.y = 0;
-        console.log('🐉 Dragon rotation: 0');
-        break;
-    case 'robot':
-        player.rotation.y = Math.PI/2;
-        console.log('🤖 Robot rotation: 90°');
-        break;
-    case 'ghost':
-        player.rotation.y = Math.PI;
-        console.log('👻 Ghost rotation: 180°');
-        break;
-    default:
-        player.rotation.y = 0;
-        break;
-}
+            switch (characterType) {
+                case 'dragon':
+                    player.rotation.y = Math.PI/4; // 45 degrees (was 0, now +45°)
+                    break;
+                case 'robot':
+                    player.rotation.y = Math.PI/4; // 45 degrees (was 90°, now -45° = 45°)
+                    break;
+                case 'ghost':
+                    player.rotation.y = Math.PI + Math.PI/4; // 225 degrees (was 180°, now +45° = 225°)
+                    break;
+                default:
+                    player.rotation.y = 0; // Default for rotating characters
+                    break;
+            }
             
             scene.add(player);
             console.log(`✅ GLB player created and added to scene: ${characterType}`);
