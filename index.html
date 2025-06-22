@@ -8631,14 +8631,25 @@ function createGLBPlayer(characterType) {
             player.position.y = playerY;
             player.position.z = 0;
             player.rotation.x = 0; // Reset rotation
-            // Set proper facing direction based on character type
-            const forwardFacingCharacters = ['dragon', 'robot', 'ghost'];
-
-            if (forwardFacingCharacters.includes(characterType)) {
-                player.rotation.y = Math.PI; // Face forward down the track (180 degrees)
-            } else {
-                player.rotation.y = 0; // Default orientation for rotating characters
-            }
+            // Set proper facing direction - each character needs different rotation
+// Temporary debug - try all rotations quickly
+switch (characterType) {
+    case 'dragon':
+        player.rotation.y = 0;
+        console.log('🐉 Dragon rotation: 0');
+        break;
+    case 'robot':
+        player.rotation.y = Math.PI/2;
+        console.log('🤖 Robot rotation: 90°');
+        break;
+    case 'ghost':
+        player.rotation.y = Math.PI;
+        console.log('👻 Ghost rotation: 180°');
+        break;
+    default:
+        player.rotation.y = 0;
+        break;
+}
             
             scene.add(player);
             console.log(`✅ GLB player created and added to scene: ${characterType}`);
