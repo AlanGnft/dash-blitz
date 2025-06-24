@@ -3748,17 +3748,7 @@ function updateSpeedIndicator() {
 // Initialize audio system
     initializeAudio();
 
-    // Add this at the very beginning of your startGame() or gameplay initialization function
-console.log('🎮 === STARTING GAMEPLAY INITIALIZATION ===');
-console.log('Current scene children count:', scene.children.length);
-console.log('Camera position:', camera.position);
-console.log('Renderer size:', renderer.getSize(new THREE.Vector2()));
-
-// Add this right before you expect to see the game
-console.log('🎮 === GAMEPLAY SHOULD BE VISIBLE NOW ===');
-console.log('Scene children after setup:', scene.children.length);
-console.log('Player exists:', !!player);
-console.log('Player visible:', player ? player.visible : 'no player');
+    
 
 // Background music system
 let backgroundMusic = null;
@@ -5810,9 +5800,12 @@ function setupShopListeners() {
 
 // Cleanup function for shop WebGL contexts
 function cleanupShopPreviews() {
+    // ADD THIS DEBUG CODE AT THE START:
+    console.log('🧹 === SHOP CLEANUP STARTING ===');
+    console.log('Shop cleanup - Scene children before:', scene ? scene.children.length : 'no scene');
+    console.log('Shop cleanup - Renderer exists:', !!renderer);
+    
     console.log('🧹 Safe shop cleanup starting...');
-    console.log('🧹 Shop cleanup - Scene children before:', scene.children.length);
-
     
     // Just remove canvases without touching WebGL contexts
     const allCanvases = document.querySelectorAll('canvas');
@@ -5837,10 +5830,12 @@ function cleanupShopPreviews() {
     });
     
     console.log(`✅ Safe cleanup complete - removed ${removedCount} canvases`);
-    console.log('🧹 Shop cleanup - Scene children after:', scene.children.length);
-    console.log('🧹 Shop cleanup - Renderer still valid:', !!renderer);
+    
+    // ADD THIS DEBUG CODE AT THE END:
+    console.log('🧹 === SHOP CLEANUP COMPLETE ===');
+    console.log('Shop cleanup - Scene children after:', scene ? scene.children.length : 'no scene');
+    console.log('Shop cleanup - Renderer still valid:', !!renderer);
 }
-
 // Purchase character from shop
 function purchaseCharacter(charName) {
     const cost = characterCosts[charName] || 100;
@@ -10560,6 +10555,20 @@ function showInsufficientFundsNotification(cost, itemType) {
 }
         
         function startGame() {
+    // ADD THIS DEBUG CODE AT THE VERY START:
+    console.log('🎮 === STARTING GAMEPLAY INITIALIZATION ===');
+    console.log('Scene exists:', !!scene);
+    if (scene) {
+        console.log('Current scene children count:', scene.children.length);
+    }
+    console.log('Camera exists:', !!camera);
+    if (camera) {
+        console.log('Camera position:', camera.position);
+    }
+    console.log('Renderer exists:', !!renderer);
+    if (renderer) {
+        console.log('Renderer size:', renderer.getSize(new THREE.Vector2()));
+    }
 
                 // ADD THIS LINE AT THE START
     saveGameData(); // Save current state when starting
@@ -10623,14 +10632,22 @@ debug('🎵 Music playing:', musicPlaying);
 startBackgroundMusic();
 
 // Fallback: try again after a short delay if music didn't start
-setTimeout(() => {
-    if (!musicPlaying && backgroundMusicEnabled && audioInitialized) {
-        debug('🎵 Fallback: Retrying music start...');
-        startBackgroundMusic();
-    }
-}, 1000);
-
+    setTimeout(() => {
+        if (!musicPlaying && backgroundMusicEnabled && audioInitialized) {
+            debug('🎵 Fallback: Retrying music start...');
+            startBackgroundMusic();
         }
+        
+        // ADD THIS DEBUG CODE HERE:
+        console.log('🎮 === GAMEPLAY SHOULD BE VISIBLE NOW ===');
+        console.log('Scene children after setup:', scene ? scene.children.length : 'no scene');
+        console.log('Player exists:', !!player);
+        console.log('Player visible:', player ? player.visible : 'no player');
+        console.log('Camera position:', camera ? camera.position : 'no camera');
+        console.log('Game state:', gameState);
+        console.log('Game started:', gameStarted);
+    }, 1000);
+}
         
         function restartGame() {
             // Clear obstacles, coins and streams
