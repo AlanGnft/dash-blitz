@@ -3748,6 +3748,18 @@ function updateSpeedIndicator() {
 // Initialize audio system
     initializeAudio();
 
+    // Add this at the very beginning of your startGame() or gameplay initialization function
+console.log('🎮 === STARTING GAMEPLAY INITIALIZATION ===');
+console.log('Current scene children count:', scene.children.length);
+console.log('Camera position:', camera.position);
+console.log('Renderer size:', renderer.getSize(new THREE.Vector2()));
+
+// Add this right before you expect to see the game
+console.log('🎮 === GAMEPLAY SHOULD BE VISIBLE NOW ===');
+console.log('Scene children after setup:', scene.children.length);
+console.log('Player exists:', !!player);
+console.log('Player visible:', player ? player.visible : 'no player');
+
 // Background music system
 let backgroundMusic = null;
 let musicPlaying = false;
@@ -5799,6 +5811,8 @@ function setupShopListeners() {
 // Cleanup function for shop WebGL contexts
 function cleanupShopPreviews() {
     console.log('🧹 Safe shop cleanup starting...');
+    console.log('🧹 Shop cleanup - Scene children before:', scene.children.length);
+
     
     // Just remove canvases without touching WebGL contexts
     const allCanvases = document.querySelectorAll('canvas');
@@ -5823,6 +5837,8 @@ function cleanupShopPreviews() {
     });
     
     console.log(`✅ Safe cleanup complete - removed ${removedCount} canvases`);
+    console.log('🧹 Shop cleanup - Scene children after:', scene.children.length);
+    console.log('🧹 Shop cleanup - Renderer still valid:', !!renderer);
 }
 
 // Purchase character from shop
