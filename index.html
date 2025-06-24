@@ -5367,18 +5367,12 @@ function populateShopCharacters() {
         characterItem.innerHTML = `
             <div class="shop-preview-container">
                 <div class="shop-3d-preview" id="shop-preview-char-${charName}"></div>
-                <div class="preview-overlay" onclick="openShopCharacterPreview('${charName}')">
-                    <div class="preview-icon">👁️</div>
-                </div>
             </div>
             <h4 style="color: white; margin: 0 0 10px 0; text-transform: capitalize;">${charName}</h4>
             <div style="color: ${isUnlocked ? '#4CAF50' : '#FFD700'}; font-size: 14px; margin-bottom: 10px;">
                 ${isUnlocked ? '✅ Unlocked' : `💰 ${cost} coins`}
             </div>
             <div class="shop-actions">
-                <button onclick="openShopCharacterPreview('${charName}')" class="preview-btn">
-                    PREVIEW
-                </button>
                 ${!isUnlocked ? `
                     <button onclick="purchaseCharacter('${charName}')" class="buy-btn">
                         BUY
@@ -5398,7 +5392,6 @@ function populateShopCharacters() {
         setTimeout(() => createShopCharacterPreview(`shop-preview-char-${charName}`, charName), 100);
     });
 }
-
 
 // Populate shop worlds
 function populateShopWorlds() {
@@ -5617,132 +5610,6 @@ function createShopWorldPreview(containerId, worldId) {
     };
     
     container.appendChild(img);
-}
-
-
-function openShopCharacterPreview(charName) {
-    console.log('Opening character preview for:', charName);
-    
-    const modal = document.getElementById('shop-character-modal');
-    if (!modal) {
-        console.error('Shop character modal not found!');
-        return;
-    }
-    
-    modal.style.display = 'flex';
-    document.getElementById('shop-character-name').textContent = charName.charAt(0).toUpperCase() + charName.slice(1);
-    
-    // Create 3D preview
-    const previewContainer = document.getElementById('shop-character-preview');
-    previewContainer.innerHTML = '';
-    createShopCharacterModalPreview(previewContainer, charName);
-}
-
-function createShopCharacterModalPreview(container, charName) {
-    container.innerHTML = '';
-    
-    // Wait for container to be properly sized
-    setTimeout(() => {
-        const scene = new THREE.Scene();
-        const camera = new THREE.PerspectiveCamera(75, 1, 0.1, 1000);
-        const renderer = new THREE.WebGLRenderer({ alpha: true, antialias: true });
-        
-        // Match renderer size to actual container size
-        const containerWidth = container.offsetWidth;
-        const containerHeight = container.offsetHeight;
-        
-        console.log('Modal container size:', containerWidth, 'x', containerHeight);
-        
-        renderer.setSize(containerWidth, containerHeight);
-        renderer.setClearColor(0x000000, 0);
-        container.appendChild(renderer.domElement);
-        
-        // Add enhanced lighting for modal
-        const ambientLight = new THREE.AmbientLight(0xffffff, 0.8);
-        scene.add(ambientLight);
-        const directionalLight = new THREE.DirectionalLight(0xffffff, 1);
-        directionalLight.position.set(2, 2, 5);
-        scene.add(directionalLight);
-        
-        // Load GLB character for modal
-        const loader = new THREE.GLTFLoader();
-        loader.load(
-            `assets/character-models/${charName}.glb`,
-            // Success callback
-            (gltf) => {
-                console.log(`✅ Modal GLB character loaded: ${charName}`);
-                
-                const characterModel = gltf.scene;
-                characterModel.scale.set(3.0, 3.0, 3.0); // Much larger for modal
-                scene.add(characterModel);
-                
-                // Better camera position - further back
-                camera.position.set(0, 0, 5);
-                camera.lookAt(0, 0, 0);
-                
-                // Auto-rotation animation
-                function animate() {
-                    requestAnimationFrame(animate);
-                    if (characterModel) {
-                        characterModel.rotation.y += 0.01;
-                    }
-                    renderer.render(scene, camera);
-                }
-                animate();
-            },
-            // Progress callback
-            undefined,
-            // Error callback
-            (error) => {
-                console.warn(`❌ Failed to load modal GLB for ${charName}:`, error);
-                
-                // Fallback for modal
-                container.innerHTML = `
-                    <div style="
-                        width: 100%; 
-                        height: 100%; 
-                        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); 
-                        border-radius: 15px; 
-                        display: flex; 
-                        flex-direction: column;
-                        align-items: center; 
-                        justify-content: center; 
-                        color: white; 
-                        font-weight: bold; 
-                        text-transform: capitalize;
-                        gap: 10px;
-                    ">
-                        <div style="font-size: 24px;">${charName}</div>
-                        <div style="font-size: 12px; opacity: 0.7;">GLB Model Missing</div>
-                    </div>
-                `;
-            }
-        );
-        
-    }, 100); // Small delay to ensure container is sized
-}
-
-
-function closeShopCharacterModal() {
-    const modal = document.getElementById('shop-character-modal');
-    const previewContainer = document.getElementById('shop-character-preview');
-    
-    // Proper GLB cleanup
-    if (previewContainer) {
-        const canvas = previewContainer.querySelector('canvas');
-        if (canvas) {
-            const gl = canvas.getContext('webgl') || canvas.getContext('experimental-webgl');
-            if (gl) {
-                const ext = gl.getExtension('WEBGL_lose_context');
-                if (ext) {
-                    ext.loseContext();
-                }
-            }
-        }
-        previewContainer.innerHTML = '';
-    }
-    
-    modal.style.display = 'none';
 }
 
 
@@ -13657,13 +13524,6 @@ if ('serviceWorker' in navigator) {
 }
 </script>
 
-<!-- Shop Character Preview Modal -->
-<div id="shop-character-modal" style="display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0, 0, 0, 0.8); z-index: 2000; justify-content: center; align-items: center; padding: 20px; box-sizing: border-box;">
-    <div style="background: linear-gradient(135deg, rgba(12, 12, 12, 0.95) 0%, rgba(26, 26, 26, 0.95) 100%); border: 2px solid rgba(255, 33, 49, 0.4); border-radius: 20px; padding: 20px; max-width: 90vw; max-height: 90vh; width: auto; text-align: center; overflow: hidden; display: flex; flex-direction: column;">
-        <h3 id="shop-character-name" style="color: white; margin-bottom: 15px; font-size: clamp(18px, 4vw, 24px); flex-shrink: 0;">Character Name</h3>
-        <div id="shop-character-preview" style="width: min(350px, 70vw); height: min(350px, 70vw); margin: 0 auto 15px auto; background: rgba(0, 0, 0, 0.3); border-radius: 15px; position: relative; box-shadow: 0 0 20px rgba(255, 33, 49, 0.3); flex-shrink: 0;"></div>
-        <button onclick="closeShopCharacterModal()" style="background: linear-gradient(135deg, #ff2131 0%, #ff4757 100%); color: white; border: 2px solid rgba(255, 255, 255, 0.2); padding: 12px 24px; border-radius: 10px; cursor: pointer; font-weight: 600; flex-shrink: 0;">Close</button>
-    </div>
-</div>
+
 </body>
 </html>
