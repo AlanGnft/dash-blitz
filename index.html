@@ -10595,6 +10595,29 @@ initializeAbilityStatusBar();
             
             // Show game UI elements
             showGameUI();
+
+            // Reset camera position for gameplay
+            camera.position.set(0, 2, 5);
+            camera.lookAt(0, 0, -10);
+            camera.updateProjectionMatrix();
+            console.log('🎮 Camera reset for gameplay:', camera.position);
+
+            // ADD ALL THIS ADDITIONAL DEBUG CODE HERE:
+            console.log('🎮 === CAMERA ANALYSIS ===');
+            console.log('Camera position:', camera.position);
+            console.log('Camera rotation:', camera.rotation);
+            console.log('Camera looking at:', camera.getWorldDirection(new THREE.Vector3()));
+
+            console.log('🎮 === RENDERER CHECK ===');
+            console.log('Renderer DOM element parent:', renderer.domElement.parentNode);
+            console.log('Renderer DOM element visible:', renderer.domElement.style.display !== 'none');
+            console.log('Renderer DOM element size:', renderer.domElement.width, 'x', renderer.domElement.height);
+            console.log('Renderer size internal:', renderer.getSize(new THREE.Vector2()));
+
+            // Check if renderer canvas is actually attached to body
+            console.log('Canvas in document body:', document.body.contains(renderer.domElement));
+            console.log('Canvas z-index:', window.getComputedStyle(renderer.domElement).zIndex);
+            console.log('Canvas position:', window.getComputedStyle(renderer.domElement).position);
             
             // Update game state
             gameState = "playing";
