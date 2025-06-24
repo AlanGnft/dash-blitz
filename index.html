@@ -12774,13 +12774,7 @@ function animateGhostGLB(model, frameCount) {
     const drift = Math.sin(frameCount * 0.02) * 0.03;
     model.position.z = drift; // Use Z-axis instead of X-axis
     
-    // Optional: Ghostly pulsing effect
-    model.traverse((child) => {
-        if (child.isMesh && child.material && child.material.transparent) {
-            const pulse = (Math.sin(frameCount * 0.04) + 1) * 0.1 + 0.85;
-            child.material.opacity = Math.min(pulse, 1.0);
-        }
-    });
+
 }
 
 function animateAtomGLB(model, frameCount) {
