@@ -12673,6 +12673,9 @@ function animateGLBCharacter(model, characterType, frameCount) {
         case 'dragon':
             animateDragonGLB(model, frameCount);
             break;
+        case 'ghost':                              // ADD THIS CASE
+            animateGhostGLB(model, frameCount);     // ADD THIS LINE
+            break;                                  // ADD THIS LINE
         case 'atom':
             animateAtomGLB(model, frameCount);
             break;
@@ -12717,6 +12720,20 @@ function animateRobotGLB(model, frameCount) {
 }
 
 function animateDragonGLB(model, frameCount) {
+    // Flying motion - up and down movement
+    if (!jumping) {
+        const flyHeight = Math.sin(frameCount * 0.045) * 0.15;
+        model.position.y = playerY + flyHeight;
+        
+        // Slight forward-backward surge for flying effect
+        const surge = Math.sin(frameCount * 0.03) * 0.08;
+        model.position.z = surge;
+    }
+    
+    // Gentle banking while flying
+    const bank = Math.sin(frameCount * 0.035) * 0.08;
+    model.rotation.z = bank;
+    
     // Try to find and animate wings
     const leftWing = model.getObjectByName('LeftWing');
     const rightWing = model.getObjectByName('RightWing');
@@ -12725,7 +12742,45 @@ function animateDragonGLB(model, frameCount) {
         const wingFlap = Math.sin(frameCount * 0.15) * 0.3;
         leftWing.rotation.z = Math.PI / 3 + wingFlap;
         rightWing.rotation.z = -Math.PI / 3 - wingFlap;
+    } else {
+        // If named wings not found, try to find wing parts by position
+        model.traverse((child) => {
+            if (child.isMesh) {
+                // Look for meshes positioned like wings (based on your GLB analysis)
+                if (child.position.x < -0.4) { // Left wing area
+                    const wingFlap = Math.sin(frameCount * 0.15) * 0.2;
+                    child.rotation.z = wingFlap;
+                } else if (child.position.x > 0.4) { // Right wing area  
+                    const wingFlap = Math.sin(frameCount * 0.15) * 0.2;
+                    child.rotation.z = -wingFlap;
+                }
+            }
+        });
     }
+}
+
+function animateGhostGLB(model, frameCount) {
+    // Ethereal floating motion
+    if (!jumping) {
+        const floatHeight = Math.sin(frameCount * 0.03) * 0.12;
+        model.position.y = playerY + floatHeight;
+        
+        // Gentle side-to-side drift
+        const drift = Math.sin(frameCount * 0.02) * 0.05;
+        model.position.x = drift;
+    }
+    
+    // Subtle ghostly swaying
+    const sway = Math.sin(frameCount * 0.025) * 0.05;
+    model.rotation.z = sway;
+    
+    // Optional: Ghostly pulsing effect
+    model.traverse((child) => {
+        if (child.isMesh && child.material && child.material.transparent) {
+            const pulse = (Math.sin(frameCount * 0.04) + 1) * 0.1 + 0.85;
+            child.material.opacity = Math.min(pulse, 1.0);
+        }
+    });
 }
 
 function animateAtomGLB(model, frameCount) {
