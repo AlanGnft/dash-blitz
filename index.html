@@ -8658,23 +8658,17 @@ console.log('Root position X:', gltf.scene.position.x, 'Y:', gltf.scene.position
             player.position.y = playerY;
             player.position.z = 0;
             player.rotation.x = 0; // Reset rotation
-            // Set proper facing direction - each character needs different rotation
-         // Set proper facing direction - all characters face positive Z by default
-        // But track goes in negative Z direction, so rotate 180 degrees
-        switch (characterType) {
-            case 'dragon':
-                player.rotation.y = Math.PI; // 180° - face down track
-                break;
-            case 'robot':
-                player.rotation.y = Math.PI; // 180° - face down track
-                break;
-            case 'ghost':
-                player.rotation.y = Math.PI; // 180° - face down track
-                break;
-            default:
-                player.rotation.y = 0; // Default for rotating characters
-                break;
-        }
+            // Set proper facing direction - match original procedural rotations
+            switch (characterType) {
+                case 'dragon':
+                case 'robot':
+                case 'ghost':
+                    player.rotation.y = Math.PI; // Same as original procedural characters
+                    break;
+                default:
+                    player.rotation.y = 0; // Default for rotating characters
+                    break;
+            }
             
             scene.add(player);
             console.log(`✅ GLB player created and added to scene: ${characterType}`);
