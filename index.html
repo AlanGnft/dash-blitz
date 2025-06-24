@@ -8624,23 +8624,27 @@ function createGLBPlayer(characterType) {
 
                     // ADD THIS NEW ANALYSIS CODE:
             console.log('🔍 GLB Model Analysis for', characterType);
-            console.log('Root rotation:', gltf.scene.rotation);
-            console.log('Root position:', gltf.scene.position);
+console.log('Root rotation X:', gltf.scene.rotation.x, 'Y:', gltf.scene.rotation.y, 'Z:', gltf.scene.rotation.z);
+console.log('Root position X:', gltf.scene.position.x, 'Y:', gltf.scene.position.y, 'Z:', gltf.scene.position.z);
 
             gltf.scene.traverse((child) => {
-                if (child.isMesh) {
-                    console.log('  📦 Mesh:', child.name || 'unnamed');
-                    console.log('    Position:', child.position);
-                    console.log('    Rotation:', child.rotation);
-                    console.log('    Scale:', child.scale);
+    if (child.isMesh) {
+        console.log('  📦 Mesh:', child.name || 'unnamed');
+        console.log('    Position X:', child.position.x, 'Y:', child.position.y, 'Z:', child.position.z);
+        console.log('    Rotation X:', child.rotation.x, 'Y:', child.rotation.y, 'Z:', child.rotation.z);
+        console.log('    Scale X:', child.scale.x, 'Y:', child.scale.y, 'Z:', child.scale.z);
                     
                     // Check geometry bounds to understand orientation
-                    if (child.geometry && child.geometry.boundingBox) {
-                        console.log('    Bounding Box:', child.geometry.boundingBox);
-                    } else if (child.geometry) {
-                        child.geometry.computeBoundingBox();
-                        console.log('    Computed Bounding Box:', child.geometry.boundingBox);
-                    }
+        if (child.geometry && child.geometry.boundingBox) {
+            const box = child.geometry.boundingBox;
+            console.log('    Bounding Box min:', box.min.x, box.min.y, box.min.z);
+            console.log('    Bounding Box max:', box.max.x, box.max.y, box.max.z);
+        } else if (child.geometry) {
+            child.geometry.computeBoundingBox();
+            const box = child.geometry.boundingBox;
+            console.log('    Computed Bounding Box min:', box.min.x, box.min.y, box.min.z);
+            console.log('    Computed Bounding Box max:', box.max.x, box.max.y, box.max.z);
+        }
                 }
             });
             console.log('🔍 End GLB Analysis for', characterType);
