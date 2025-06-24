@@ -10618,6 +10618,24 @@ initializeAbilityStatusBar();
             console.log('Canvas in document body:', document.body.contains(renderer.domElement));
             console.log('Canvas z-index:', window.getComputedStyle(renderer.domElement).zIndex);
             console.log('Canvas position:', window.getComputedStyle(renderer.domElement).position);
+
+            // ADD THIS FIX HERE:
+            console.log('🔧 === FIXING DETACHED CANVAS ===');
+            if (!document.body.contains(renderer.domElement)) {
+                console.log('Canvas is detached! Reattaching to body...');
+                document.body.appendChild(renderer.domElement);
+                console.log('Canvas reattached:', document.body.contains(renderer.domElement));
+            } else {
+                console.log('Canvas is already attached to body');
+            }
+
+            // Ensure canvas is visible and properly styled
+            renderer.domElement.style.position = 'fixed';
+            renderer.domElement.style.top = '0';
+            renderer.domElement.style.left = '0';
+            renderer.domElement.style.zIndex = '1';
+            renderer.domElement.style.display = 'block';
+            console.log('Canvas styles applied');
             
             // Update game state
             gameState = "playing";
