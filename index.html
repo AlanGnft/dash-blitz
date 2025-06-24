@@ -12760,19 +12760,19 @@ function animateDragonGLB(model, frameCount) {
 }
 
 function animateGhostGLB(model, frameCount) {
-    // Ethereal floating motion
+    // Ethereal floating motion (Y-axis only)
     if (!jumping) {
         const floatHeight = Math.sin(frameCount * 0.03) * 0.12;
         model.position.y = playerY + floatHeight;
-        
-        // Gentle side-to-side drift
-        const drift = Math.sin(frameCount * 0.02) * 0.05;
-        model.position.x = drift;
     }
     
-    // Subtle ghostly swaying
+    // Subtle ghostly swaying (rotation only - doesn't affect movement)
     const sway = Math.sin(frameCount * 0.025) * 0.05;
     model.rotation.z = sway;
+    
+    // Gentle forward-backward drift instead of side-to-side
+    const drift = Math.sin(frameCount * 0.02) * 0.03;
+    model.position.z = drift; // Use Z-axis instead of X-axis
     
     // Optional: Ghostly pulsing effect
     model.traverse((child) => {
