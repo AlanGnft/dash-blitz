@@ -8621,6 +8621,11 @@ function createGLBPlayer(characterType) {
             console.log(`🎮 USING GLB MODEL FOR GAMEPLAY: ${characterType}`);
             console.log('GLB Scene structure:', gltf.scene);
             console.log('GLB has', gltf.scene.children.length, 'children');
+
+                    // ADD THIS NEW ANALYSIS CODE:
+            console.log('🔍 GLB Model Analysis for', characterType);
+            console.log('Root rotation:', gltf.scene.rotation);
+            console.log('Root position:', gltf.scene.position); 
             
             // Adjust GLB character scale as needed
             // or player.scale.set(0.8, 0.8, 0.8); // Make smaller if too big
@@ -8664,25 +8669,7 @@ function createGLBPlayer(characterType) {
     );
 }
 
-// TEMPORARY: Add rotation controls for testing
-function debugCharacterRotation() {
-    if (!player || !player.isGLB) return;
-    
-    // Add keyboard controls for testing (only during development)
-    document.addEventListener('keydown', function(event) {
-        if (event.key === 'q') {
-            player.rotation.y -= Math.PI/8; // Rotate left by 22.5°
-            console.log(`Rotation: ${(player.rotation.y * 180/Math.PI).toFixed(1)}°`);
-        }
-        if (event.key === 'e') {
-            player.rotation.y += Math.PI/8; // Rotate right by 22.5°
-            console.log(`Rotation: ${(player.rotation.y * 180/Math.PI).toFixed(1)}°`);
-        }
-        if (event.key === 'r') {
-            console.log(`Current rotation: ${(player.rotation.y * 180/Math.PI).toFixed(1)}°`);
-        }
-    });
-}
+
 
 // Call this after creating a GLB player
 debugCharacterRotation();
