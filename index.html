@@ -8625,7 +8625,25 @@ function createGLBPlayer(characterType) {
                     // ADD THIS NEW ANALYSIS CODE:
             console.log('🔍 GLB Model Analysis for', characterType);
             console.log('Root rotation:', gltf.scene.rotation);
-            console.log('Root position:', gltf.scene.position); 
+            console.log('Root position:', gltf.scene.position);
+
+            gltf.scene.traverse((child) => {
+                if (child.isMesh) {
+                    console.log('  📦 Mesh:', child.name || 'unnamed');
+                    console.log('    Position:', child.position);
+                    console.log('    Rotation:', child.rotation);
+                    console.log('    Scale:', child.scale);
+                    
+                    // Check geometry bounds to understand orientation
+                    if (child.geometry && child.geometry.boundingBox) {
+                        console.log('    Bounding Box:', child.geometry.boundingBox);
+                    } else if (child.geometry) {
+                        child.geometry.computeBoundingBox();
+                        console.log('    Computed Bounding Box:', child.geometry.boundingBox);
+                    }
+                }
+            });
+            console.log('🔍 End GLB Analysis for', characterType);
             
             // Adjust GLB character scale as needed
             // or player.scale.set(0.8, 0.8, 0.8); // Make smaller if too big
@@ -8671,8 +8689,6 @@ function createGLBPlayer(characterType) {
 
 
 
-// Call this after creating a GLB player
-debugCharacterRotation();
 
 // Existing procedural player creation (your current logic)
 function createProceduralPlayer(characterType) {
