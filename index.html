@@ -2173,6 +2173,83 @@ setTimeout(() => {
     </div> <!-- End centered container -->
 </div> <!-- End settings screen -->
 
+<!-- Universal Character Preview System -->
+<div id="character-preview-system" style="display: none;">
+    <!-- Main 3D Preview Area -->
+    <div id="character-preview-main" style="
+        width: 100%;
+        max-width: 400px;
+        height: 300px;
+        margin: 0 auto 20px auto;
+        background: rgba(0, 0, 0, 0.2);
+        border-radius: 15px;
+        position: relative;
+        overflow: hidden;
+        border: 2px solid rgba(255, 255, 255, 0.1);
+    "></div>
+    
+    <!-- Character Info Display -->
+    <div id="character-info-display" style="
+        text-align: center;
+        margin-bottom: 20px;
+        color: white;
+    ">
+        <h3 id="current-character-name" style="margin: 0 0 10px 0; text-transform: capitalize;"></h3>
+        <div id="current-character-status" style="font-size: 16px; margin-bottom: 15px;"></div>
+    </div>
+    
+    <!-- Character Navigation Carousel -->
+    <div id="character-carousel" style="
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        gap: 10px;
+        margin-bottom: 20px;
+    ">
+        <button id="prev-character-btn" style="
+            background: rgba(255, 255, 255, 0.1);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            color: white;
+            padding: 10px 15px;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 18px;
+        ">‹</button>
+        
+        <div id="character-thumbnails" style="
+            display: flex;
+            gap: 8px;
+            overflow-x: auto;
+            max-width: 300px;
+            padding: 5px;
+        "></div>
+        
+        <button id="next-character-btn" style="
+            background: rgba(255, 255, 255, 0.1);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            color: white;
+            padding: 10px 15px;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 18px;
+        ">›</button>
+    </div>
+    
+    <!-- Action Button (Buy/Select/etc) -->
+    <div id="character-action-area" style="text-align: center;">
+        <button id="character-action-btn" style="
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border: none;
+            padding: 15px 30px;
+            border-radius: 10px;
+            cursor: pointer;
+            font-size: 16px;
+            font-weight: bold;
+        "></button>
+    </div>
+</div>
+
 <!-- Shop Screen -->
 <div id="shopScreen" style="position: absolute; top: 0; left: 0; width: 100%; height: 100%; display: none; flex-direction: column; z-index: 400; background: linear-gradient(135deg, #0c0c0c 0%, #1a1a1a 25%, #2d1b1b 50%, #1a1a1a 75%, #0c0c0c 100%); overflow: hidden;">
     <div class="menu-bg-animation">
@@ -2211,8 +2288,16 @@ setTimeout(() => {
         <div style="flex: 1; overflow-y: auto; padding: 0 20px 20px 20px;">
         
         <!-- Characters Tab Content -->
-        <div id="shop-characters" class="shop-tab-content active" style="display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 15px; max-height: 100%;">
-            <!-- Will be populated by JavaScript -->
+        <div id="shop-characters" class="shop-tab-content active" style="display: block; max-height: 100%; overflow-y: auto;">
+            <!-- New Character Preview System Container -->
+            <div id="shop-character-preview-area" style="
+                padding: 20px;
+                text-align: center;
+                max-width: 600px;
+                margin: 0 auto;
+            ">
+                <!-- The CharacterPreviewSystem will be moved here -->
+            </div>
         </div>
         
         <!-- Worlds Tab Content -->
@@ -2331,6 +2416,113 @@ setTimeout(() => {
         </div> <!-- End shop content area -->
     </div> <!-- End centered container -->
 </div> <!-- End shop screen -->
+
+<!-- Universal Character Preview System (Shared between Shop and Character Select) -->
+<div id="character-preview-system" style="display: none;">
+    <!-- Main 3D Preview Area -->
+    <div id="character-preview-main" style="
+        width: 100%;
+        max-width: 400px;
+        height: 350px;
+        margin: 0 auto 20px auto;
+        background: rgba(0, 0, 0, 0.3);
+        border-radius: 15px;
+        position: relative;
+        overflow: hidden;
+        border: 2px solid rgba(255, 255, 255, 0.1);
+        box-shadow: 0 8px 25px rgba(0, 0, 0, 0.3);
+    "></div>
+    
+    <!-- Character Info Display -->
+    <div id="character-info-display" style="
+        text-align: center;
+        margin-bottom: 20px;
+        color: white;
+    ">
+        <h3 id="current-character-name" style="
+            margin: 0 0 10px 0; 
+            text-transform: capitalize;
+            font-size: 24px;
+            text-shadow: 0 2px 4px rgba(0, 0, 0, 0.5);
+        "></h3>
+        <div id="current-character-status" style="
+            font-size: 16px; 
+            margin-bottom: 15px;
+            padding: 8px 16px;
+            border-radius: 20px;
+            display: inline-block;
+            background: rgba(255, 255, 255, 0.1);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+        "></div>
+    </div>
+    
+    <!-- Character Navigation Carousel -->
+    <div id="character-carousel" style="
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        gap: 15px;
+        margin-bottom: 25px;
+        flex-wrap: wrap;
+    ">
+        <button id="prev-character-btn" style="
+            background: linear-gradient(135deg, #434343 0%, #000000 100%);
+            border: 2px solid rgba(255, 255, 255, 0.2);
+            color: white;
+            padding: 12px 16px;
+            border-radius: 10px;
+            cursor: pointer;
+            font-size: 18px;
+            font-weight: bold;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.3);
+        " onmouseover="this.style.background='linear-gradient(135deg, #555 0%, #222 100%)'" 
+           onmouseout="this.style.background='linear-gradient(135deg, #434343 0%, #000000 100%)'">‹</button>
+        
+        <div id="character-thumbnails" style="
+            display: flex;
+            gap: 8px;
+            overflow-x: auto;
+            max-width: 400px;
+            padding: 5px;
+            scrollbar-width: thin;
+            scrollbar-color: rgba(255,255,255,0.3) transparent;
+        "></div>
+        
+        <button id="next-character-btn" style="
+            background: linear-gradient(135deg, #434343 0%, #000000 100%);
+            border: 2px solid rgba(255, 255, 255, 0.2);
+            color: white;
+            padding: 12px 16px;
+            border-radius: 10px;
+            cursor: pointer;
+            font-size: 18px;
+            font-weight: bold;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.3);
+        " onmouseover="this.style.background='linear-gradient(135deg, #555 0%, #222 100%)'" 
+           onmouseout="this.style.background='linear-gradient(135deg, #434343 0%, #000000 100%)'">›</button>
+    </div>
+    
+    <!-- Action Button (Buy/Select/etc) -->
+    <div id="character-action-area" style="text-align: center;">
+        <button id="character-action-btn" style="
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border: 2px solid rgba(255, 255, 255, 0.2);
+            padding: 15px 35px;
+            border-radius: 12px;
+            cursor: pointer;
+            font-size: 16px;
+            font-weight: bold;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            transition: all 0.3s ease;
+            box-shadow: 0 6px 20px rgba(102, 126, 234, 0.4);
+        " onmouseover="this.style.transform='translateY(-2px)'; this.style.boxShadow='0 8px 25px rgba(102, 126, 234, 0.6)'" 
+           onmouseout="this.style.transform='translateY(0)'; this.style.boxShadow='0 6px 20px rgba(102, 126, 234, 0.4)'"></button>
+    </div>
+</div>
 
 <!-- Profile Screen -->
 <div id="profileScreen" style="position: absolute; top: 0; left: 0; width: 100%; height: 100%; display: none; flex-direction: column; z-index: 400; background: linear-gradient(135deg, #0c0c0c 0%, #1a1a1a 25%, #2d1b1b 50%, #1a1a1a 75%, #0c0c0c 100%); overflow: hidden;">
@@ -2887,6 +3079,361 @@ let characterNames = [
     // END CHARACTER ROSTER INJECTION POINT
 ];
 
+// Add this helper function to your JavaScript:
+function updateShopCoins() {
+    const coinElements = ['coinDisplay', 'shopCoinsDisplay'];
+    coinElements.forEach(id => {
+        const element = document.getElementById(id);
+        if (element) {
+            element.textContent = totalCoins;
+        }
+    });
+}
+
+// ==================== CHARACTER PREVIEW SYSTEM ====================
+// Universal system for character previews (Shop + Character Select)
+
+const CharacterPreviewSystem = {
+    // Core WebGL components
+    scene: null,
+    camera: null,
+    renderer: null,
+    currentModel: null,
+    
+    // System state
+    currentCharacterIndex: 0,
+    availableCharacters: [],
+    mode: null, // 'shop' or 'select'
+    isInitialized: false,
+    animationId: null,
+    
+    // Initialize the preview system
+    init(mode = 'shop') {
+        console.log('🎮 Initializing CharacterPreviewSystem in', mode, 'mode');
+        
+        this.mode = mode;
+        this.setupWebGL();
+        this.setupEventListeners();
+        this.isInitialized = true;
+        
+        // Show the system
+        document.getElementById('character-preview-system').style.display = 'block';
+    },
+    
+    // Setup single WebGL context
+    setupWebGL() {
+        const container = document.getElementById('character-preview-main');
+        container.innerHTML = ''; // Clear any existing content
+        
+        // Create scene
+        this.scene = new THREE.Scene();
+        
+        // Create camera
+        this.camera = new THREE.PerspectiveCamera(75, container.offsetWidth / container.offsetHeight, 0.1, 1000);
+        this.camera.position.set(0, 0, 3);
+        
+        // Create renderer
+        this.renderer = new THREE.WebGLRenderer({ 
+            alpha: true, 
+            antialias: true 
+        });
+        this.renderer.setSize(container.offsetWidth, container.offsetHeight);
+        this.renderer.setClearColor(0x000000, 0);
+        container.appendChild(this.renderer.domElement);
+        
+        // Add lighting
+        const ambientLight = new THREE.AmbientLight(0xffffff, 0.8);
+        this.scene.add(ambientLight);
+        
+        const directionalLight = new THREE.DirectionalLight(0xffffff, 0.6);
+        directionalLight.position.set(2, 2, 5);
+        this.scene.add(directionalLight);
+        
+        // Start animation loop
+        this.animate();
+        
+        console.log('✅ WebGL context created for CharacterPreviewSystem');
+    },
+    
+    // Setup event listeners
+    setupEventListeners() {
+        document.getElementById('prev-character-btn').onclick = () => this.previousCharacter();
+        document.getElementById('next-character-btn').onclick = () => this.nextCharacter();
+        
+        // Handle window resize
+        window.addEventListener('resize', () => this.handleResize());
+    },
+    
+    // Load characters based on mode
+    loadCharacters(mode = this.mode) {
+        this.mode = mode;
+        
+        if (mode === 'shop') {
+            // Show all characters (locked + unlocked)
+            this.availableCharacters = [...characterNames];
+        } else if (mode === 'select') {
+            // Show only unlocked characters
+            this.availableCharacters = characterNames.filter(char => 
+                unlockedCharacters[char] || modModeEnabled
+            );
+        }
+        
+        console.log(`📋 Loaded ${this.availableCharacters.length} characters for ${mode} mode`);
+        
+        // Reset to first character
+        this.currentCharacterIndex = 0;
+        
+        // Populate thumbnail carousel
+        this.populateThumbnails();
+        
+        // Load first character
+        if (this.availableCharacters.length > 0) {
+            this.loadCharacter(this.availableCharacters[0]);
+        }
+    },
+    
+    // Populate thumbnail carousel
+    populateThumbnails() {
+        const container = document.getElementById('character-thumbnails');
+        container.innerHTML = '';
+        
+        this.availableCharacters.forEach((charName, index) => {
+            const thumbnail = document.createElement('div');
+            thumbnail.style.cssText = `
+                width: 40px;
+                height: 40px;
+                border-radius: 8px;
+                cursor: pointer;
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                font-size: 12px;
+                border: 2px solid ${index === this.currentCharacterIndex ? '#4CAF50' : 'rgba(255,255,255,0.2)'};
+                background: ${index === this.currentCharacterIndex ? 'rgba(76,175,80,0.2)' : 'rgba(255,255,255,0.1)'};
+                transition: all 0.3s ease;
+                flex-shrink: 0;
+            `;
+            
+            // Use emoji or first letter as thumbnail
+            const charEmojis = {
+                'apple': '🍎', 'carrot': '🥕', 'pumpkin': '🎃', 'happyface': '😊',
+                'monster': '👹', 'atom': '⚛️', 'slime': '🟢', 'ufo': '🛸',
+                'robot': '🤖', 'dragon': '🐉', 'ghost': '👻', 'creature': '👾'
+            };
+            
+            thumbnail.textContent = charEmojis[charName] || charName[0].toUpperCase();
+            thumbnail.onclick = () => this.selectCharacterByIndex(index);
+            
+            container.appendChild(thumbnail);
+        });
+    },
+    
+    // Load specific character into 3D preview
+    loadCharacter(charName) {
+        if (!this.isInitialized) return;
+        
+        console.log('🔄 Loading character:', charName);
+        
+        // Clear current model
+        if (this.currentModel) {
+            this.scene.remove(this.currentModel);
+            this.currentModel = null;
+        }
+        
+        // Load GLB model
+        const loader = new THREE.GLTFLoader();
+        loader.load(
+            `assets/character-models/${charName}.glb`,
+            (gltf) => {
+                this.currentModel = gltf.scene;
+                this.currentModel.scale.set(1.5, 1.5, 1.5);
+                this.currentModel.position.set(0, 0, 0);
+                this.scene.add(this.currentModel);
+                
+                console.log('✅ Character loaded:', charName);
+                this.updateCharacterInfo(charName);
+            },
+            undefined,
+            (error) => {
+                console.warn('❌ Failed to load character:', charName, error);
+                this.createFallbackCharacter(charName);
+            }
+        );
+    },
+    
+    // Create fallback for missing characters
+    createFallbackCharacter(charName) {
+        const geometry = new THREE.BoxGeometry(1, 1, 1);
+        const material = new THREE.MeshStandardMaterial({ 
+            color: 0x667eea,
+            transparent: true,
+            opacity: 0.8 
+        });
+        
+        this.currentModel = new THREE.Mesh(geometry, material);
+        this.currentModel.position.set(0, 0, 0);
+        this.scene.add(this.currentModel);
+        
+        this.updateCharacterInfo(charName);
+    },
+    
+    // Update character info display
+    updateCharacterInfo(charName) {
+        const nameElement = document.getElementById('current-character-name');
+        const statusElement = document.getElementById('current-character-status');
+        const actionBtn = document.getElementById('character-action-btn');
+        
+        nameElement.textContent = charName.charAt(0).toUpperCase() + charName.slice(1);
+        
+        if (this.mode === 'shop') {
+            const isUnlocked = unlockedCharacters[charName] || modModeEnabled;
+            const cost = characterCosts[charName] || 100;
+            
+            if (isUnlocked) {
+                statusElement.innerHTML = '<span style="color: #4CAF50;">✅ Unlocked</span>';
+                actionBtn.textContent = 'SELECT';
+                actionBtn.onclick = () => this.selectCharacterFromShop(charName);
+                actionBtn.style.background = 'linear-gradient(135deg, #4CAF50 0%, #45a049 100%)';
+            } else {
+                statusElement.innerHTML = `<span style="color: #FFD700;">💰 ${cost} coins</span>`;
+                actionBtn.textContent = 'BUY';
+                actionBtn.onclick = () => this.purchaseCharacter(charName);
+                actionBtn.style.background = 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)';
+            }
+        } else if (this.mode === 'select') {
+            statusElement.innerHTML = '<span style="color: #4CAF50;">Ready to Play</span>';
+            actionBtn.textContent = 'SELECT & PLAY';
+            actionBtn.onclick = () => this.selectCharacterForGame(charName);
+            actionBtn.style.background = 'linear-gradient(135deg, #4CAF50 0%, #45a049 100%)';
+        }
+        
+        // Update thumbnail highlighting
+        this.updateThumbnailHighlight();
+    },
+    
+    // Navigation methods
+    previousCharacter() {
+        if (this.availableCharacters.length === 0) return;
+        
+        this.currentCharacterIndex = (this.currentCharacterIndex - 1 + this.availableCharacters.length) % this.availableCharacters.length;
+        this.loadCharacter(this.availableCharacters[this.currentCharacterIndex]);
+    },
+    
+    nextCharacter() {
+        if (this.availableCharacters.length === 0) return;
+        
+        this.currentCharacterIndex = (this.currentCharacterIndex + 1) % this.availableCharacters.length;
+        this.loadCharacter(this.availableCharacters[this.currentCharacterIndex]);
+    },
+    
+    selectCharacterByIndex(index) {
+        this.currentCharacterIndex = index;
+        this.loadCharacter(this.availableCharacters[index]);
+    },
+    
+    // Update thumbnail highlighting
+    updateThumbnailHighlight() {
+        const thumbnails = document.querySelectorAll('#character-thumbnails > div');
+        thumbnails.forEach((thumb, index) => {
+            const isActive = index === this.currentCharacterIndex;
+            thumb.style.border = `2px solid ${isActive ? '#4CAF50' : 'rgba(255,255,255,0.2)'}`;
+            thumb.style.background = isActive ? 'rgba(76,175,80,0.2)' : 'rgba(255,255,255,0.1)';
+        });
+    },
+    
+    // Action handlers
+    purchaseCharacter(charName) {
+        // Call your existing purchase function
+        if (typeof purchaseCharacter === 'function') {
+            purchaseCharacter(charName);
+            // Refresh after purchase
+            setTimeout(() => this.updateCharacterInfo(charName), 100);
+        }
+    },
+    
+    selectCharacterFromShop(charName) {
+        // Call your existing select function
+        if (typeof selectCharacterFromShop === 'function') {
+            selectCharacterFromShop(charName);
+        }
+    },
+    
+    selectCharacterForGame(charName) {
+        // Set current character and close character select
+        currentCharacter = charName;
+        console.log('Selected character for game:', charName);
+        
+        // Close character select and start game
+        this.hide();
+        if (typeof startGame === 'function') {
+            startGame();
+        }
+    },
+    
+    // Animation loop
+    animate() {
+        this.animationId = requestAnimationFrame(() => this.animate());
+        
+        // Rotate current model
+        if (this.currentModel) {
+            this.currentModel.rotation.y += 0.01;
+        }
+        
+        this.renderer.render(this.scene, this.camera);
+    },
+    
+    // Handle window resize
+    handleResize() {
+        if (!this.isInitialized) return;
+        
+        const container = document.getElementById('character-preview-main');
+        const width = container.offsetWidth;
+        const height = container.offsetHeight;
+        
+        this.camera.aspect = width / height;
+        this.camera.updateProjectionMatrix();
+        this.renderer.setSize(width, height);
+    },
+    
+    // Show the system
+    show(mode = 'shop') {
+        this.init(mode);
+        this.loadCharacters(mode);
+    },
+    
+    // Hide the system
+    hide() {
+        document.getElementById('character-preview-system').style.display = 'none';
+        
+        // Stop animation
+        if (this.animationId) {
+            cancelAnimationFrame(this.animationId);
+            this.animationId = null;
+        }
+    },
+    
+    // Clean disposal
+    dispose() {
+        console.log('🧹 Disposing CharacterPreviewSystem');
+        
+        this.hide();
+        
+        // Clean up WebGL
+        if (this.renderer) {
+            this.renderer.dispose();
+            this.renderer = null;
+        }
+        
+        if (this.currentModel) {
+            this.scene.remove(this.currentModel);
+            this.currentModel = null;
+        }
+        
+        this.scene = null;
+        this.camera = null;
+        this.isInitialized = false;
+    }
+};
 
 // ==================== GLB OBSTACLE SYSTEM ====================
 // Add this with your other game variables at the top
@@ -5336,62 +5883,30 @@ function initShopScreen() {
     // Update coins display
     document.getElementById('shopCoinsDisplay').textContent = totalCoins;
     
-    // Populate characters list
-    populateShopCharacters();
+    // NEW: Don't populate old character list anymore
+    // populateShopCharacters(); // REMOVE THIS LINE
     
-    // Populate worlds list
+    // Populate worlds list (keep this)
     populateShopWorlds();
     
     // Setup shop event listeners
     setupShopListeners();
+    
+    // NEW: Initialize the character preview system for shop
+    setTimeout(() => {
+        // Move the character preview system to shop area
+        const shopCharacterArea = document.getElementById('shop-character-preview-area');
+        const previewSystem = document.getElementById('character-preview-system');
+        
+        if (shopCharacterArea && previewSystem) {
+            shopCharacterArea.appendChild(previewSystem);
+            
+            // Initialize character preview system in shop mode
+            CharacterPreviewSystem.show('shop');
+        }
+    }, 100);
 }
 
-// Populate shop characters
-function populateShopCharacters() {
-    const charactersList = document.getElementById('shop-characters');
-    charactersList.innerHTML = '';
-    
-    characterNames.forEach(charName => {
-        const isUnlocked = unlockedCharacters[charName] || modModeEnabled;
-        const cost = characterCosts[charName] || 100; // Default cost if not defined
-        
-        const characterItem = document.createElement('div');
-        characterItem.style.cssText = `
-            background: rgba(255, 255, 255, 0.05);
-            border-radius: 10px;
-            padding: 15px;
-            text-align: center;
-            border: 1px solid ${isUnlocked ? '#4CAF50' : '#666'};
-        `;
-        
-        characterItem.innerHTML = `
-            <div class="shop-preview-container">
-                <div class="shop-3d-preview" id="shop-preview-char-${charName}"></div>
-            </div>
-            <h4 style="color: white; margin: 0 0 10px 0; text-transform: capitalize;">${charName}</h4>
-            <div style="color: ${isUnlocked ? '#4CAF50' : '#FFD700'}; font-size: 14px; margin-bottom: 10px;">
-                ${isUnlocked ? '✅ Unlocked' : `💰 ${cost} coins`}
-            </div>
-            <div class="shop-actions">
-                ${!isUnlocked ? `
-                    <button onclick="purchaseCharacter('${charName}')" class="buy-btn">
-                        BUY
-                    </button>
-                ` : `
-                    <button onclick="selectCharacterFromShop('${charName}')" class="buy-btn" 
-                        style="background: linear-gradient(135deg, #4CAF50 0%, #45a049 100%);">
-                        SELECT
-                    </button>
-                `}
-            </div>
-        `;
-        
-        charactersList.appendChild(characterItem);
-        
-        // Create mini 3D preview after adding to DOM
-        setTimeout(() => createShopCharacterPreview(`shop-preview-char-${charName}`, charName), 100);
-    });
-}
 
 // Populate shop worlds
 function populateShopWorlds() {
@@ -5437,98 +5952,6 @@ function populateShopWorlds() {
     });
 }
 
-// Shop Preview Functions
-function createShopCharacterPreview(containerId, charName) {
-    const container = document.getElementById(containerId);
-    if (!container) return;
-    
-    container.innerHTML = '';
-    
-    // Create Three.js scene for GLB
-    const scene = new THREE.Scene();
-    const camera = new THREE.PerspectiveCamera(75, 1, 0.1, 1000);
-    const renderer = new THREE.WebGLRenderer({ alpha: true, antialias: true });
-    
-    // Set up renderer with square aspect ratio to prevent stretching
-    const containerWidth = container.offsetWidth;
-    const containerHeight = container.offsetHeight;
-    const size = Math.min(containerWidth, containerHeight);
-
-    renderer.setSize(containerWidth, containerHeight);
-    renderer.setViewport(
-        (containerWidth - size) / 2, // Center horizontally
-        (containerHeight - size) / 2, // Center vertically
-        size, 
-        size
-    );
-    renderer.setClearColor(0x000000, 0);
-    container.appendChild(renderer.domElement);
-    
-    // Add lighting
-    const ambientLight = new THREE.AmbientLight(0xffffff, 0.6);
-    scene.add(ambientLight);
-    const directionalLight = new THREE.DirectionalLight(0xffffff, 0.8);
-    directionalLight.position.set(2, 2, 5);
-    scene.add(directionalLight);
-    
-    // Load GLB character
-    const loader = new THREE.GLTFLoader();
-    loader.load(
-        `assets/character-models/${charName}.glb`,
-        // Success callback
-        (gltf) => {
-            console.log(`✅ GLB character loaded: ${charName}`);
-            
-            const characterModel = gltf.scene;
-            characterModel.scale.set(2.0, 2.0, 2.0); // Increased from 0.8 to 2.0
-            scene.add(characterModel);
-            
-            // Position camera
-            camera.position.set(0, 0, 3);
-            camera.lookAt(0, 0, 0);
-            
-            // Auto-rotation animation
-            function animate() {
-                requestAnimationFrame(animate);
-                if (characterModel) {
-                    characterModel.rotation.y += 0.01;
-                }
-                renderer.render(scene, camera);
-            }
-            animate();
-        },
-        // Progress callback
-        (progress) => {
-            console.log(`Loading ${charName}: ${(progress.loaded / progress.total * 100)}%`);
-        },
-        // Error callback
-        (error) => {
-            console.warn(`❌ Failed to load GLB for ${charName}:`, error);
-            
-            // Fallback to simple colored div
-            container.innerHTML = '';
-            container.innerHTML = `
-                <div style="
-                    width: 100%; 
-                    height: 100%; 
-                    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); 
-                    border-radius: 10px; 
-                    display: flex; 
-                    align-items: center; 
-                    justify-content: center; 
-                    color: white; 
-                    font-weight: bold; 
-                    text-transform: capitalize;
-                    font-size: 14px;
-                    text-align: center;
-                ">
-                    ${charName}<br>
-                    <small style="opacity: 0.7;">GLB Missing</small>
-                </div>
-            `;
-        }
-    );
-}
 
 // ADD this temporary debug function to test world previews
 function debugWorldPreviews() {
@@ -5624,8 +6047,11 @@ function openShopWorldPreview(worldId) {
 
 // Setup shop event listeners
 function setupShopListeners() {
-    // Back button
+    // Back button - UPDATED
     document.getElementById('backToMainMenuFromShop').addEventListener('click', function() {
+        // NEW: Hide character preview system properly
+        CharacterPreviewSystem.hide();
+        
         // CLEANUP: Dispose of all shop WebGL contexts before leaving
         cleanupShopPreviews();
         
@@ -5634,7 +6060,7 @@ function setupShopListeners() {
         gameState = "mainMenu";
     });
     
-    // Shop tab switching
+    // Keep the rest of your existing shop tab switching code...
     document.querySelectorAll('.shop-tab').forEach(tab => {
         tab.addEventListener('click', function() {
             // Remove active class from all tabs
@@ -5656,6 +6082,13 @@ function setupShopListeners() {
             const tabName = this.getAttribute('data-tab');
             const content = document.getElementById(`shop-${tabName}`);
             content.style.display = tabName === 'drip' ? 'block' : 'grid';
+            
+            // NEW: Show/hide character preview system based on tab
+            if (tabName === 'characters') {
+                CharacterPreviewSystem.show('shop');
+            } else {
+                CharacterPreviewSystem.hide();
+            }
             
             // Add hover effect for DRiP preview
             if (tabName === 'drip') {
@@ -5716,13 +6149,20 @@ function purchaseCharacter(charName) {
         totalCoins -= cost;
         unlockedCharacters[charName] = true;
         updateTotalCoins();
+        
+        // NEW: Update shop coins display
+        document.getElementById('shopCoinsDisplay').textContent = totalCoins;
+        
         saveGameData('character_purchase');
         showPurchaseSuccessNotification(charName, 'character');
         
-        // Refresh shop display
-        initShopScreen();
+        // NEW: Refresh the character preview system instead of reinitializing shop
+        setTimeout(() => {
+            CharacterPreviewSystem.updateCharacterInfo(charName);
+        }, 100);
+        
     } else {
-showInsufficientFundsNotification(cost, 'character');
+        showInsufficientFundsNotification(cost, 'character');
     }
 }
 
@@ -5752,9 +6192,23 @@ showInsufficientFundsNotification(world.cost, 'world');
 
 // Select character from shop
 function selectCharacterFromShop(charName) {
+    console.log('🎭 Selecting character from shop:', charName);
+    
     currentCharacter = charName;
     createPlayer();
     showCharacterSelectedNotification(charName);
+    
+    // NEW: Close shop and go to character select or start game
+    CharacterPreviewSystem.hide();
+    cleanupShopPreviews();
+    
+    document.getElementById('shopScreen').style.display = 'none';
+    
+    // Option A: Go to character select
+    showCharacterSelect();
+    
+    // Option B: Start game immediately
+    // startGame();
 }
 
 // Select world from shop
