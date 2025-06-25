@@ -2618,6 +2618,7 @@ setTimeout(() => {
         
     </div>
 </div>
+
     <!-- Character Select -->
 <div id="characterSelectScreen" style="position: absolute; top: 0; left: 0; width: 100%; height: 100%; display: none; flex-direction: column; justify-content: center; align-items: center; z-index: 300; background: linear-gradient(135deg, #0c0c0c 0%, #1a1a1a 25%, #2d1b1b 50%, #1a1a1a 75%, #0c0c0c 100%);">
     <div class="menu-bg-animation">
@@ -2627,29 +2628,30 @@ setTimeout(() => {
         <div class="bg-grid"></div>
     </div>
 
-    <!-- Add this somewhere in your character select screen -->
-<div id="characterLoadingIndicator" style="position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); color: white; font-size: 18px; text-align: center; z-index: 100;">
-    <div>Loading Characters...</div>
-    <div style="font-size: 14px; opacity: 0.7; margin-top: 10px;">🔄</div>
-</div>
+    <!-- Header -->
+    <h2 style="color: white; font-size: 42px; margin-bottom: 30px; text-shadow: 0 0 15px rgba(255, 33, 49, 0.8); position: relative; z-index: 10; text-align: center; font-weight: 700; letter-spacing: 2px;">CHARACTER SELECT</h2>
     
-    <div style="position: absolute; top: 0; left: 0; width: 100%; height: 100%;" id="characterSelectCanvas"></div>
-<h2 style="color: white; font-size: 42px; margin-bottom: 30px; text-shadow: 0 0 15px rgba(255, 33, 49, 0.8); position: relative; z-index: 10; text-align: center; font-weight: 700; letter-spacing: 2px;">CHARACTER SELECT</h2>
-    <div style="display: flex; align-items: center; margin-bottom: 30px; position: relative; z-index: 10;">
-        <button id="prevCharacterBtn" class="game-button char-nav-btn" style="font-size: 24px; font-weight: 700; padding: 15px 25px; margin-right: 20px; background: linear-gradient(135deg, #434343 0%, #000000 100%); color: white; border: 2px solid rgba(255, 255, 255, 0.2); border-radius: 12px; cursor: pointer; transition: all 0.3s ease; box-shadow: 0 6px 20px rgba(67, 67, 67, 0.3), inset 0 1px 0 rgba(255, 255, 255, 0.2);">←</button>
-<div id="characterDisplay" style="width: 180px; height: 180px;"></div>
-        <button id="nextCharacterBtn" class="game-button char-nav-btn" style="font-size: 24px; font-weight: 700; padding: 15px 25px; margin-left: 20px; background: linear-gradient(135deg, #434343 0%, #000000 100%); color: white; border: 2px solid rgba(255, 255, 255, 0.2); border-radius: 12px; cursor: pointer; transition: all 0.3s ease; box-shadow: 0 6px 20px rgba(67, 67, 67, 0.3), inset 0 1px 0 rgba(255, 255, 255, 0.2);">→</button>
+    <!-- Character Preview Area -->
+    <div id="character-select-preview-area" style="
+        position: relative;
+        z-index: 10;
+        text-align: center;
+        max-width: 600px;
+        margin: 0 auto 30px auto;
+        flex: 1;
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+    ">
+        <!-- The CharacterPreviewSystem will be moved here -->
     </div>
-    <div id="characterInfo" style="color: white; text-align: center; margin-bottom: 20px; position: relative; z-index: 10;">
-        <h3 id="characterName" style="font-size: 32px; margin-bottom: 10px;">Apple</h3>
-        <p id="characterDescription" style="font-size: 18px;">Classic runner</p>
-        <p id="characterUnlockStatus" style="font-size: 16px; color: #4CAF50;">Unlocked</p>
-    </div>
-<div style="display: flex; gap: 15px; position: relative; z-index: 10; justify-content: center; width: 100%; max-width: 400px; margin: 0 auto;">
+    
+    <!-- Action Buttons -->
+    <div style="display: flex; gap: 15px; position: relative; z-index: 10; justify-content: center; width: 100%; max-width: 400px; margin: 0 auto;">
         <button id="backToMainMenuFromCharacters" class="game-button char-action-btn" style="font-size: 16px; font-weight: 600; padding: 14px 20px; background: linear-gradient(135deg, #434343 0%, #000000 100%); color: white; border: 2px solid rgba(255, 255, 255, 0.2); border-radius: 10px; cursor: pointer; flex: 1; max-width: 120px; transition: all 0.3s ease; box-shadow: 0 4px 15px rgba(67, 67, 67, 0.3), inset 0 1px 0 rgba(255, 255, 255, 0.2); text-transform: uppercase; letter-spacing: 1px;">← BACK</button>
-        <button id="selectCharacterButton" class="game-button char-action-btn" style="font-size: 18px; font-weight: 700; padding: 16px 25px; background: linear-gradient(135deg, #ff2131 0%, #ff4757 100%); color: white; border: 2px solid rgba(255, 255, 255, 0.2); border-radius: 10px; cursor: pointer; flex: 2; max-width: 200px; transition: all 0.3s ease; box-shadow: 0 6px 20px rgba(255, 33, 49, 0.3), inset 0 1px 0 rgba(255, 255, 255, 0.2); text-transform: uppercase; letter-spacing: 1px; animation: select-pulse 3s ease-in-out infinite;">SELECT</button>
     </div>
 </div>
+
 <!-- World Select Screen -->
 <div id="worldSelectScreen" style="position: absolute; top: 0; left: 0; width: 100%; height: 100%; display: none; flex-direction: column; justify-content: center; align-items: center; z-index: 300; background: linear-gradient(135deg, #0c0c0c 0%, #1a1a1a 25%, #2d1b1b 50%, #1a1a1a 75%, #0c0c0c 100%); padding: 20px; box-sizing: border-box;">
    <div class="menu-bg-animation">
@@ -3382,17 +3384,29 @@ setupWebGL() {
         }
     },
     
-    selectCharacterForGame(charName) {
-        // Set current character and close character select
-        currentCharacter = charName;
-        console.log('Selected character for game:', charName);
-        
-        // Close character select and start game
-        this.hide();
-        if (typeof startGame === 'function') {
-            startGame();
-        }
-    },
+    // In CharacterPreviewSystem object, update this function:
+selectCharacterForGame(charName) {
+    console.log('🎮 Character selected for game:', charName);
+    
+    // Set current character
+    currentCharacter = charName;
+    
+    // Update player model
+    createPlayer();
+    
+    // Show success notification
+    showCharacterSelectedNotification(charName);
+    
+    // Hide the character preview system
+    this.hide();
+    
+    // Close character select screen and return to main menu
+    document.getElementById('characterSelectScreen').style.display = 'none';
+    document.getElementById('mainMenuScreen').style.display = 'flex';
+    gameState = "mainMenu";
+    
+    console.log('✅ Character selected and returned to main menu');
+},
     
     // Animation loop
     animate() {
@@ -5573,11 +5587,11 @@ function setupMainMenuButtons() {
         gameState = "worldSelect";
     });
     
-    // CHARACTERS button - goes to character select (no longer leads to world select)
+    // CHARACTERS button - goes to character select
     document.getElementById('charactersButton').addEventListener('click', function() {
         document.getElementById('mainMenuScreen').style.display = 'none';
         document.getElementById('characterSelectScreen').style.display = 'flex';
-        initCharacterSelectScreen();
+        initCharacterSelectScreen(); // This now uses the new system
         gameState = "characterSelect";
     });
     
@@ -6399,325 +6413,48 @@ function setupProfileListeners() {
 // Dependencies: characters.js, THREE.js
 // Functions: initCharacterSelectScreen(), selectCharacter(), previewCharacter(), etc.
 
-        // Initialize Character Selection Screen
+// Initialize Character Selection Screen - NEW VERSION
 function initCharacterSelectScreen() {
-    // Clear existing canvas content
-    const selectCanvas = document.getElementById('characterSelectCanvas');
-    selectCanvas.innerHTML = '';
+    console.log('🎭 Initializing Character Select with new system');
     
-    // Create a new scene for character display
-    const characterSelectScene = new THREE.Scene();
-    characterSelectScene.background = null; // Transparent background
+    // Move the character preview system to character select area
+    const characterSelectArea = document.getElementById('character-select-preview-area');
+    const previewSystem = document.getElementById('character-preview-system');
     
-    // Create a camera
-const selectCamera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 1000);
-selectCamera.position.set(0, 0, 5); // Move camera further back
-    
-    // Create a renderer for full screen with background effects
-const characterSelectRenderer = new THREE.WebGLRenderer({ alpha: true, antialias: true });
-characterSelectRenderer.setSize(window.innerWidth, window.innerHeight);
-characterSelectRenderer.setClearColor(0x000000, 0); // Transparent background
-selectCanvas.appendChild(characterSelectRenderer.domElement);
-    
-    // Store references globally so they can be accessed by animation loop
-window.characterSelectScene = characterSelectScene;
-window.selectCamera = selectCamera;
-window.characterSelectRenderer = characterSelectRenderer;
-            
-            // Add lights
-            const ambientLight = new THREE.AmbientLight(0xffffff, 0.6);
-            characterSelectScene.add(ambientLight);
-            
-            const directionalLight = new THREE.DirectionalLight(0xffffff, 0.8);
-            directionalLight.position.set(10, 20, 10);
-            characterSelectScene.add(directionalLight);
-            
-
-            
-            // Clear existing character models if they exist
-if (characterSelectModels && characterSelectModels.length > 0) {
-    characterSelectModels.forEach(charObj => {
-        if (charObj.model && charObj.model.parent) {
-            charObj.model.parent.remove(charObj.model);
-        }
-    });
-}
-
-// Create all character models fresh
-characterSelectModels = [];
-
-// Filter to only show unlocked characters (unless mod mode is enabled)
-const visibleCharacters = modModeEnabled ? characterNames : characterNames.filter(char => unlockedCharacters[char]);
-
-// Load all character models from GLB files (order-preserving)
-characterSelectModels = []; // Reset array
-let loadedCount = 0;
-const totalCharacters = visibleCharacters.length;
-
-// Create placeholder array to preserve order
-const modelSlots = new Array(totalCharacters).fill(null);
-
-visibleCharacters.forEach((charType, index) => {
-    const loader = new THREE.GLTFLoader();
-    
-    loader.load(
-        `assets/character-models/${charType}.glb`,
-        // Success callback
-        (gltf) => {
-            console.log(`✅ Character Select GLB loaded: ${charType} at index ${index}`);
-            
-            const charModel = gltf.scene;
-            
-            // Scale and position
-            charModel.scale.set(1.2, 1.2, 1.2);
-            charModel.position.set(0, 0, 0);
-            charModel.visible = false; // Hide all initially
-            
-            // Add to scene
-            characterSelectScene.add(charModel);
-            
-            // IMPORTANT: Store in correct index position
-            modelSlots[index] = {
-                model: charModel,
-                type: charType
-            };
-            
-            loadedCount++;
-            console.log(`Character loading progress: ${loadedCount}/${totalCharacters} - ${charType} loaded at position ${index}`);
-            
-            // When all characters are loaded, populate the array in correct order
-            if (loadedCount === totalCharacters) {
-                // Copy models in correct order
-                characterSelectModels = [...modelSlots];
-                console.log('✅ All characters loaded in correct order:', characterSelectModels.map(m => m.type));
-                finishCharacterSelectInit();
-            }
-        },
-        // Progress callback
-        (progress) => {
-            console.log(`Loading ${charType}: ${Math.round(progress.loaded / progress.total * 100)}%`);
-        },
-        // Error callback
-        (error) => {
-            console.warn(`❌ Failed to load GLB for ${charType}:`, error);
-            
-            // Create fallback placeholder model
-            const fallbackGeometry = new THREE.BoxGeometry(1, 1, 1);
-            const fallbackMaterial = new THREE.MeshStandardMaterial({ 
-                color: 0x667eea,
-                transparent: true,
-                opacity: 0.8
-            });
-            const charModel = new THREE.Mesh(fallbackGeometry, fallbackMaterial);
-            
-            // Scale and position
-            charModel.scale.set(3.5, 3.5, 3.5);
-            charModel.position.set(0, 0, 0);
-            charModel.visible = false;
-            
-            // Add to scene
-            characterSelectScene.add(charModel);
-            
-            // IMPORTANT: Store in correct index position
-            modelSlots[index] = {
-                model: charModel,
-                type: charType
-            };
-            
-            loadedCount++;
-            console.log(`Character loading progress (with fallback): ${loadedCount}/${totalCharacters} - ${charType} fallback at position ${index}`);
-            
-            // When all characters are loaded, populate the array in correct order
-            if (loadedCount === totalCharacters) {
-                // Copy models in correct order
-                characterSelectModels = [...modelSlots];
-                console.log('✅ All characters loaded in correct order:', characterSelectModels.map(m => m.type));
-                finishCharacterSelectInit();
-            }
-        }
-    );
-});
-
-// Function called when all characters finish loading
-function finishCharacterSelectInit() {
-    console.log('🎮 All characters loaded for Character Select');
-    
-    // Ensure selectedCharacterIndex is valid
-    if (selectedCharacterIndex >= characterSelectModels.length) {
-        selectedCharacterIndex = 0;
-    }
-    
-    // Show the correct initial character
-    if (characterSelectModels[selectedCharacterIndex]) {
-        characterSelectModels[selectedCharacterIndex].model.visible = true;
-        updateCharacterInfo();
-    }
-    
-    // Hide loading indicator if you have one
-    const loadingIndicator = document.getElementById('characterLoadingIndicator');
-    if (loadingIndicator) {
-        loadingIndicator.style.display = 'none';
-    }
-}
-            
-            // Clear any existing animation loop
-if (window.characterSelectAnimationId) {
-    cancelAnimationFrame(window.characterSelectAnimationId);
-}
-
-// Animation for character selection screen
-function animateCharacterSelect() {
-    window.characterSelectAnimationId = requestAnimationFrame(animateCharacterSelect);
-    
-    if (gameState === "characterSelect") {
-        // Rotate the displayed character
-        if (characterSelectModels && characterSelectModels[selectedCharacterIndex]) {
-            const currentModel = characterSelectModels[selectedCharacterIndex].model;
-            const currentType = characterSelectModels[selectedCharacterIndex].type;
-            
-            // Basic rotation
-            if (currentModel && currentModel.visible) {
-                currentModel.rotation.y += 0.01;
-                
-                // With this simple rotation:
-                // (GLB models only need basic rotation, no special animations)
-            }
-        }
+    if (characterSelectArea && previewSystem) {
+        characterSelectArea.appendChild(previewSystem);
         
-
-        
-        // Render
-if (window.characterSelectRenderer && window.characterSelectScene && window.selectCamera) {
-    window.characterSelectRenderer.render(window.characterSelectScene, window.selectCamera);
+        // Initialize character preview system in select mode (only unlocked characters)
+        CharacterPreviewSystem.show('select');
+    }
+    
+    // Setup event listeners
+    setupCharacterSelectListeners();
+    
+    console.log('✅ Character Select initialized with new system');
 }
-    }
-}
 
-// Start animation
-animateCharacterSelect();
-            
-            // Remove any existing event listeners and add fresh ones
-const prevBtn = document.getElementById('prevCharacterBtn');
-const nextBtn = document.getElementById('nextCharacterBtn');
-
-// Clone buttons to remove all event listeners
-const newPrevBtn = prevBtn.cloneNode(true);
-const newNextBtn = nextBtn.cloneNode(true);
-prevBtn.parentNode.replaceChild(newPrevBtn, prevBtn);
-nextBtn.parentNode.replaceChild(newNextBtn, nextBtn);
-
-// Update arrow button visibility based on unlocked characters
-updateCharacterArrowVisibility();
-
-// Add fresh event listeners
-document.getElementById('prevCharacterBtn').addEventListener('click', function() {
-    // Get current visible characters
-    const visibleCharacters = modModeEnabled ? characterNames : characterNames.filter(char => unlockedCharacters[char]);
+// Setup Character Select Event Listeners
+function setupCharacterSelectListeners() {
+    // Remove existing listeners and add fresh ones
+    const backBtn = document.getElementById('backToMainMenuFromCharacters');
     
-    // Hide current model
-    if (characterSelectModels[selectedCharacterIndex]) {
-        characterSelectModels[selectedCharacterIndex].model.visible = false;
-    }
+    // Clone button to remove all event listeners
+    const newBackBtn = backBtn.cloneNode(true);
+    backBtn.parentNode.replaceChild(newBackBtn, backBtn);
     
-    // Find current character in visible list
-    const currentChar = characterNames[selectedCharacterIndex];
-    const currentVisibleIndex = visibleCharacters.indexOf(currentChar);
-    
-    // Move to previous visible character
-    const newVisibleIndex = (currentVisibleIndex - 1 + visibleCharacters.length) % visibleCharacters.length;
-    const newChar = visibleCharacters[newVisibleIndex];
-    
-    // Update to new character index in full array
-    selectedCharacterIndex = characterNames.indexOf(newChar);
-    
-    // Show new model
-    if (characterSelectModels[selectedCharacterIndex]) {
-        characterSelectModels[selectedCharacterIndex].model.visible = true;
-    }
-    
-    // Update info display
-    updateCharacterInfo();
-});
-
-document.getElementById('nextCharacterBtn').addEventListener('click', function() {
-    // Get current visible characters
-    const visibleCharacters = modModeEnabled ? characterNames : characterNames.filter(char => unlockedCharacters[char]);
-    
-    // Hide current model
-    if (characterSelectModels[selectedCharacterIndex]) {
-        characterSelectModels[selectedCharacterIndex].model.visible = false;
-    }
-    
-    // Find current character in visible list
-    const currentChar = characterNames[selectedCharacterIndex];
-    const currentVisibleIndex = visibleCharacters.indexOf(currentChar);
-    
-    // Move to next visible character
-    const newVisibleIndex = (currentVisibleIndex + 1) % visibleCharacters.length;
-    const newChar = visibleCharacters[newVisibleIndex];
-    
-    // Update to new character index in full array
-    selectedCharacterIndex = characterNames.indexOf(newChar);
-    
-    // Show new model
-    if (characterSelectModels[selectedCharacterIndex]) {
-        characterSelectModels[selectedCharacterIndex].model.visible = true;
-    }
-    
-    // Update info display
-    updateCharacterInfo();
-});
-
-function updateCharacterArrowVisibility() {
-    const visibleCharacters = modModeEnabled ? characterNames : characterNames.filter(char => unlockedCharacters[char]);
-    const prevBtn = document.getElementById('prevCharacterBtn');
-    const nextBtn = document.getElementById('nextCharacterBtn');
-    
-    if (visibleCharacters.length <= 1) {
-        prevBtn.style.display = 'none';
-        nextBtn.style.display = 'none';
-    } else {
-        prevBtn.style.display = 'block';
-        nextBtn.style.display = 'block';
-    }
-}
-            
-            // Back to main menu button
-document.getElementById('backToMainMenuFromCharacters').addEventListener('click', function() {
-    document.getElementById('characterSelectScreen').style.display = 'none';
-    document.getElementById('mainMenuScreen').style.display = 'flex';
-    gameState = "mainMenu";
-});
-
-// Select character button - just selects character and returns to main menu
-document.getElementById('selectCharacterButton').addEventListener('click', function() {
-    // Check if character is unlocked
-    const selectedChar = characterNames[selectedCharacterIndex];
-    
-    if (unlockedCharacters[selectedChar] || modModeEnabled) {
-        // Set the selected character
-        currentCharacter = selectedChar;
-        createPlayer(); // Update player model
+    // Add fresh event listener
+    document.getElementById('backToMainMenuFromCharacters').addEventListener('click', function() {
+        // Hide the character preview system
+        CharacterPreviewSystem.hide();
         
-        // Show success notification
-        showCharacterSelectedNotification(characterNames[selectedCharacterIndex]);
-        
-        // Return to main menu
         document.getElementById('characterSelectScreen').style.display = 'none';
         document.getElementById('mainMenuScreen').style.display = 'flex';
         gameState = "mainMenu";
-    } else {
-        // Character is locked - ask if they want to unlock
-        const cost = characterCosts[selectedChar];
-        if (confirm(`This character costs ${cost} coins. Do you want to unlock it?`)) {
-            tryUnlockCharacter(selectedChar);
-            updateCharacterInfo(); // Refresh display after attempt
-        }
-    }
-});
-        }
-
-
+        
+        console.log('🎭 Returned to main menu from character select');
+    });
+}
         
         // ==================== WORLD SELECTION SYSTEM ====================
 // World selection screen and world preview functionality
