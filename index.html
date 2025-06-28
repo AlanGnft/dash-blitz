@@ -2173,44 +2173,31 @@ setTimeout(() => {
     </div> <!-- End centered container -->
 </div> <!-- End settings screen -->
 
-<!-- Universal Character Preview System (Mobile-Responsive) -->
+<!-- Universal Character Preview System (Ultra-Compact for Mobile) -->
 <div id="character-preview-system" style="display: none;">
     <!-- Main 3D Preview Area -->
     <div id="character-preview-main" style="
         width: 100%;
-        max-width: min(400px, 90vw);
-        height: min(350px, 40vh);
-        margin: 0 auto 15px auto;
+        max-width: min(350px, 85vw);
+        height: min(280px, 32vh);
+        margin: 0 auto 10px auto;
         background: rgba(0, 0, 0, 0.3);
-        border-radius: 15px;
+        border-radius: 12px;
         position: relative;
         overflow: hidden;
         border: 2px solid rgba(255, 255, 255, 0.1);
-        box-shadow: 0 8px 25px rgba(0, 0, 0, 0.3);
+        box-shadow: 0 6px 20px rgba(0, 0, 0, 0.3);
     "></div>
     
-    <!-- Character Info Display -->
-    <div id="character-info-display" style="
-        text-align: center;
-        margin-bottom: 15px;
-        color: white;
-        padding: 0 10px;
-    ">
+    <!-- Character Name (removed separate status div to save space) -->
+    <div style="text-align: center; margin-bottom: 10px;">
         <h3 id="current-character-name" style="
-            margin: 0 0 8px 0; 
+            margin: 0; 
             text-transform: capitalize;
-            font-size: clamp(18px, 5vw, 24px);
+            font-size: clamp(16px, 4vw, 20px);
+            color: white;
             text-shadow: 0 2px 4px rgba(0, 0, 0, 0.5);
         "></h3>
-        <div id="current-character-status" style="
-            font-size: clamp(14px, 4vw, 16px); 
-            margin-bottom: 12px;
-            padding: 6px 14px;
-            border-radius: 20px;
-            display: inline-block;
-            background: rgba(255, 255, 255, 0.1);
-            border: 1px solid rgba(255, 255, 255, 0.2);
-        "></div>
     </div>
     
     <!-- Character Navigation Carousel -->
@@ -2218,71 +2205,76 @@ setTimeout(() => {
         display: flex;
         align-items: center;
         justify-content: center;
-        gap: min(15px, 3vw);
-        margin-bottom: 20px;
+        gap: min(10px, 2.5vw);
+        margin-bottom: 12px;
         flex-wrap: nowrap;
-        padding: 0 10px;
+        padding: 0 8px;
     ">
         <button id="prev-character-btn" style="
             background: linear-gradient(135deg, #434343 0%, #000000 100%);
             border: 2px solid rgba(255, 255, 255, 0.2);
             color: white;
-            padding: clamp(8px, 2.5vw, 12px) clamp(12px, 3vw, 16px);
-            border-radius: 10px;
+            padding: clamp(6px, 1.8vw, 9px) clamp(10px, 2.5vw, 12px);
+            border-radius: 8px;
             cursor: pointer;
-            font-size: clamp(16px, 4vw, 18px);
+            font-size: clamp(14px, 3.5vw, 16px);
             font-weight: bold;
             transition: all 0.3s ease;
-            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.3);
+            box-shadow: 0 3px 10px rgba(0, 0, 0, 0.3);
             flex-shrink: 0;
         " onmouseover="this.style.background='linear-gradient(135deg, #555 0%, #222 100%)'" 
            onmouseout="this.style.background='linear-gradient(135deg, #434343 0%, #000000 100%)'">‹</button>
         
         <div id="character-thumbnails" style="
             display: flex;
-            gap: clamp(8px, 2vw, 12px);
+            gap: clamp(5px, 1.2vw, 8px);
             align-items: center;
             justify-content: center;
-            max-width: min(400px, 60vw);
-            padding: 5px;
-            overflow-x: visible;
+            max-width: min(280px, 45vw);
+            padding: 2px;
         "></div>
         
         <button id="next-character-btn" style="
             background: linear-gradient(135deg, #434343 0%, #000000 100%);
             border: 2px solid rgba(255, 255, 255, 0.2);
             color: white;
-            padding: clamp(8px, 2.5vw, 12px) clamp(12px, 3vw, 16px);
-            border-radius: 10px;
+            padding: clamp(6px, 1.8vw, 9px) clamp(10px, 2.5vw, 12px);
+            border-radius: 8px;
             cursor: pointer;
-            font-size: clamp(16px, 4vw, 18px);
+            font-size: clamp(14px, 3.5vw, 16px);
             font-weight: bold;
             transition: all 0.3s ease;
-            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.3);
+            box-shadow: 0 3px 10px rgba(0, 0, 0, 0.3);
             flex-shrink: 0;
         " onmouseover="this.style.background='linear-gradient(135deg, #555 0%, #222 100%)'" 
            onmouseout="this.style.background='linear-gradient(135deg, #434343 0%, #000000 100%)'">›</button>
     </div>
     
-    <!-- Action Button (Buy/Select/etc) -->
-    <div id="character-action-area" style="text-align: center; padding: 0 20px;">
+    <!-- Combined Status/Action Button (replaces separate status and button) -->
+    <div id="character-action-area" style="text-align: center; padding: 0 12px;">
         <button id="character-action-btn" style="
             background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
             color: white;
             border: 2px solid rgba(255, 255, 255, 0.2);
-            padding: clamp(12px, 3vw, 15px) clamp(25px, 7vw, 35px);
-            border-radius: 12px;
+            padding: clamp(10px, 2.5vw, 12px) clamp(16px, 4vw, 20px);
+            border-radius: 10px;
             cursor: pointer;
-            font-size: clamp(14px, 4vw, 16px);
+            font-size: clamp(12px, 3vw, 14px);
             font-weight: bold;
             text-transform: uppercase;
-            letter-spacing: 1px;
+            letter-spacing: 0.5px;
             transition: all 0.3s ease;
-            box-shadow: 0 6px 20px rgba(102, 126, 234, 0.4);
+            box-shadow: 0 4px 15px rgba(102, 126, 234, 0.4);
             width: 100%;
-            max-width: 280px;
-        " onmouseover="this.style.transform='translateY(-2px)'; this.style.boxShadow='0 8px 25px rgba(102, 126, 234, 0.6)'" 
-           onmouseout="this.style.transform='translateY(0)'; this.style.boxShadow='0 6px 20px rgba(102, 126, 234, 0.4)'"></button>
+            max-width: 240px;
+            min-height: clamp(38px, 9vw, 46px);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            text-align: center;
+            line-height: 1.2;
+        " onmouseover="this.style.transform='translateY(-1px)'; this.style.boxShadow='0 6px 20px rgba(102, 126, 234, 0.6)'" 
+           onmouseout="this.style.transform='translateY(0)'; this.style.boxShadow='0 4px 15px rgba(102, 126, 234, 0.4)'"></button>
     </div>
 </div>
 
@@ -2324,22 +2316,23 @@ setTimeout(() => {
         <div style="flex: 1; overflow-y: auto; padding: 0 20px 20px 20px;">
         
         <!-- Characters Tab Content -->
-    <div id="shop-characters" class="shop-tab-content active" style="display: block; max-height: 100%; overflow-y: auto; padding: 0;">
-        <!-- New Character Preview System Container -->
-        <div id="shop-character-preview-area" style="
-            padding: clamp(10px, 3vh, 20px);
-            text-align: center;
-            max-width: 600px;
-            margin: 0 auto;
-            height: 100%;
-            display: flex;
-            flex-direction: column;
-            justify-content: center;
-            min-height: 0;
-        ">
-            <!-- The CharacterPreviewSystem will be moved here -->
+        <div id="shop-characters" class="shop-tab-content active" style="display: flex; flex-direction: column; height: 100%; max-height: 100%; overflow: hidden; padding: 0;">
+            <!-- New Character Preview System Container -->
+            <div id="shop-character-preview-area" style="
+                padding: clamp(8px, 2vh, 15px);
+                text-align: center;
+                max-width: 600px;
+                margin: 0 auto;
+                flex: 1;
+                display: flex;
+                flex-direction: column;
+                justify-content: center;
+                min-height: 0;
+                overflow: hidden;
+            ">
+                <!-- The CharacterPreviewSystem will be moved here -->
+            </div>
         </div>
-    </div>
         
         <!-- Worlds Tab Content -->
         <div id="shop-worlds" class="shop-tab-content" style="display: none; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 15px; max-height: 100%;">
@@ -3356,40 +3349,36 @@ setupWebGL() {
         this.updateCharacterInfo(charName);
     },
     
-    // Update character info display
-    updateCharacterInfo(charName) {
-        const nameElement = document.getElementById('current-character-name');
-        const statusElement = document.getElementById('current-character-status');
-        const actionBtn = document.getElementById('character-action-btn');
-        
-        nameElement.textContent = charName.charAt(0).toUpperCase() + charName.slice(1);
-        
-        if (this.mode === 'shop') {
-            const isUnlocked = unlockedCharacters[charName] || modModeEnabled;
-            const cost = characterCosts[charName] || 100;
-            
-            if (isUnlocked) {
-                statusElement.innerHTML = '<span style="color: #4CAF50;">✅ Unlocked</span>';
-                actionBtn.textContent = 'SELECT';
-                actionBtn.onclick = () => this.selectCharacterFromShop(charName);
-                actionBtn.style.background = 'linear-gradient(135deg, #4CAF50 0%, #45a049 100%)';
-            } else {
-                statusElement.innerHTML = `<span style="color: #FFD700;">💰 ${cost} coins</span>`;
-                actionBtn.textContent = 'BUY';
-                actionBtn.onclick = () => this.purchaseCharacter(charName);
-                actionBtn.style.background = 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)';
-            }
-        } else if (this.mode === 'select') {
-            statusElement.innerHTML = '<span style="color: #4CAF50;">Ready to Play</span>';
-            actionBtn.textContent = 'SELECT & PLAY';
-            actionBtn.onclick = () => this.selectCharacterForGame(charName);
-            actionBtn.style.background = 'linear-gradient(135deg, #4CAF50 0%, #45a049 100%)';
-        }
-        
-        // Update thumbnail highlighting
-        this.updateThumbnailHighlight();
-    },
+// Update character info display with combined button
+updateCharacterInfo(charName) {
+    const nameElement = document.getElementById('current-character-name');
+    const actionBtn = document.getElementById('character-action-btn');
     
+    nameElement.textContent = charName.charAt(0).toUpperCase() + charName.slice(1);
+    
+    if (this.mode === 'shop') {
+        const isUnlocked = unlockedCharacters[charName] || modModeEnabled;
+        const cost = characterCosts[charName] || 100;
+        
+        if (isUnlocked) {
+            actionBtn.innerHTML = '✅ UNLOCKED<br><span style="font-size: 0.8em; opacity: 0.8;">Tap to Select</span>';
+            actionBtn.onclick = () => this.selectCharacterFromShop(charName);
+            actionBtn.style.background = 'linear-gradient(135deg, #4CAF50 0%, #45a049 100%)';
+        } else {
+            actionBtn.innerHTML = `💰 BUY FOR ${cost}<br><span style="font-size: 0.8em; opacity: 0.8;">coins</span>`;
+            actionBtn.onclick = () => this.purchaseCharacter(charName);
+            actionBtn.style.background = 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)';
+        }
+    } else if (this.mode === 'select') {
+        actionBtn.innerHTML = '🎮 SELECT & PLAY';
+        actionBtn.onclick = () => this.selectCharacterForGame(charName);
+        actionBtn.style.background = 'linear-gradient(135deg, #4CAF50 0%, #45a049 100%)';
+    }
+    
+    // Update thumbnail highlighting
+    this.updateThumbnailHighlight();
+},
+
     // Navigation methods
     previousCharacter() {
         if (this.availableCharacters.length === 0) return;
@@ -6198,9 +6187,21 @@ function setupShopListeners() {
             const content = document.getElementById(`shop-${tabName}`);
             content.style.display = tabName === 'drip' ? 'block' : 'grid';
             
-            // NEW: Show/hide character preview system based on tab
+            // NEW: Show/hide character preview system based on tab with force resize
             if (tabName === 'characters') {
                 CharacterPreviewSystem.show('shop');
+                
+                // Force multiple resize attempts for shop
+                setTimeout(() => {
+                    CharacterPreviewSystem.handleResize();
+                    if (CharacterPreviewSystem.renderer && CharacterPreviewSystem.scene && CharacterPreviewSystem.camera) {
+                        CharacterPreviewSystem.renderer.render(CharacterPreviewSystem.scene, CharacterPreviewSystem.camera);
+                    }
+                }, 100);
+                
+                setTimeout(() => {
+                    CharacterPreviewSystem.handleResize();
+                }, 300);
             } else {
                 CharacterPreviewSystem.hide();
             }
@@ -6482,38 +6483,48 @@ function setupProfileListeners() {
 // Dependencies: characters.js, THREE.js
 // Functions: initCharacterSelectScreen(), selectCharacter(), previewCharacter(), etc.
 
-// Initialize Character Selection Screen - NEW VERSION
-// Initialize Character Selection Screen - FIXED VERSION
+// Initialize Character Selection Screen - BULLETPROOF VERSION
 function initCharacterSelectScreen() {
     console.log('🎭 Initializing Character Select with new system');
     
-    // Small delay to ensure DOM is ready
-    setTimeout(() => {
-        // Move the character preview system to character select area
+    // Ensure we start fresh
+    CharacterPreviewSystem.hide();
+    
+    // Multiple initialization attempts to ensure it works
+    const initializePreviewSystem = () => {
         const characterSelectArea = document.getElementById('character-select-preview-area');
         const previewSystem = document.getElementById('character-preview-system');
         
         if (characterSelectArea && previewSystem) {
             characterSelectArea.appendChild(previewSystem);
             
-            // Initialize character preview system in select mode (only unlocked characters)
+            // Force initialization
             CharacterPreviewSystem.show('select');
             
-            // Force a render after initialization
-            setTimeout(() => {
-                if (CharacterPreviewSystem.renderer && CharacterPreviewSystem.scene && CharacterPreviewSystem.camera) {
-                    CharacterPreviewSystem.handleResize();
-                    CharacterPreviewSystem.renderer.render(CharacterPreviewSystem.scene, CharacterPreviewSystem.camera);
-                }
-            }, 200);
+            // Multiple render attempts
+            [100, 300, 500, 800].forEach(delay => {
+                setTimeout(() => {
+                    if (CharacterPreviewSystem.renderer && CharacterPreviewSystem.scene && CharacterPreviewSystem.camera) {
+                        CharacterPreviewSystem.handleResize();
+                        CharacterPreviewSystem.renderer.render(CharacterPreviewSystem.scene, CharacterPreviewSystem.camera);
+                        console.log(`🔄 Character select render attempt at ${delay}ms`);
+                    }
+                }, delay);
+            });
         }
-        
-        // Setup event listeners
-        setupCharacterSelectListeners();
-        
-        console.log('✅ Character Select initialized with new system');
-    }, 100);
+    };
+    
+    // Try initialization immediately and with delays
+    initializePreviewSystem();
+    setTimeout(initializePreviewSystem, 50);
+    setTimeout(initializePreviewSystem, 150);
+    
+    // Setup event listeners
+    setupCharacterSelectListeners();
+    
+    console.log('✅ Character Select initialized with multiple attempts');
 }
+
 
 // Setup Character Select Event Listeners
 function setupCharacterSelectListeners() {
