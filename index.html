@@ -3358,40 +3358,37 @@ setupWebGL() {
     
     // Update character info display
     updateCharacterInfo(charName) {
-    const nameElement = document.getElementById('current-character-name');
-    const statusElement = document.getElementById('current-character-status');
-    const actionBtn = document.getElementById('character-action-btn');
-    
-    nameElement.textContent = charName.charAt(0).toUpperCase() + charName.slice(1);
-    
-    if (this.mode === 'shop') {
-        const isUnlocked = unlockedCharacters[charName] || modModeEnabled;
-        const cost = characterCosts[charName] || 100;
+        const nameElement = document.getElementById('current-character-name');
+        const statusElement = document.getElementById('current-character-status');
+        const actionBtn = document.getElementById('character-action-btn');
         
-        // Hide status element to save space in shop
-        statusElement.style.display = 'none';
+        nameElement.textContent = charName.charAt(0).toUpperCase() + charName.slice(1);
         
-        if (isUnlocked) {
-            actionBtn.innerHTML = '✅ UNLOCKED<br><small style="opacity: 0.8;">Tap to Select</small>';
-            actionBtn.onclick = () => this.selectCharacterFromShop(charName);
+        if (this.mode === 'shop') {
+            const isUnlocked = unlockedCharacters[charName] || modModeEnabled;
+            const cost = characterCosts[charName] || 100;
+            
+            if (isUnlocked) {
+                statusElement.innerHTML = '<span style="color: #4CAF50;">✅ Unlocked</span>';
+                actionBtn.textContent = 'SELECT';
+                actionBtn.onclick = () => this.selectCharacterFromShop(charName);
+                actionBtn.style.background = 'linear-gradient(135deg, #4CAF50 0%, #45a049 100%)';
+            } else {
+                statusElement.innerHTML = `<span style="color: #FFD700;">💰 ${cost} coins</span>`;
+                actionBtn.textContent = 'BUY';
+                actionBtn.onclick = () => this.purchaseCharacter(charName);
+                actionBtn.style.background = 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)';
+            }
+        } else if (this.mode === 'select') {
+            statusElement.innerHTML = '<span style="color: #4CAF50;">Ready to Play</span>';
+            actionBtn.textContent = 'SELECT & PLAY';
+            actionBtn.onclick = () => this.selectCharacterForGame(charName);
             actionBtn.style.background = 'linear-gradient(135deg, #4CAF50 0%, #45a049 100%)';
-        } else {
-            actionBtn.innerHTML = `💰 BUY FOR ${cost}<br><small style="opacity: 0.8;">coins</small>`;
-            actionBtn.onclick = () => this.purchaseCharacter(charName);
-            actionBtn.style.background = 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)';
         }
-    } else if (this.mode === 'select') {
-        // Show status element in character select
-        statusElement.style.display = 'inline-block';
-        statusElement.innerHTML = '<span style="color: #4CAF50;">Ready to Play</span>';
-        actionBtn.textContent = 'SELECT & PLAY';
-        actionBtn.onclick = () => this.selectCharacterForGame(charName);
-        actionBtn.style.background = 'linear-gradient(135deg, #4CAF50 0%, #45a049 100%)';
-    }
-    
-    // Update thumbnail highlighting
-    this.updateThumbnailHighlight();
-},
+        
+        // Update thumbnail highlighting
+        this.updateThumbnailHighlight();
+    },
     
     // Navigation methods
     previousCharacter() {
@@ -6486,34 +6483,36 @@ function setupProfileListeners() {
 // Functions: initCharacterSelectScreen(), selectCharacter(), previewCharacter(), etc.
 
 // Initialize Character Selection Screen - NEW VERSION
+// Initialize Character Selection Screen - FIXED VERSION
 function initCharacterSelectScreen() {
     console.log('🎭 Initializing Character Select with new system');
     
-    // Move the character preview system to character select area
-    const characterSelectArea = document.getElementById('character-select-preview-area');
-    const previewSystem = document.getElementById('character-preview-system');
-    
-    if (characterSelectArea && previewSystem) {
-        characterSelectArea.appendChild(previewSystem);
-        
-        // Initialize character preview system in select mode (only unlocked characters)
-        CharacterPreviewSystem.show('select');
-    }
-    
-    // Setup event listeners
-    setupCharacterSelectListeners();
-    
-    // ADD: Force render after delay to fix initialization bug
+    // Small delay to ensure DOM is ready
     setTimeout(() => {
-        if (CharacterPreviewSystem.isInitialized && CharacterPreviewSystem.renderer) {
-            CharacterPreviewSystem.handleResize();
-            if (CharacterPreviewSystem.scene && CharacterPreviewSystem.camera) {
-                CharacterPreviewSystem.renderer.render(CharacterPreviewSystem.scene, CharacterPreviewSystem.camera);
-            }
+        // Move the character preview system to character select area
+        const characterSelectArea = document.getElementById('character-select-preview-area');
+        const previewSystem = document.getElementById('character-preview-system');
+        
+        if (characterSelectArea && previewSystem) {
+            characterSelectArea.appendChild(previewSystem);
+            
+            // Initialize character preview system in select mode (only unlocked characters)
+            CharacterPreviewSystem.show('select');
+            
+            // Force a render after initialization
+            setTimeout(() => {
+                if (CharacterPreviewSystem.renderer && CharacterPreviewSystem.scene && CharacterPreviewSystem.camera) {
+                    CharacterPreviewSystem.handleResize();
+                    CharacterPreviewSystem.renderer.render(CharacterPreviewSystem.scene, CharacterPreviewSystem.camera);
+                }
+            }, 200);
         }
-    }, 500);
-    
-    console.log('✅ Character Select initialized with new system');
+        
+        // Setup event listeners
+        setupCharacterSelectListeners();
+        
+        console.log('✅ Character Select initialized with new system');
+    }, 100);
 }
 
 
